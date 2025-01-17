@@ -1,0 +1,53 @@
+
+<div class="w-full h-full login-fondo">
+    <div class="login">
+    <div class="avatar">
+    <img src="assets/img/demo/landscape.jpg" >
+    </div>
+    <h2>
+        Iniciar sesion
+    
+    </h2>
+    <h3>
+        Bienvenido
+    </h3>
+    
+    
+    
+    <form [formGroup]="form" class="login-form" (ngSubmit)="Login()">
+    <mat-form-field  class="textbox">
+    <mat-label >
+        Email
+    </mat-label>
+    <input matInput formControlName="credenciales">
+    <mat-error *ngIf="form.get('credenciales')?.hasError('required')">
+    Campo Email es requerido
+    </mat-error>
+    </mat-form-field>
+    
+    <mat-form-field  class="textbox">
+        <mat-label >
+        Contraseña
+        </mat-label>
+        <input matInput formControlName="password" [type]="inputType">
+        <mat-error *ngIf="form.get('password')?.hasError('required')">
+        Campo Contraseña es requerido
+        </mat-error>
+    <button (click)="toggleVisibility()" mat-icon-button matSuffix matTooltip="{{!visible ? 'Ver contraseña':'Ocultar Contraseña'}}"
+    type="button">
+    <mat-icon *ngIf="visible" ></mat-icon>
+    <mat-icon *ngIf="!visible" ></mat-icon>
+    
+    </button>
+    
+        </mat-form-field>
+        <button type="submit" color="primary" mat-raised-button>
+    Iniciar Sesion 
+    </button>
+    
+    </form>
+    
+    </div>
+    </div>
+    
+    
