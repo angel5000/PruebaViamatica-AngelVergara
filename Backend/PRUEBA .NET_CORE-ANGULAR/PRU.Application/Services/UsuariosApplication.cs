@@ -115,7 +115,7 @@ namespace PRU.Application.Services
                     Data = true,  // Indica que la operación fue exitosa
                     Message = "Registro exitoso",
                     TotalRecords = 1,  // Puedes ajustar este valor según el caso
-                    Errors = null,
+                    //Errors = null,
                     AdditionalData = new { PersonaId = personaId, UsuarioId = usuarioId }
                 };
             }
@@ -127,7 +127,7 @@ namespace PRU.Application.Services
                     Data = false,  // Indica que la operación falló
                     Message = $"Error al registrar los datos: {ex.Message}",
                     TotalRecords = 0,
-                    Errors = null
+                   // Errors = null
                 };
             }
 

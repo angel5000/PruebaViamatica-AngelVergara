@@ -33,7 +33,7 @@ namespace Pru.Api.Controllers
             return StatusCode(500, new
             {
                 response.Message,
-                response.Errors
+                //response.Errors
             });  // Si hubo un error, retorna un código 500 con el mensaje de error
         }
     }

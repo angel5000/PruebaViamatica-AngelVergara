@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Pru.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ddb23906c6c55e1bf5975672fe3de78e08b83d0e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+33812bc68e9662555393162e0b0c36d810b9b35b")]
 [assembly: System.Reflection.AssemblyProductAttribute("Pru.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Pru.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

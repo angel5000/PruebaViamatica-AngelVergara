@@ -6232,11 +6232,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\Pru.Api\\Pru.Api.csproj",
+      "projectUniqueName": "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\Pru.Api\\Pru.Api.csproj",
       "projectName": "Pru.Api",
-      "projectPath": "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\Pru.Api\\Pru.Api.csproj",
+      "projectPath": "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\Pru.Api\\Pru.Api.csproj",
       "packagesPath": "C:\\Users\\angeldvvp\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\Pru.Api\\obj\\",
+      "outputPath": "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\Pru.Api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\angeldvvp\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -6254,14 +6254,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Application\\PRU.Application.csproj": {
-              "projectPath": "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Application\\PRU.Application.csproj"
+            "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Application\\PRU.Application.csproj": {
+              "projectPath": "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Application\\PRU.Application.csproj"
             },
-            "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Infrastructure\\PRU.Infrastructure.csproj": {
-              "projectPath": "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Infrastructure\\PRU.Infrastructure.csproj"
+            "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Infrastructure\\PRU.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Infrastructure\\PRU.Infrastructure.csproj"
             },
-            "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Utilities\\PRU.Utilities.csproj": {
-              "projectPath": "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Utilities\\PRU.Utilities.csproj"
+            "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Utilities\\PRU.Utilities.csproj": {
+              "projectPath": "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Utilities\\PRU.Utilities.csproj"
             }
           }
         }

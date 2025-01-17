@@ -14,7 +14,7 @@ namespace PRU.Application.Commons.Bases.Response
         public int TotalRecords { get; set; }
         public string? Message { get; set; }
         public object? AdditionalData { get; set; }
-        public IEnumerable<ValidationFailure>? Errors { get; set; }
+      //  public IEnumerable<ValidationFailure>? Errors { get; set; }
 
 
 

@@ -25,14 +25,17 @@ namespace PRU.Application.Services
             _context = context;
             _validaciones = validaciones;
         }
-        public async Task<BaseResponse<bool>> Login(TokenRequest requestDto)
+        public async Task<BaseResponse<int>> Login(TokenRequest requestDto)
         {
+            var response = new BaseResponse<int>();
+            try { 
+           
             var outputParam = new SqlParameter
             {
                 ParameterName = "@Result",
                 SqlDbType = SqlDbType.Int,
                 Direction = ParameterDirection.Output,
-                
+
             };
             var outputParam2 = new SqlParameter
             {
@@ -47,77 +50,97 @@ namespace PRU.Application.Services
         outputParam,outputParam2
     };
 
-            await _context.Database.ExecuteSqlRawAsync("EXEC InicioSesion @Login, @Password, @Result OUTPUT, @Rol OUTPUT", parametros);
+          await _context.Database.ExecuteSqlRawAsync("EXEC InicioSesion @Login, @Password, @Result OUTPUT, @Rol OUTPUT", parametros);
 
             var resultado = (int)outputParam.Value;
             var Rol = (int)outputParam2.Value;
             if (resultado == -1)
             {
-                return new BaseResponse<bool>
-                {
-                    IsSucces = true,
-                    Message = "Cuenta bloqueada, contacte al administrador",
-                    Data = true
-                };
+                 response = new BaseResponse<int>();
+
+                response.IsSucces = false;
+                response.Message = "Cuenta bloqueada, contacte al administrador";
+                response.Data = resultado;
+                return response;
+              
             }
             if (resultado == 0)
             {
+                response = new BaseResponse<int>();
 
-                return new BaseResponse<bool>
-                {
-                    IsSucces = false,
-                    Message = "Credenciales incorrectas, Intentelo denuevo",
-                    Data = true
-                };
+                response.IsSucces = false;
+                response.Message = "Credenciales incorrectas, Intentelo denuevo";
+                response.Data = resultado;
+                return response;
+              
             }
             if (resultado == 1)
             {
-                string nombRol= _validaciones.VerificacionRoles(Rol);
-                return new BaseResponse<bool>
-                {
-                    IsSucces = true,
-                    Message = "Sesión iniciada exitosamente. ("+nombRol+")",
-                    Data = true
-                };
+                string nombRol = _validaciones.VerificacionRoles(Rol);
+                 response = new BaseResponse<int>();
+
+                response.IsSucces = true;
+                response.Message = "Sesión iniciada exitosamente. (" + nombRol + ")";
+                response.Data = Rol;
+                return response;
             }
             else if (resultado == 2)
             {
-                return new BaseResponse<bool>
-                {
-                    IsSucces = false,
-                    Message = "Ya existe una sesión activa para este usuario.",
-                    Data = false
-                };
+                 response = new BaseResponse<int>();
+
+                response.IsSucces = false;
+                response.Message = "Ya existe una sesión activa para este usuario.";
+                response.Data = resultado;
+                return response;
+                
             }
             else
-            {
-                return new BaseResponse<bool>
-                {
-                    IsSucces = false,
-                    Message = "Credenciales incorrectas.",
-                    Data = false
-                };
+             {
+
+                response = new BaseResponse<int>();
+
+                response.IsSucces = false;
+                response.Message = "Usuario/correo no existente, verifique su informacion";
+                response.Data = resultado;
+                return response;
             }
+
+            }
+            catch (Exception e) {
+                response = new BaseResponse<int>();
+
+                response.IsSucces = false;
+                response.Message = "Usuario/correo no existente, verifique su informacion";
+                response.Data = 0;
+                Console.WriteLine(e.Message);
+               
+               
+            }
+            return response;
         }
 
 
         public async Task<BaseResponse<bool>> Logout(string login)
         {
+            var response = new BaseResponse<bool>();
             var parametros = new[]
             {
-        new SqlParameter("@Login", login ?? (object)DBNull.Value)
-    };
+          new SqlParameter("@Login", login ?? (object)DBNull.Value)
+                 };
 
-            await _context.Database.ExecuteSqlRawAsync("EXEC CerrarSesion @Login", parametros);
+            var result = await _context.Database.ExecuteSqlRawAsync("EXEC CerrarSesion @Login", parametros);
 
-            return new BaseResponse<bool>
+            if (result !=0)
             {
-                IsSucces = true,
-                Message = "Sesión cerrada exitosamente.",
-                Data = true
-            };
-        }
+                response.IsSucces = true;
+                response.Message = "Sesion cerrada con exito";
+                Console.Write("response: "+response.IsSucces);
+                return response;
+            }
 
+            return response;
+        }
+    
 
     }
 }

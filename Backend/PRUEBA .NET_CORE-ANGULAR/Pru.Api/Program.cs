@@ -4,6 +4,8 @@ using PRU.Application.Extension;
 using PRU.Application.Interfaces;
 using PRU.Application.Services;
 using PRU.Infrastructure.Extensions;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
@@ -21,6 +23,13 @@ builder.Services.AddScoped<Validaciones>();
 
 builder.Services.AddScoped<IUsuariosApplication, UsuariosApplication>();
 builder.Services.AddScoped<IAuth, Auth>();
+/*builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
+*/
 builder.Services.AddCors(option =>
 {
     option.AddPolicy(name: Cors, builder => { builder.WithOrigins("http://localhost:4200"); builder.AllowAnyMethod(); builder.AllowAnyHeader(); });

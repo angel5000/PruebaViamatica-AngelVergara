@@ -4738,11 +4738,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Utilities\\PRU.Utilities.csproj",
+      "projectUniqueName": "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Utilities\\PRU.Utilities.csproj",
       "projectName": "PRU.Utilities",
-      "projectPath": "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Utilities\\PRU.Utilities.csproj",
+      "projectPath": "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Utilities\\PRU.Utilities.csproj",
       "packagesPath": "C:\\Users\\angeldvvp\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Utilities\\obj\\",
+      "outputPath": "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Utilities\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\angeldvvp\\AppData\\Roaming\\NuGet\\NuGet.Config",

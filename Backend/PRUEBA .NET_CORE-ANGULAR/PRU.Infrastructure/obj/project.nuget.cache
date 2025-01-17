@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "kmF4Vi1l/h8=",
+  "dgSpecHash": "CdyGfTTmqDY=",
   "success": true,
-  "projectFilePath": "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Infrastructure\\PRU.Infrastructure.csproj",
+  "projectFilePath": "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\PRU.Infrastructure\\PRU.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\angeldvvp\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\angeldvvp\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "8+PP1OzB+AE=",
+  "dgSpecHash": "ypb0/fqeyM0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\angeldvvp\\source\\repos\\Backend\\PRUEBA .NET_CORE-ANGULAR\\Pru.Api\\Pru.Api.csproj",
+  "projectFilePath": "C:\\Users\\angeldvvp\\source\\repos\\Prueba\\Backend\\PRUEBA .NET_CORE-ANGULAR\\Pru.Api\\Pru.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\angeldvvp\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\angeldvvp\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
