@@ -12,10 +12,14 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { DatePipe } from '@angular/common';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { AppRoutingModule } from './app-routing.module';
+import { SidenavModule } from "./commons/sidenav/sidenav-modules";
+import { SharedModule } from './shared/shared.module';
+import { ItemsidenavComponent } from './commons/sidenav/itemsidenav/itemsidenav.component';
+import { MatSortModule } from '@angular/material/sort';
 
 
 @NgModule({
-  declarations: [AppComponent, NotFoundComponent],
+  declarations: [AppComponent, NotFoundComponent, ItemsidenavComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -24,8 +28,9 @@ import { AppRoutingModule } from './app-routing.module';
     MatSnackBarModule,
     MatInputModule,
     MatFormFieldModule,
-   
-  ],
+
+    SharedModule
+],
   /*
   providers:[DatePipe,{provide: MAT_DATE_LOCALE, useValue:"es-ES"},
   {provide: HTTP_INTERCEPTORS, useClass: Authinterpcetor, multi: true}

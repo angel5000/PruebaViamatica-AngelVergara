@@ -1,8 +1,8 @@
 export interface TableColumns<T>{
     label : string;
     csslabel: string[];
-    property: keyof T |string;
-    cssProperty: string[];
+    property: string;
+    cssProperty?: string[];
     subProperty?: keyof T | string;
     cssSubProperty?: string[];
     type: "text" | "datetime" | "time" | "icon"

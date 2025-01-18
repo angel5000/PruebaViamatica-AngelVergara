@@ -1,3 +1,75 @@
+<mat-sidenav-container *ngIf="showSidenav" class="example-container">
 
-<router-outlet></router-outlet>
+    <mat-sidenav #sidenav [mode]="mode.value || 'over'">
+        <div class="background">
+            <div class="divh2">
+                <h2>Control de datos</h2>
+                <button class="position-absolute  end-0 translate-middle-y mx-2
+                  " type="button" 
+                        (click)="sidenav.toggle()">
+                       
+                        <span class="bi bi-back"></span>
+                       </button>
+                    
+                        
+                    
+                    
+                 
+            </div>
+        </div>
+        <div class="contenedor-item">
+            <app-itemsidenav *ngFor="let item of items;" [item]="item"></app-itemsidenav>
+        </div>
 
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+
+  
+    
+                
+                <nav id ="navb" class="navbar navbar-expand-lg bg-body-tertiary">
+                    <div class="container-fluid">
+                       
+                    
+                      <button class="boton" type="button"
+                      (click)="sidenav.toggle()">
+                        <span class="navbar-toggler-icon"></span>
+                      </button>
+                
+                     
+                
+                      
+                      <div id="dvbt" class="d-flex justify-content-end">
+                        <ng-container >
+                          <span>
+                            
+                            <div class="dropdown">
+                              <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              NOMBRE DEL USUARIO
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" >Perfil</a></li>
+                                <li><a class="dropdown-item" (click)="Cerrarsesion()" >Cerra sesion </a></li>
+                            
+                              </ul>
+                            </div>
+                           
+                          
+                          
+                          
+                          </span>
+                      
+                        </ng-container>
+                    
+                      </div>
+                    </div>
+                   
+                  </nav>
+                
+
+        <router-outlet></router-outlet>
+
+    </mat-sidenav-content>
+</mat-sidenav-container>
+<router-outlet *ngIf="!showSidenav"></router-outlet>

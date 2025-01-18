@@ -1,29 +1,67 @@
-import { Component, Inject, LOCALE_ID, Renderer2 } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit, Renderer2 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Platform } from '@angular/cdk/platform';
 
 
 import icDashboard from '@iconify/icons-ic/twotone-dashboard';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 import icCategory from "@iconify/icons-ic/twotone-article";
 import { IconsService } from './shared/services/Icon.services';
 import icWarehouse from "@iconify/icons-ic/twotone-widgets";
+import { FormControl } from '@angular/forms';
+import { MatDrawerMode } from '@angular/material/sidenav';
+import { Navigationitem } from './commons/sidenav/itemsidenav/navigations';
+import { AuthService } from './pages/Auth/Services/auth.service';
+import { UsuarioResponse } from './pages/Administrador/Models/UsuariosResponse';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  title = 'Fundacion';
-
-  constructor() {
+export class AppComponent implements OnInit {
+title=""
+  showSidenav = true;
+  mode = new FormControl('push' as MatDrawerMode);
+  items: Navigationitem[] = [
+    { route: '/administrador', label: 'Manejor de usuarios' },
+    { route: '/bienvenido', label: 'Usuario' },
+    { route: '/settings', label: 'Configuración' }
+  ];
+  constructor(private router: Router, private authService: AuthService) {
 
     
   }
-  
+  ngOnInit(): void {
+    this.router.events.subscribe(() => {
+      // Oculta el sidenav en la página de login
+      this.showSidenav = this.router.url !== '/login';
+    });
+  }
+  Cerrarsesion(): void {
+    // Obtén las credenciales del almacenamiento local
+    const userCredentials = localStorage.getItem('userCredentials');
+console.log(userCredentials)
+    // Verifica que las credenciales existen antes de llamar a logout
+    if (userCredentials) {
+      this.authService.logout(userCredentials).subscribe({
+        next: () => {
+          // Redirige al usuario al login después de un logout exitoso
+          localStorage.removeItem('userCredentials');
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          console.error('Error al cerrar sesión:', err);
+          // Manejo de errores opcional, como mostrar un mensaje al usuario
+        },
+      });
+    } else {
+      console.warn('No se encontraron credenciales de usuario en localStorage.');
+      this.router.navigate(['/login']); // Redirige al login incluso si no hay credenciales
+    }
+  }    
  /* constructor(private configService: ConfigService,
     private styleService: StyleService,
     private renderer: Renderer2,

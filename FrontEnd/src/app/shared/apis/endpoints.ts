@@ -2,6 +2,8 @@ import { HttpHeaders } from "@angular/common/http"
 
 export const endpoint={
     GENERATE_TOKEN: 'AuthControlles/Login',
+    LIST_USUARIOS: 'Admin/ListaUsuarios',
+    LOGOUT: 'AuthControlles/Logout',
 
     
 }

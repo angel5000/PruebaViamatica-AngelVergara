@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PRU.Utilities")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+33812bc68e9662555393162e0b0c36d810b9b35b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d14247af78f7083de4867fce335d671d4bf561a9")]
 [assembly: System.Reflection.AssemblyProductAttribute("PRU.Utilities")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PRU.Utilities")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

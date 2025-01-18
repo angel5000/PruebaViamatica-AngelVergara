@@ -6,6 +6,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IconModule } from '@visurel/iconify-angular';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { SidenavComponent } from '../commons/sidenav/sidenav.component';
+import { MatSortModule } from '@angular/material/sort';
 
 
 
@@ -13,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
   declarations: [],
   imports: [
     CommonModule
+    
   ],
   exports: [
     CommonModule,
@@ -32,8 +35,8 @@ import { MatInputModule } from '@angular/material/input';
     //SearchFilterModule,
     //DownloadCsvModule,
     //NgxSpinnerModule,
-    MatFormFieldModule
-   
+    MatFormFieldModule,
+  
   ]
 })
 export class SharedModule { }

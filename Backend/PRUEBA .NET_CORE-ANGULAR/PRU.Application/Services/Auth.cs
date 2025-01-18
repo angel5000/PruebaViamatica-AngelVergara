@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PRU.Application.Commons.Bases.Response;
 using PRU.Application.Commons.Validations;
 using PRU.Application.Dtos.Usuarios.Request;
+using PRU.Application.Dtos.Usuarios.Response;
 using PRU.Application.Interfaces;
 using PRU.Infrastructure.Persitences.Context;
 using System;
@@ -28,96 +29,155 @@ namespace PRU.Application.Services
         public async Task<BaseResponse<int>> Login(TokenRequest requestDto)
         {
             var response = new BaseResponse<int>();
-            try { 
-           
-            var outputParam = new SqlParameter
+            try
             {
-                ParameterName = "@Result",
-                SqlDbType = SqlDbType.Int,
-                Direction = ParameterDirection.Output,
+                var outputParam = new SqlParameter
+                {
+                    ParameterName = "@Result",
+                    SqlDbType = SqlDbType.Int,
+                    Direction = ParameterDirection.Output,
+                };
 
-            };
-            var outputParam2 = new SqlParameter
+                var outputParam2 = new SqlParameter
+                {
+                    ParameterName = "@Rol",
+                    SqlDbType = SqlDbType.Int,
+                    Direction = ParameterDirection.Output
+                };
+
+                var outputParam3 = new SqlParameter
+                {
+                    ParameterName = "@UsuarioId",
+                    SqlDbType = SqlDbType.Int,
+                    Direction = ParameterDirection.Output
+                };
+
+                // Parámetros adicionales para obtener los datos personales
+                var outputParam4 = new SqlParameter
+                {
+                    ParameterName = "@UserName",
+                    SqlDbType = SqlDbType.NVarChar,
+                    Size = 50,
+                    Direction = ParameterDirection.Output
+                };
+                var outputParam5 = new SqlParameter
+                {
+                    ParameterName = "@Mail",
+                    SqlDbType = SqlDbType.NVarChar,
+                    Size = 50,
+                    Direction = ParameterDirection.Output
+                };
+                var outputParam6 = new SqlParameter
+                {
+                    ParameterName = "@Nombres",
+                    SqlDbType = SqlDbType.NVarChar,
+                    Size = 100,
+                    Direction = ParameterDirection.Output
+                };
+                var outputParam7 = new SqlParameter
+                {
+                    ParameterName = "@Apellidos",
+                    SqlDbType = SqlDbType.NVarChar,
+                    Size = 100,
+                    Direction = ParameterDirection.Output
+                };
+                var outputParam8 = new SqlParameter
+                {
+                    ParameterName = "@Identificacion",
+                    SqlDbType = SqlDbType.NVarChar,
+                    Size = 50,
+                    Direction = ParameterDirection.Output
+                };
+                var outputParam9 = new SqlParameter
+                {
+                    ParameterName = "@FechaNacimiento",
+                    SqlDbType = SqlDbType.Date,
+                    Direction = ParameterDirection.Output
+                };
+
+                var parametros = new[]
+                {
+            new SqlParameter("@Login", requestDto.Credenciales ?? (object)DBNull.Value),
+            new SqlParameter("@Password", requestDto.Password ?? (object)DBNull.Value),
+            outputParam,
+            outputParam2,
+            outputParam3,
+            outputParam4,
+            outputParam5,
+            outputParam6,
+            outputParam7,
+            outputParam8,
+            outputParam9
+        };
+
+                await _context.Database.ExecuteSqlRawAsync("EXEC InicioSesion @Login, @Password, @Result OUTPUT, @Rol OUTPUT, @UsuarioId OUTPUT, @UserName OUTPUT, @Mail OUTPUT, @Nombres OUTPUT, @Apellidos OUTPUT, @Identificacion OUTPUT, @FechaNacimiento OUTPUT", parametros);
+
+                var resultado = (int)outputParam.Value;
+                var rol = (int)outputParam2.Value;
+                var id = (int)outputParam3.Value;
+
+                if (resultado == -1)
+                {
+                    response.IsSucces = false;
+                    response.Message = "Cuenta bloqueada, contacte al administrador";
+                    response.Data = resultado;
+                    return response;
+                }
+
+                if (resultado == 0)
+                {
+                    response.IsSucces = false;
+                    response.Message = "Credenciales incorrectas, Intentelo denuevo";
+                    response.Data = resultado;
+                    return response;
+                }
+
+                if (resultado == 1)
+                {
+                    string nombRol = _validaciones.VerificacionRoles(rol);
+
+                    response.IsSucces = true;
+                    response.Message = "Sesión iniciada exitosamente. (" + nombRol + ")";
+                    response.Data = rol;
+                    response.AdditionalData = id;
+                    // Asignar los datos personales a DataPersonal
+                    response.DataPersonal = new UsuariosResponse
+                    {
+                        UserName = (string)outputParam4.Value,
+                        Mail = (string)outputParam5.Value,
+                        Nombres = (string)outputParam6.Value,
+                        Apellidos = (string)outputParam7.Value,
+                        Identificacion = (string)outputParam8.Value,
+                        FechaNacimiento = DateOnly.FromDateTime((DateTime)outputParam9.Value)
+                    };
+
+                    return response;
+                }
+                else if (resultado == 2)
+                {
+                    response.IsSucces = false;
+                    response.Message = "Ya existe una sesión activa para este usuario.";
+                    response.Data = resultado;
+                    return response;
+                }
+                else
+                {
+                    response.IsSucces = false;
+                    response.Message = "Usuario/correo no existente, verifique su informacion...";
+                    response.Data = resultado;
+                    return response;
+                }
+            }
+            catch (Exception e)
             {
-                ParameterName = "@Rol",
-                SqlDbType = SqlDbType.Int,
-                Direction = ParameterDirection.Output
-            };
-            var parametros = new[]
-            {
-        new SqlParameter("@Login", requestDto.Credenciales ?? (object)DBNull.Value),
-        new SqlParameter("@Password", requestDto.Password ?? (object)DBNull.Value),
-        outputParam,outputParam2
-    };
-
-          await _context.Database.ExecuteSqlRawAsync("EXEC InicioSesion @Login, @Password, @Result OUTPUT, @Rol OUTPUT", parametros);
-
-            var resultado = (int)outputParam.Value;
-            var Rol = (int)outputParam2.Value;
-            if (resultado == -1)
-            {
-                 response = new BaseResponse<int>();
-
                 response.IsSucces = false;
-                response.Message = "Cuenta bloqueada, contacte al administrador";
-                response.Data = resultado;
-                return response;
-              
-            }
-            if (resultado == 0)
-            {
-                response = new BaseResponse<int>();
-
-                response.IsSucces = false;
-                response.Message = "Credenciales incorrectas, Intentelo denuevo";
-                response.Data = resultado;
-                return response;
-              
-            }
-            if (resultado == 1)
-            {
-                string nombRol = _validaciones.VerificacionRoles(Rol);
-                 response = new BaseResponse<int>();
-
-                response.IsSucces = true;
-                response.Message = "Sesión iniciada exitosamente. (" + nombRol + ")";
-                response.Data = Rol;
-                return response;
-            }
-            else if (resultado == 2)
-            {
-                 response = new BaseResponse<int>();
-
-                response.IsSucces = false;
-                response.Message = "Ya existe una sesión activa para este usuario.";
-                response.Data = resultado;
-                return response;
-                
-            }
-            else
-             {
-
-                response = new BaseResponse<int>();
-
-                response.IsSucces = false;
-                response.Message = "Usuario/correo no existente, verifique su informacion";
-                response.Data = resultado;
-                return response;
-            }
-
-            }
-            catch (Exception e) {
-                response = new BaseResponse<int>();
-
-                response.IsSucces = false;
-                response.Message = "Usuario/correo no existente, verifique su informacion";
+                response.Message = "Error en el proceso de inicio de sesión";
                 response.Data = 0;
                 Console.WriteLine(e.Message);
-               
-               
+                return response;
             }
-            return response;
         }
+
 
 
         public async Task<BaseResponse<bool>> Logout(string login)

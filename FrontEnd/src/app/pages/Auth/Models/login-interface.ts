@@ -3,3 +3,8 @@ export interface Login{
     password: string
     
     }
+    export interface Logout{
+        credenciales: string
+
+        
+        }

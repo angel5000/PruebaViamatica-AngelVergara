@@ -1,0 +1,48 @@
+.example-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 100%;
+    
+  }
+  
+ .divh2{
+    margin-top: 5%;
+    margin-left: 5%;
+    padding: 5%;
+    display: flex;
+    align-items: center; /* Alinea verticalmente los elementos */
+    gap: 16px;
+ }
+ .background{
+    position: absolute;
+    top: 0;
+
+    left: 0;
+    right: 0;
+
+    background-color: burlywood;
+ }
+ .backgroundbt{
+ 
+    background-color: burlywood;
+ }
+
+ .divh2 h2{
+    margin: 0; 
+ }
+ .contenedor-item{
+margin-top: 30%;
+    top: 0;
+
+    left: 0;
+    right: 0;
+ }
+ .boton{
+    top: 0px; /* Ajusta esta propiedad según el espacio que quieras desde la parte superior */
+    right: 0px; /* Ajusta la distancia a la derecha */
+    z-index: 1; /* Asegura que esté encima de otros elementos */
+  }
+  

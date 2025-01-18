@@ -22,6 +22,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<Validaciones>();
 
 builder.Services.AddScoped<IUsuariosApplication, UsuariosApplication>();
+
+builder.Services.AddScoped<IAdministrador, Administrador>();
 builder.Services.AddScoped<IAuth, Auth>();
 /*builder.Services.AddControllers()
     .AddJsonOptions(options =>

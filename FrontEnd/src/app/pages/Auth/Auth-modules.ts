@@ -6,6 +6,7 @@ import { AuthRoutingModule } from './Auth-routing.module';
 import { SharedModule } from '../../shared/shared.module'; 
 import { LoginComponent } from './components/login/login.component';
 import { AppRoutingModule } from '../../app-routing.module';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -18,7 +19,7 @@ import { AppRoutingModule } from '../../app-routing.module';
   exports:[],
   imports: [
     CommonModule,
-    
+    RouterModule,
     SharedModule,
    
   ]
