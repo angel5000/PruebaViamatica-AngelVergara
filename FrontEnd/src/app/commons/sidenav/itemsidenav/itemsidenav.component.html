@@ -1,15 +1,12 @@
 
 
-<a *ngIf="item?.route"
-   [routerLink]="item?.route"
-   class="item"
-   fxLayout="row"
-   matRipple
-   routerLinkActive="active">
-  <!-- Icono de la ruta (opcional) *ngIf="item.icon" [icIcon]="item.icon"-->
-  <mat-icon  class="item-icon" fxFlex="none"></mat-icon>
+<a *ngIf="item?.route && isRoleAllowed(item!)" 
+   [routerLink]="item?.route" 
   
-  <!-- Nombre de la ruta -->
+   class="item" 
+   fxLayout="row" 
+   matRipple 
+   routerLinkActive="active">
+  <mat-icon class="item-icon" fxFlex="none"></mat-icon>
   <span class="item-label" fxFlex="auto">{{ item?.label }}</span>
 </a>
-

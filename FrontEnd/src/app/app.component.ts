@@ -26,10 +26,11 @@ title=""
   showSidenav = true;
   mode = new FormControl('push' as MatDrawerMode);
   items: Navigationitem[] = [
-    { route: '/administrador', label: 'Manejor de usuarios' },
-    { route: '/bienvenido', label: 'Usuario' },
+    { route: '/administrador', label: 'Manejor de usuarios',requiredRole: [1] },
+    { route: '/bienvenido', label: 'Usuario',requiredRole: [2]},
     { route: '/settings', label: 'Configuración' }
   ];
+  filteredItems: Navigationitem[] = [];
   constructor(private router: Router, private authService: AuthService) {
 
     
@@ -39,6 +40,13 @@ title=""
       // Oculta el sidenav en la página de login
       this.showSidenav = this.router.url !== '/login';
     });
+    const userRole = this.authService.getUserRole()?? 0; // Método que devuelve el rol del usuario
+
+    // Filtrar los elementos según el rol
+    this.filteredItems = this.items.filter(item => 
+      item.requiredRole ? item.requiredRole.includes(userRole) : true
+    );
+    console.log(this.filteredItems)
   }
   Cerrarsesion(): void {
     // Obtén las credenciales del almacenamiento local

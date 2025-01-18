@@ -64,6 +64,7 @@ return resp;
   }
   getUserRole(): number | null {
     return JSON.parse(localStorage.getItem('userRole') || 'null');
+    
   }
 
   // Método para obtener el ID del usuario

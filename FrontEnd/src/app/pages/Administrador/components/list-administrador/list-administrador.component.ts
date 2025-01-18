@@ -26,7 +26,7 @@ constructor(public AdminServices:AdministradorService, private authService: Auth
      this.identifi=userId;
       console.log('Rol del usuario:', userRole);
       console.log('ID del usuario:', userId);
-    
+      
     
       }
       rowClick(e:RowClick<UsuarioResponse>){

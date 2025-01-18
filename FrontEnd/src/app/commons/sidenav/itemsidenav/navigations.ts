@@ -37,5 +37,6 @@ export interface NavigationSubheading {
 export interface Navigationitem {
     route: string; // Ruta asociada
     label: string; // Nombre que se mostrará
+    requiredRole?: number[]|null;
   }
   
