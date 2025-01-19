@@ -141,12 +141,39 @@ const tableColumns: TableColumns<UsuarioResponse>[] = [
       visible: true,
       download: true,
     },
-    
+    {
+      label:"",
+      csslabel:[],
+      cssProperty:[""],
+      cssSubProperty:["bi bi-pen fs-5"],
+      property: "icEdit",
+      type:"icon",
+  action:"edit",
+  sticky:false,
+  sort:false,
+  visible:true,
+  download:false
+  
+  },
+  {
+      label:"",
+      csslabel:[],
+      cssProperty:['rounded'],
+      property: "icDelete",
+      cssSubProperty:["bi bi-trash3 fs-5"],
+      type:"icon",
+  action:"remove",
+  sticky:false,
+  sort:false,
+  visible:true,
+  download:false
+  
+  }
   ];
   
 
 const filters={
-    numFilter:0,
+    numFilter:"",
     textFilter:"",
     stateFilter: null,
     startDate: null,
@@ -155,7 +182,7 @@ const filters={
 }
 
 const resetFilters={
-    numFilter:0,
+    numFilter:"",
     textFilter:"",
     stateFilter: null,
     startDate: null,
@@ -167,7 +194,7 @@ export const ComponentSettings={
    // icProvider: IconsService.prototype.getIcon("icProvider"),
    
     tableColumns,
-    initialSort: "Id",
+    initialSort: "idUsuario",
     initialSortDir: "desc",
     getInputs,
     resetFilters,

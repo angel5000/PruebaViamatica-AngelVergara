@@ -128,13 +128,13 @@
                         {{column.label}}
                     </th>
                     <th mat-cell *matCellDef="let row" [ngClass]="column.cssProperty ">
-                        <div *ngIf="row[column.property].icon" [ngClass]="row[column.property].css" 
+                        <div *ngIf="row[column.property]?.icon" [ngClass]="row[column.property].css" 
                             [class]="column.action ?'cursor-pointer':''" (click)="column.action ? rowClick.emit({
     action:column.action,row:row
 }
     ):'' ">
                             <mat-icon matToolPosition="above" [matTooltip]="row[column.property].tooltip"
-                                 >
+                            [ngClass]="column.cssSubProperty" >
 
 
                             </mat-icon>

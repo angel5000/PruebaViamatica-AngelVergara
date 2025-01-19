@@ -18,8 +18,4 @@
     <ProjectReference Include="..\PRU.Utilities\PRU.Utilities.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commons\Ordering\" />
-  </ItemGroup>
-
 </Project>

@@ -9,11 +9,9 @@ export interface UsuarioResponse {
     nombres: string;
     apellidos: string;
     identificacion: string;
-    fechaNacimiento: string;
+    fechaNacimiento: Date;
     statusPersona: string;
  
-icAdd:any
-icView:any;
 
 badgeColor:string;
 icEdit:any;

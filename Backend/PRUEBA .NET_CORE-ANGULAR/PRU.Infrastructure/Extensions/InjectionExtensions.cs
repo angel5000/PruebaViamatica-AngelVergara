@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PRU.Infrastructure.FileExcel;
 
 namespace PRU.Infrastructure.Extensions
 {
@@ -20,10 +21,11 @@ namespace PRU.Infrastructure.Extensions
                 b => b.MigrationsAssembly(assembly)), ServiceLifetime.Transient
 
             );
-          /*  services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddTransient<IGenerateExcel, GenerateExcel>();
-            services.AddTransient<IFileStorageLocal, FileStorageLocal>();*/
+            services.AddScoped<IUploadExcel, UploadExcel>();
+            /*  services.AddTransient<IUnitOfWork, UnitOfWork>();
+              services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+              services.AddTransient<IGenerateExcel, GenerateExcel>();
+              services.AddTransient<IFileStorageLocal, FileStorageLocal>();*/
             return services;
         }
 

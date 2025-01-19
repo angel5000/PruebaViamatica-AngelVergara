@@ -6,5 +6,4 @@ export interface Login{
     export interface Logout{
         credenciales: string
 
-        
         }

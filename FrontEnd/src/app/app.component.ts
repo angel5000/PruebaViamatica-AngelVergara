@@ -24,8 +24,10 @@ import { UsuarioResponse } from './pages/Administrador/Models/UsuariosResponse';
 export class AppComponent implements OnInit {
 title=""
   showSidenav = true;
+  NombreUsuario?:any;
   mode = new FormControl('push' as MatDrawerMode);
   items: Navigationitem[] = [
+    { route: '/admin-dashboard', label: 'Dashboard',requiredRole: [1] },
     { route: '/administrador', label: 'Manejor de usuarios',requiredRole: [1] },
     { route: '/bienvenido', label: 'Usuario',requiredRole: [2]},
     { route: '/settings', label: 'Configuración' }
@@ -36,6 +38,7 @@ title=""
     
   }
   ngOnInit(): void {
+    
     this.router.events.subscribe(() => {
       // Oculta el sidenav en la página de login
       this.showSidenav = this.router.url !== '/login';
@@ -46,7 +49,9 @@ title=""
     this.filteredItems = this.items.filter(item => 
       item.requiredRole ? item.requiredRole.includes(userRole) : true
     );
-    console.log(this.filteredItems)
+    this.NombreUsuario = localStorage.getItem('NombreUsuario')?.replace(/"/g, '');
+
+    console.log(this.NombreUsuario)
   }
   Cerrarsesion(): void {
     // Obtén las credenciales del almacenamiento local
@@ -58,6 +63,7 @@ console.log(userCredentials)
         next: () => {
           // Redirige al usuario al login después de un logout exitoso
           localStorage.removeItem('userCredentials');
+          localStorage.removeItem('NombreUsuario');
           this.router.navigate(['/login']);
         },
         error: (err) => {

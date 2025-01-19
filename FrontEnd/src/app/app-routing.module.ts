@@ -11,7 +11,7 @@ import { AuthGuard } from './shared/components/guardas/Authguards';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'administrador', // Redirige al login
+    redirectTo: 'bienvenido', // Redirige al login
     pathMatch: 'full', // Coincide exactamente con la raíz
    
   },
@@ -28,7 +28,7 @@ const routes: Routes = [
       path: 'bienvenido',
       component: BienvenidaComponent,
       loadChildren: () => import('./pages/General/Principal/components/bienvenida-modules').then((m) => m.BienvenidaModule)
-      ,canActivate: [AuthGuard]
+     // ,canActivate: [AuthGuard]
     },
     {
     

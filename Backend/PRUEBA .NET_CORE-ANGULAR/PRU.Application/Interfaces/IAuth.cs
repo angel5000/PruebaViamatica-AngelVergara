@@ -11,6 +11,7 @@ namespace PRU.Application.Interfaces
    public interface IAuth
     {
         Task<BaseResponse<int>> Login(TokenRequest requestDto);
+
         Task<BaseResponse<bool>> Logout(String credenciales);
     }
 }

@@ -17,23 +17,34 @@ export class AuthGuard implements CanActivate {
     const user = this.authService.getUserId();
     const role = this.authService.getUserRole();
     console.log(this.authService.getUserId(), role)
-    if (route.url[0].path === 'bienvenido' && role === 1) {
-        // Si el rol es admin, redirigir al NotFound
+    if (route.url[0].path === 'bienvenido' && role === 2) {
+        return true; // Usuario con rol 2 puede acceder a 'bienvenido'
+      }
+      
+      // Redirige al NotFound si el rol no es 2 y trata de acceder a 'bienvenido'
+      if (route.url[0].path === 'bienvenido' && role !== 2) {
         this.router.navigate(['/notfound']);
         return false;
       }
-      if (route.url[0].path === 'administrador' && role === 2) {
-        // Si el rol es user, redirigir al NotFound
-        this.router.navigate(['/notfound']);
-        return false;
-      }
-     
-      if (role !== null && user !== null) {
-        return true;
-
+      
+      // Acceso a 'administrador' solo permitido para el rol 1 (admin)
+      if (route.url[0].path === 'administrador' && role === 1) {
+        return true; // Administrador con rol 1 puede acceder a 'administrador'
       }
   
-      // Si no está autenticado, redirigir al login
+      // Redirige al NotFound si el rol es 2 y trata de acceder a 'administrador'
+      if (route.url[0].path === 'administrador' && role === 2) {
+        this.router.navigate(['/notfound']);
+        return false;
+      }
+  
+      // Si el usuario está autenticado, permite el acceso
+      if (role !== null && user !== null) {
+      
+        return true;
+      }
+     
+      // Si no está autenticado, redirige al login
       this.router.navigate(['/login']);
       return false;
     }

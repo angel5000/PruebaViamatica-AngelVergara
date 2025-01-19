@@ -10,6 +10,7 @@ namespace PRU.Application.Interfaces
 {
    public interface IUsuariosApplication
     {
-        Task<BaseResponse<bool>> RegisterUser(UsuarioRequest requestDto);
+       
+       // Task<BaseResponse<bool>> RegisterUserbyExcel(UsuarioRequest requestDto);
     }
 }

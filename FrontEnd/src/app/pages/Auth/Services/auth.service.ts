@@ -49,11 +49,13 @@ if (resp.data!=null && resp.additionalData!=null) {
 
   // Almacenar el objeto de credenciales en localStorage
   localStorage.setItem('userCredentials', JSON.stringify(resp.dataPersonal.userName));
+  localStorage.setItem('NombreUsuario', JSON.stringify(resp.dataPersonal.nombres));
 }
 if (resp.dataPersonal) {
   const userName = resp.dataPersonal.userName;
   //localStorage.setItem('personalData', JSON.stringify(resp.dataPersonal));
   console.log('Datos personales:', resp.dataPersonal,userName);
+  console.log('Datos personales:', resp.dataPersonal.nombres);
 }
 }
 return resp;

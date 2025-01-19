@@ -24,6 +24,7 @@
     "@angular/platform-server": "^17.3.0",
     "@angular/router": "^17.3.0",
     "@angular/ssr": "^17.3.6",
+    "@iconify/iconify": "^3.1.1",
     "@iconify/icons-ic": "^1.2.13",
     "@visurel/iconify-angular": "^11.0.0",
     "bootstrap": "^5.3.3",

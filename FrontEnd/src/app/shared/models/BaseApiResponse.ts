@@ -1,5 +1,5 @@
 export interface BaseResponse{
-    isSucces: boolean
+    isSucces: boolean,
     data: any,
     message: any,
     errors: any,

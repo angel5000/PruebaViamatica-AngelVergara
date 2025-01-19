@@ -4,7 +4,9 @@ export const endpoint={
     GENERATE_TOKEN: 'AuthControlles/Login',
     LIST_USUARIOS: 'Admin/ListaUsuarios',
     LOGOUT: 'AuthControlles/Logout',
-
+    UPLOAD_EXCEL: 'Admin/registerbyExcel',
+    USUARIOS_EDIT: 'Admin/EditbyAdmin/',
+    USUARIOBYID: 'Admin/',
     
 }
     export const httpOptions ={

@@ -37,23 +37,23 @@ import { SharedModule } from '../../../shared.module';
 export class ListTableComponent <T> implements OnInit, AfterViewInit, OnChanges {
 
   @Input() service?: DefaultService;
-  @Input() colums: TableColumns<T>[] | undefined;
-  @Input() getInputs: any;
-  @Input() Numrecords?: number=10;
+  @Input() colums?: TableColumns<T>[];
+  @Input() getInputs?: any;
+  @Input() Numrecords?: number=3;
   @Input() IDenti?: number=0;
   @Input() sortBy?: string;
   @Input() sortDir: string = "asc";
   @Input() footer: TableFooter<T>[] = [];
 
   @Output() rowClick  = new EventEmitter<{ action: string; row: T }>();
-  @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
-  @ViewChild(MatSort) sort: MatSort | null = null;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   changesGetInputs = new EventEmitter<T>();
   dataSource = new MatTableDataSource<T>();
-  visibleColumns: Array<keyof T | string> | null = null;
-  visibleFooter: Array<keyof T | string| object> | null = null;
+  visibleColumns: Array<keyof T | string> ;
+  visibleFooter: Array<keyof T | string| object> ;
   paginatorOptions={
-    pageSizeOptions:[this.Numrecords || 10, 20, 50],
+    pageSizeOptions:[this.Numrecords || 3, 20, 50],
     pageSize:this.Numrecords,
     pageLenght: 0,
 
@@ -76,7 +76,7 @@ this.dataSource.sort= this.sort;
       this.setVisibleColumns();
         }
       
-        if(changes['getInputs']&&this.paginator){
+        if(changes['getInputs'] &&this.paginator){
           this.paginator.pageIndex=0;
           this.changesGetInputs.emit();
             }
@@ -84,7 +84,7 @@ this.dataSource.sort= this.sort;
 
 
   setVisibleColumns() {
-    this.visibleColumns= this.colums!
+    this.visibleColumns= this.colums
    .filter((columns: any)=> columns.visible)
    .map((columns:any)=>columns.property)
      }
@@ -94,15 +94,15 @@ this.dataSource.sort= this.sort;
      this.paginatorChanges()
    }
      paginatorChanges() {
-      this.paginator!.page.subscribe(()=>{
+      this.paginator.page.subscribe(()=>{
        this.changesGetInputs.emit();
       });
    
    
      }
      sortChanges() {
-       this.sort!.sortChange.subscribe(()=>{
-         this.paginator!.pageIndex=0;
+       this.sort.sortChange.subscribe(()=>{
+         this.paginator.pageIndex=0;
          this.changesGetInputs.emit();
        });
      }
@@ -111,8 +111,14 @@ this.dataSource.sort= this.sort;
       .pipe(startWith("")
       ,switchMap(()=>{
       // this._spinner.show("modal-table")
-       return this.service!.GetAll(this.IDenti
-        
+       return this.service.GetAll(
+         this.paginator.pageSize,
+         this.sort.active,
+         this.sort.direction,
+         this.paginator.pageIndex,
+         this.getInputs,
+         this.IDenti
+       
        );
       })
 /*,switchMap(()=>{

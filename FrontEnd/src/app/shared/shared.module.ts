@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from './import-modules/material.module';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-import { IconModule } from '@visurel/iconify-angular';
+import { IconDirective, IconModule } from '@visurel/iconify-angular';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { SidenavComponent } from '../commons/sidenav/sidenav.component';
 import { MatSortModule } from '@angular/material/sort';
+import { UploadExcelComponent } from './components/Reusables/UploadExcel/upload-excel.component';
+import { ListTableComponent } from './components/Reusables/list-table/list-table.component';
 
 
 
@@ -35,6 +37,7 @@ import { MatSortModule } from '@angular/material/sort';
     //SearchFilterModule,
     //DownloadCsvModule,
     //NgxSpinnerModule,
+
     MatFormFieldModule,
   
   ]

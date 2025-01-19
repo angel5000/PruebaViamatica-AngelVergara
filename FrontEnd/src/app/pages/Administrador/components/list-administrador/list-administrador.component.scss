@@ -1,0 +1,61 @@
+:host {
+    bottom: 0;
+    display: block;
+    width: 100%;
+    z-index: var(--footer-z-index);
+  }
+
+  .footer {
+    background: var(--footer-background, #2c3e50); /* Fondo por defecto */
+    color: var(--footer-color, #ecf0f1); /* Color de texto por defecto */
+    height: auto; /* Permitir que el footer se ajuste al contenido */
+    padding: 10px 20px; /* Padding ajustado */
+    position: relative;
+    z-index: var(--footer-z-index);
+    text-align: center;
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+.size
+{
+  
+    width: 90%;
+    height: 100%;
+    bottom: 0;
+    padding-bottom: 1%;
+}
+.sizeborder{
+  
+    width: 1140px;
+
+  
+    padding-bottom: 52%;
+
+}
+
+
+.divtb{
+    margin-top: -550px;
+    margin-left: 3%;
+}
+  .footer-text {
+    margin: 0;
+    font-size: 14px;
+    font-weight: normal;
+    color: inherit;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .footer {
+      padding: 10px;
+    }
+
+    .footer-text {
+      font-size: 12px;
+    }
+  }
