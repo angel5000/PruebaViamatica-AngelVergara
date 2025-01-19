@@ -95,6 +95,18 @@ namespace PRU.Application.Services
                     Direction = ParameterDirection.Output
                 };
 
+                var outputParam10 = new SqlParameter
+                {
+                    ParameterName = "@FechaIngreso",
+                    SqlDbType = SqlDbType.Date,
+                    Direction = ParameterDirection.Output
+                };
+                var outputParam11 = new SqlParameter
+                {
+                    ParameterName = "@FechaCierre",
+                    SqlDbType = SqlDbType.Date,
+                    Direction = ParameterDirection.Output
+                };
                 var parametros = new[]
                 {
             new SqlParameter("@Login", requestDto.Credenciales ?? (object)DBNull.Value),
@@ -107,10 +119,14 @@ namespace PRU.Application.Services
             outputParam6,
             outputParam7,
             outputParam8,
-            outputParam9
+            outputParam9,
+            outputParam10,
+            outputParam11
         };
 
-                await _context.Database.ExecuteSqlRawAsync("EXEC InicioSesion @Login, @Password, @Result OUTPUT, @Rol OUTPUT, @UsuarioId OUTPUT, @UserName OUTPUT, @Mail OUTPUT, @Nombres OUTPUT, @Apellidos OUTPUT, @Identificacion OUTPUT, @FechaNacimiento OUTPUT", parametros);
+                await _context.Database.ExecuteSqlRawAsync("EXEC InicioSesion @Login, @Password, @Result OUTPUT, @Rol OUTPUT, @UsuarioId OUTPUT," +
+                    " @UserName OUTPUT, @Mail OUTPUT, @Nombres OUTPUT, @Apellidos OUTPUT," +
+                    " @Identificacion OUTPUT, @FechaNacimiento OUTPUT,@FechaIngreso OUTPUT,@FechaCierre OUTPUT", parametros);
 
                 var resultado = (int)outputParam.Value;
                 var rol = (int)outputParam2.Value;
@@ -148,7 +164,9 @@ namespace PRU.Application.Services
                         Nombres = (string)outputParam6.Value,
                         Apellidos = (string)outputParam7.Value,
                         Identificacion = (string)outputParam8.Value,
-                        FechaNacimiento = DateOnly.FromDateTime((DateTime)outputParam9.Value)
+                        FechaNacimiento = DateOnly.FromDateTime((DateTime)outputParam9.Value),
+                         FechaIngreso = (DateTime)outputParam10.Value,
+                          FechaCierre =(DateTime)outputParam11.Value
                     };
 
                     return response;

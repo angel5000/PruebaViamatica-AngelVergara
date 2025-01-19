@@ -35,6 +35,8 @@ export class LoginComponent implements OnInit {
 
 
       Login():void{
+        console.log("presionado");
+        
         if(this.form.invalid){
         return Object.values(this.form.controls).forEach((controls)=>{
         
@@ -45,6 +47,7 @@ export class LoginComponent implements OnInit {
         
         this.authServices.login(this.form.value).subscribe((resp)=>{
         if(resp.isSucces){
+          console.log(resp)
         this.router.navigate(["/"]);
         }
         

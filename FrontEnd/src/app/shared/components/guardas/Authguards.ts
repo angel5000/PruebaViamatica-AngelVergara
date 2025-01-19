@@ -17,6 +17,16 @@ export class AuthGuard implements CanActivate {
     const user = this.authService.getUserId();
     const role = this.authService.getUserRole();
     console.log(this.authService.getUserId(), role)
+    if (route.url[0].path === 'bienvenido' && role ===null&& user === null) {
+      this.router.navigate(['/login']);
+      return true; // Usuario con rol 2 puede acceder a 'bienvenido'
+    }
+    if (route.url[0].path === 'bienvenido' && role !==null&& user !== null) {
+      this.router.navigate(['/bienvenido']);
+      return true; // Usuario con rol 2 puede acceder a 'bienvenido'
+    }
+    
+    /*
     if (route.url[0].path === 'bienvenido' && role === 2) {
         return true; // Usuario con rol 2 puede acceder a 'bienvenido'
       }
@@ -26,26 +36,26 @@ export class AuthGuard implements CanActivate {
         this.router.navigate(['/notfound']);
         return false;
       }
-      
+      */
       // Acceso a 'administrador' solo permitido para el rol 1 (admin)
-      if (route.url[0].path === 'administrador' && role === 1) {
-        return true; // Administrador con rol 1 puede acceder a 'administrador'
-      }
-  
-      // Redirige al NotFound si el rol es 2 y trata de acceder a 'administrador'
-      if (route.url[0].path === 'administrador' && role === 2) {
-        this.router.navigate(['/notfound']);
-        return false;
-      }
-  
+     
       // Si el usuario está autenticado, permite el acceso
       if (role !== null && user !== null) {
-      
-        return true;
+        if (route.url[0].path === 'administrador' && role === 1) {
+          return true; // Administrador con rol 1 puede acceder a 'administrador'
+        }
+    
+        // Redirige al NotFound si el rol es 2 y trata de acceder a 'administrador'
+        if (route.url[0].path === 'administrador' && role === 2) {
+          this.router.navigate(['/notfound']);
+          return false;
+        }
+    
+       // return true;
       }
-     
+      
       // Si no está autenticado, redirige al login
-      this.router.navigate(['/login']);
+     this.router.navigate(['/login']);
       return false;
     }
 }

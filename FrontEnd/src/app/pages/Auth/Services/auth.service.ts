@@ -6,6 +6,7 @@ import { Login, Logout } from '../Models/login-interface';
 import { environment as env } from '../../../../enviroments/environment';  
 import { endpoint as end, httpOptions } from '../../../shared/apis/endpoints'; 
 import { catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -57,13 +58,21 @@ if (resp.dataPersonal) {
   console.log('Datos personales:', resp.dataPersonal,userName);
   console.log('Datos personales:', resp.dataPersonal.nombres);
 }
+}else{
+  console.log(resp.message)
 }
 return resp;
+
+}),  catchError((error) => {
+  // Aquí puedes manejar el error de manera adecuada
+  console.error('Error al hacer login', error);
+  // Puedes devolver un objeto de respuesta de error si lo necesitas
+ 
+  return of(error);  // Retorna una respuesta de error para que el flujo continúe
 })
+);
+}
 
-
-)
-  }
   getUserRole(): number | null {
     return JSON.parse(localStorage.getItem('userRole') || 'null');
     

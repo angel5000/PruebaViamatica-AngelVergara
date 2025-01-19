@@ -28,7 +28,7 @@ const routes: Routes = [
       path: 'bienvenido',
       component: BienvenidaComponent,
       loadChildren: () => import('./pages/General/Principal/components/bienvenida-modules').then((m) => m.BienvenidaModule)
-     // ,canActivate: [AuthGuard]
+   //  ,canActivate: [AuthGuard]
     },
     {
     
