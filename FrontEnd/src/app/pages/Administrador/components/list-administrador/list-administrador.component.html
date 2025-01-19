@@ -2,7 +2,10 @@
 
 <div class="w-90  flex flex-col mx-5 my-5
 ">
-    <div class="px-2 pt-10  bg-primary flex-none rounded sizeborder">
+
+<mat-drawer-container class="bg-transparent flex-auto flex">
+    <mat-drawer-content class="p-gutter pt-0 flex-auto flex items-start">
+    <div class="px-2 pt-10  bg-primary h-full  flex-auto rounded sizeborder">
 
         <h2 class="headline   text-2xl font-bold bg-red-100     text-primary-contrast m-0 flex items-center w-full max-w-xxxl mr-6">
 
@@ -15,6 +18,12 @@
         </div>
         <app-upload-excel></app-upload-excel>
     </div>
+
+</mat-drawer-content>
+
+
+</mat-drawer-container>
+
 
     <div class="-mt-14 pt-0 overflow-hidden flex divtb">
         <mat-drawer-container class="bg-transparent flex-auto flex">

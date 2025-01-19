@@ -1,7 +1,11 @@
 
 select*from Usuarios
 select*from Personas
-update Usuarios set SesionActive='I' where idUsuario=3
+delete Usuarios where idUsuario=7
+delete Personas where idPersona=7
+delete Sessions where idPersona=7
+select*from Sessions
+update Usuarios set SesionActive='I' where idUsuario=7
 select*from Roles
 select*from RolUsuarios
 select*from RolOpciones
@@ -23,12 +27,11 @@ values(1,1),(1,2),(1,3),(1,4),(1,5),(2,7),(2,6)
 
 
 
-
 create PROCEDURE sp_RegistrarPersonaYUsuario
     @Identificacion NVARCHAR(10),
     @Nombres NVARCHAR(60),
     @Apellidos NVARCHAR(60),
-	 @FechaNacimiento Date,
+    @FechaNacimiento DATE,
     @Mail NVARCHAR(120),
     @UserName NVARCHAR(50),
     @Password NVARCHAR(50),
@@ -39,40 +42,46 @@ create PROCEDURE sp_RegistrarPersonaYUsuario
 AS
 BEGIN
     BEGIN TRY
+        -- Inicia la transacción
         BEGIN TRANSACTION;
-	
-        INSERT INTO Personas ( Nombres, Apellidos, Identificacion,FechaNacimiento, [Status])
-        VALUES (@Nombres, @Apellidos, @Identificacion, @FechaNacimiento,'Activo');
-        
-        SET @PersonaId = SCOPE_IDENTITY();
-     INSERT INTO Usuarios (UserName,[Password],	Mail	,SesionActive,	Persona_IdPersona2,	[Status] )
-    VALUES (@UserName, @Password, @Mail, @SesionActive,@PersonaId, 'Activo');
 
+        -- Verifica si ya existe una persona con la misma identificación
+		PRINT @Identificacion;
+        IF EXISTS (
+            SELECT 1
+            FROM Personas
+            WHERE Identificacion = @Identificacion
+        )
+        BEGIN
+            RAISERROR('El usuario ya tiene una cuenta registrada.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Inserta la nueva persona
+        INSERT INTO Personas (Nombres, Apellidos, Identificacion, FechaNacimiento, [Status])
+        VALUES (@Nombres, @Apellidos, @Identificacion, @FechaNacimiento, 'Activo');
+        
+        -- Obtén el ID de la persona recién insertada
+        SET @PersonaId = SCOPE_IDENTITY();
+
+        -- Inserta el nuevo usuario asociado a la persona
+        INSERT INTO Usuarios (UserName, [Password], Mail, SesionActive, Persona_IdPersona2, [Status])
+        VALUES (@UserName, @Password, @Mail, @SesionActive, @PersonaId, 'Activo');
+
+        -- Obtén el ID del usuario recién insertado
         SET @UsuarioId = SCOPE_IDENTITY();
 
-		
-			IF EXISTS (
-        SELECT 1
-        FROM Personas
-        WHERE Identificacion = @Identificacion
-    )
-    BEGIN
-        RAISERROR('El usuario ya tiene una cuenta registrada.', 16, 1);
-        ROLLBACK TRANSACTION;
-		RETURN;
-    END
-
-
-
-
-
+        -- Confirma la transacción
         COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
+        -- Si ocurre un error, deshace la transacción
         ROLLBACK TRANSACTION;
-        THROW;  -- Vuelve a lanzar el error si ocurre alguna excepción
+        THROW; -- Lanza nuevamente el error para que sea manejado por el cliente
     END CATCH
 END
+
 
 DECLARE @PersonaId INT, @UsuarioId INT;
 
@@ -103,7 +112,9 @@ create PROCEDURE InicioSesion
     @Nombres NVARCHAR(100) OUTPUT, -- Variable de salida para el Nombres
     @Apellidos NVARCHAR(100) OUTPUT, -- Variable de salida para el Apellidos
     @Identificacion NVARCHAR(50) OUTPUT, -- Variable de salida para el Identificacion
-    @FechaNacimiento DATE OUTPUT -- Variable de salida para el FechaNacimiento
+    @FechaNacimiento DATE OUTPUT, -- Variable de salida para el FechaNacimiento
+	@FechaCierre DATETIME OUTPUT,
+	  @FechaIngreso DATETIME OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -111,7 +122,7 @@ BEGIN
     DECLARE @IntentosFallidos INT;
     DECLARE @Status CHAR(20);
     DECLARE @RolId INT;
-
+	
     -- Verificar si el usuario existe y obtener el estado y el ID de usuario
     SELECT 
         @Status = u.Status,
@@ -121,10 +132,13 @@ BEGIN
         @Nombres = p.Nombres,
         @Apellidos = p.Apellidos,
         @Identificacion = p.Identificacion,
-        @FechaNacimiento = p.FechaNacimiento
+        @FechaNacimiento = p.FechaNacimiento,
+		@FechaIngreso=s.FechaIngreso,
+		@FechaCierre=s.FechaCierre
     FROM Usuarios u
     INNER JOIN Personas p ON u.Persona_IdPersona2 = p.idPersona
-    WHERE u.UserName = @Login OR u.Mail = @Login;
+	INNER JOIN Sessions s on u.idUsuario=s.idPersona
+    WHERE u.UserName = @Login OR u.Mail = @Login order by FechaIngreso asc;
 
     IF @Status = 'Bloqueado'
     BEGIN
@@ -211,11 +225,12 @@ DECLARE @Nombres NVARCHAR(100);
 DECLARE @Apellidos NVARCHAR(100);
 DECLARE @Identificacion NVARCHAR(50);
 DECLARE @FechaNacimiento DATE;
-
+DECLARE @FechaIngreso DATETIME;
+DECLARE @FechaCierre DATETIME;
 
 EXEC InicioSesion 
     @Login = 'angelvergarap', 
-    @Password = 'P@ssw0rd123', 
+    @Password = 'C@rllopez2024', 
     @Rol = @Rol OUTPUT, 
     @Result = @Resultado OUTPUT, 
     @UsuarioId = @id OUTPUT,
@@ -224,7 +239,9 @@ EXEC InicioSesion
     @Nombres = @Nombres OUTPUT,
     @Apellidos = @Apellidos OUTPUT,
     @Identificacion = @Identificacion OUTPUT,
-    @FechaNacimiento = @FechaNacimiento OUTPUT;
+    @FechaNacimiento = @FechaNacimiento OUTPUT,
+	@FechaCierre=@FechaCierre OUTPUT,
+	  @FechaIngreso = @FechaIngreso OUTPUT;
 
 -- Mostrar los resultados
 SELECT 
@@ -236,13 +253,14 @@ SELECT
     @Nombres AS Nombres,
     @Apellidos AS Apellidos,
     @Identificacion AS Identificacion,
-    @FechaNacimiento AS FechaNacimiento;
-
+    @FechaNacimiento AS FechaNacimiento,
+	@FechaIngreso AS FechaIngreso,
+	@FechaCierre as FechaCierre;
 
 select*from Usuarios
-
+select*from Sessions
 EXEC CerrarSesion 
-    @Login = 'angelvergarap'
+    @Login = 'juanperez90'
   
 
 
@@ -324,22 +342,29 @@ BEGIN
     END
 END;
 
-
-CREATE PROCEDURE ConsultarUsuariosYPersonas
-    @UsuarioId INT  -- Se pasa el ID del usuario para verificar su rol
+create PROCEDURE ConsultarUsuariosYPersonasConFiltros
+    @UsuarioId INT,
+    @NumPage INT = 1,
+    @NumRecordsPage INT = 10,
+    @Order NVARCHAR(10) = 'asc',
+    @Sort NVARCHAR(50) = 'idUsuario',
+    @NumFilter INT = NULL,
+    @TextFilter NVARCHAR(100) = NULL,
+    @StateFilter INT = NULL,
+    @StartDate NVARCHAR(10) = NULL,
+    @EndDate NVARCHAR(10) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Declarar variable para verificar si el usuario es admin
-    DECLARE @EsAdmin BIT;
+    DECLARE @EsAdmin INT;
 
-    -- Consultar el rol del usuario (si es admin)
+    -- Verificar si el usuario es admin
     SELECT @EsAdmin = CASE WHEN Rol_idRol = 1 THEN 1 ELSE 0 END
     FROM RolUsuarios
     WHERE Usuarios_idUsuarios = @UsuarioId;
 
-    -- Consulta combinada de Usuarios y Personas
+    -- Consulta con filtros y paginación
     SELECT 
         u.idUsuario,
         u.UserName,
@@ -358,15 +383,260 @@ BEGIN
     INNER JOIN 
         Personas p ON u.Persona_IdPersona2 = p.idPersona
     WHERE 
-        (@EsAdmin = 0 OR u.idUsuario != @UsuarioId)  -- Si es admin, no mostrar su propio usuario
+        (@EsAdmin = 0 OR u.idUsuario != @UsuarioId)
         AND NOT EXISTS (
             SELECT 1
             FROM RolUsuarios ru
             WHERE ru.Usuarios_idUsuarios = u.idUsuario
             AND ru.Rol_idRol = 1
-        );  -- Si es admin, no mostrar usuarios con rol=1
+        )
+        -- Lógica de filtros basada en @NumFilter
+        AND (
+            @NumFilter IS NULL 
+            OR (@NumFilter = 1 AND p.Nombres LIKE '%' + @TextFilter + '%')  -- Filtrar por Nombres
+            OR (@NumFilter = 2 AND u.UserName LIKE '%' + @TextFilter + '%') -- Filtrar por UserName
+        )
+        AND (@StateFilter IS NULL OR u.Status = @StateFilter)
+        AND (@StartDate IS NULL OR p.FechaNacimiento >= @StartDate)
+        AND (@EndDate IS NULL OR p.FechaNacimiento <= @EndDate)
+    ORDER BY 
+        CASE WHEN @Order = 'asc' THEN 
+            CASE WHEN @Sort = 'idUsuario' THEN u.idUsuario END
+        END ASC,
+        CASE WHEN @Order = 'desc' THEN 
+            CASE WHEN @Sort = 'idUsuario' THEN u.idUsuario END
+        END DESC
+    OFFSET (@NumPage - 1) * @NumRecordsPage ROWS
+    FETCH NEXT @NumRecordsPage ROWS ONLY;
+END;
+
+create PROCEDURE ConsultarUsuariosYPersonasConFiltros
+    @UsuarioId INT,
+    @NumPage INT = 1,
+    @NumRecordsPage INT = 10,
+    @Order NVARCHAR(10) = 'asc',
+    @Sort NVARCHAR(50) = 'idUsuario',
+    @NumFilter INT = NULL,
+    @TextFilter NVARCHAR(100) = NULL,
+    @StateFilter INT = NULL,
+    @StartDate NVARCHAR(10) = NULL,
+    @EndDate NVARCHAR(10) = NULL,
+	 @TotalRecords INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @EsAdmin INT;
+
+    -- Verificar si el usuario es admin
+    SELECT @EsAdmin = CASE WHEN Rol_idRol = 1 THEN 1 ELSE 0 END
+    FROM RolUsuarios
+    WHERE Usuarios_idUsuarios = @UsuarioId;
+
+    -- Calcular total de registros filtrados
+    SELECT @totalRecords = COUNT(*)
+    FROM Usuarios u
+    INNER JOIN Personas p ON u.Persona_IdPersona2 = p.idPersona
+    WHERE 
+        (@EsAdmin = 0 OR u.idUsuario != @UsuarioId)
+        AND NOT EXISTS (
+            SELECT 1
+            FROM RolUsuarios ru
+            WHERE ru.Usuarios_idUsuarios = u.idUsuario
+            AND ru.Rol_idRol = 1
+        )
+         AND (
+            @NumFilter IS NULL 
+            OR (@NumFilter = 1 AND p.Nombres LIKE '%' + @TextFilter + '%')  -- Filtrar por Nombres
+            OR (@NumFilter = 2 AND u.UserName LIKE '%' + @TextFilter + '%') -- Filtrar por UserName
+        )
+        AND (@StateFilter IS NULL OR u.Status = @StateFilter)
+        AND (@StartDate IS NULL OR p.FechaNacimiento >= CAST(@StartDate AS DATE))
+        AND (@EndDate IS NULL OR p.FechaNacimiento < DATEADD(DAY, 1, CAST(@EndDate AS DATE)));
+
+    -- Consulta con filtros y paginación
+    SELECT 
+        u.idUsuario,
+        u.UserName,
+        u.Password,
+        u.Mail,
+        u.SesionActive,
+        u.Status AS StatusUsuario,
+        u.IntentosFallidos,
+        p.Nombres,
+        p.Apellidos,
+        p.Identificacion,
+        p.FechaNacimiento,
+        p.Status AS StatusPersona,
+        @totalRecords AS TotalRecords
+    FROM 
+        Usuarios u
+    INNER JOIN 
+        Personas p ON u.Persona_IdPersona2 = p.idPersona
+    WHERE 
+        (@EsAdmin = 0 OR u.idUsuario != @UsuarioId)
+        AND NOT EXISTS (
+            SELECT 1
+            FROM RolUsuarios ru
+            WHERE ru.Usuarios_idUsuarios = u.idUsuario
+            AND ru.Rol_idRol = 1
+        )
+          AND (
+            @NumFilter IS NULL 
+            OR (@NumFilter = 1 AND p.Nombres LIKE '%' + @TextFilter + '%')  -- Filtrar por Nombres
+            OR (@NumFilter = 2 AND u.UserName LIKE '%' + @TextFilter + '%') -- Filtrar por UserName
+        )
+        AND (@StateFilter IS NULL OR u.Status = @StateFilter)
+        AND (@StartDate IS NULL OR p.FechaNacimiento >= CAST(@StartDate AS DATE))
+        AND (@EndDate IS NULL OR p.FechaNacimiento < DATEADD(DAY, 1, CAST(@EndDate AS DATE)))
+    ORDER BY 
+        CASE WHEN @Order = 'asc' THEN 
+            CASE WHEN @Sort = 'idUsuario' THEN u.idUsuario END
+        END ASC,
+        CASE WHEN @Order = 'desc' THEN 
+            CASE WHEN @Sort = 'idUsuario' THEN u.idUsuario END
+        END DESC
+    OFFSET (@NumPage - 1) * @NumRecordsPage ROWS
+    FETCH NEXT @NumRecordsPage ROWS ONLY;
+END;
+
+DECLARE @Total INT;
+EXEC ConsultarUsuariosYPersonasConFiltros
+  @UsuarioId = 1,
+    @TotalRecords = @Total OUTPUT
+
+	SELECT @Total AS TotalRecords;
+
+  @NumFilter=1,
+  @TextFilter='Juan',
+  @Sort='Nombres',
+  @NumRecordsPage=2
+
+
+
+
+create PROCEDURE ActualizarUsuarioYPersona
+    @IdUsuario INT,
+    @UserName NVARCHAR(50),
+    @SesionActive char(1),
+    @StatusUsuario NVARCHAR(50),
+    @IdPersona INT,
+    @Nombres NVARCHAR(60),
+    @Apellidos NVARCHAR(60),
+    @FechaNacimiento DATE,
+    @StatusPersona NVARCHAR(10)
+AS
+BEGIN
+    -- Iniciar la transacción
+    BEGIN TRANSACTION;
+
+    BEGIN TRY
+        -- Verificar si el usuario tiene el rol 1
+        IF NOT EXISTS (
+            SELECT 1
+            FROM [PRUEBAUSUARIOS].[dbo].[RolUsuarios] AS RU
+            INNER JOIN [PRUEBAUSUARIOS].[dbo].[Usuarios] AS U
+                ON RU.Usuarios_idUsuarios = U.idUsuario
+            WHERE RU.Rol_idRol = 1
+              AND U.idUsuario= @IdUsuario
+        )
+        BEGIN
+            RAISERROR ('Permisos insuficientes: el usuario no es admin.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Actualizar la tabla Usuarios
+        UPDATE U
+        SET 
+            U.[UserName] = @UserName,
+        
+            U.[SesionActive] = @SesionActive,
+            U.[Status] = @StatusUsuario
+        FROM [PRUEBAUSUARIOS].[dbo].[Usuarios] AS U
+        WHERE U.[idUsuario] = @IdPersona;
+
+        -- Verificar si la actualización en Usuarios afectó alguna fila
+        IF @@ROWCOUNT = 0
+        BEGIN
+            RAISERROR ('No se encontró el usuario especificado.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Actualizar la tabla Personas
+        UPDATE P
+        SET 
+            P.[Nombres] = @Nombres,
+            P.[Apellidos] = @Apellidos,
+           
+            P.[FechaNacimiento] = @FechaNacimiento,
+            P.[Status] = @StatusPersona
+        FROM [PRUEBAUSUARIOS].[dbo].[Personas] AS P
+        WHERE P.[idPersona] = @IdPersona;
+
+        -- Verificar si la actualización en Personas afectó alguna fila
+        IF @@ROWCOUNT = 0
+        BEGIN
+            RAISERROR ('No se encontró la persona especificada.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Confirmar la transacción si todo salió bien
+        COMMIT TRANSACTION;
+
+        PRINT 'Actualización realizada con éxito.';
+    END TRY
+    BEGIN CATCH
+        -- Manejo de errores
+        ROLLBACK TRANSACTION;
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
+        DECLARE @ErrorState INT = ERROR_STATE();
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH
 END;
 
 
-EXEC ConsultarUsuariosYPersonas
-  @UsuarioId = 1
+
+select*from Usuarios
+select*from Personas
+
+update Usuarios set Mail='carfrankl29' where idUsuario=7
+EXEC ActualizarUsuarioYPersona
+    @IdUsuario = 1,
+    @UserName = 'angelvergarap',
+    @SesionActive = 'A',
+    @StatusUsuario = 'Activo',
+    @IdPersona = 1,
+    @Nombres = 'Angel David',
+    @Apellidos = 'Vergara Paredes',
+    @FechaNacimiento = '2000-01-30',
+    @StatusPersona = 'Activo';
+
+
+create PROCEDURE ConsultarUsuarioPorId
+    @idUsuario INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        u.UserName, 
+        u.SesionActive, 
+        u.Status , 
+		p.idPersona,
+        p.Nombres, 
+        p.Apellidos, 
+        p.FechaNacimiento, 
+        p.Status
+    FROM 
+        Usuarios u
+    INNER JOIN 
+        Personas p ON u.Persona_IdPersona2= p.IdPersona
+    WHERE 
+        u.IdUsuario = @idUsuario;
+END
+
+EXEC ConsultarUsuarioPorId @idUsuario = 1;
