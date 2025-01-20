@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BaseResponse } from '../../../shared/models/BaseApiResponse';
-import { UsuarioResponse} from '../Models/UsuariosResponse';
+import { UsuarioRequest, UsuarioResponse} from '../Models/UsuariosResponse';
 import { environment as env } from '../../../../enviroments/environment';  
 import { endpoint as end, httpOptions } from '../../../shared/apis/endpoints'; 
 import { map } from 'rxjs/operators';
@@ -84,9 +84,34 @@ export class AdministradorService {
     return formData;
   }
   
+  UsuarioRegister(user: UsuarioRequest): Observable<BaseResponse> {
+    const requestURL = `${env.api}${end.USUARIOS_REGISTER}`;
+    const Formdata = this._builFormDataRegUser(user);
+    return this.http.post(requestURL, Formdata).pipe(map((resp: BaseResponse) => {
+      return resp;
 
 
+    }))
+  }
 
+  private _builFormDataRegUser(user: UsuarioRequest): FormData {
+    const formData = new FormData();
+  
+    formData.append("identificacion", user.identificacion .toString());  
+    formData.append("userName", user.userName.toString());   
+    formData.append("password", user.password.toString());              
+    formData.append("nombres", user.nombres.toString());                
+    formData.append("apellidos", user.apellidos.toString());            
+    formData.append("fechaNacimiento", user.fechaNacimiento.toString()); 
+    formData.append("sesionActive", user.sesionActive.toString()); 
+    formData.append("stadoPersona", user.statusPersona.toString());    
+    formData.append("stadoUsuario", user.statusUsuario.toString());   
+    formData.append("Rol", user.rol.toString());     
+            
+  
+   
+    return formData;
+  }
 }
 
 

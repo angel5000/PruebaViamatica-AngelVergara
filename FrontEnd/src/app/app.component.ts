@@ -24,13 +24,14 @@ import { UsuarioResponse } from './pages/Administrador/Models/UsuariosResponse';
 export class AppComponent implements OnInit {
 title=""
   showSidenav = true;
-  NombreUsuario?:any;
+  NombreUsuario:any;
   mode = new FormControl('push' as MatDrawerMode);
   items: Navigationitem[] = [
-    { route: '/admin-dashboard', label: 'Dashboard',requiredRole: [1] },
-    { route: '/administrador', label: 'Manejor de usuarios',requiredRole: [1] },
-    { route: '/bienvenido', label: 'Usuario',requiredRole: [2]},
-    { route: '/settings', label: 'Configuración' }
+    { icons:'bi bi-house fs-4',route: '/bienvenido', label: 'Principal' },
+    { icons:'bi bi-speedometer',route: '/admin-dashboard', label: 'Dashboard',requiredRole: [1] },
+    { icons:'bi bi-people',route: '/administrador', label: 'Manejo de usuarios',requiredRole: [1] },
+    { icons:'bi bi-person',route: '/datos', label: 'Usuario',requiredRole: [2]},
+
   ];
   filteredItems: Navigationitem[] = [];
   constructor(private router: Router, private authService: AuthService) {
@@ -44,19 +45,24 @@ title=""
       this.showSidenav = this.router.url !== '/login';
     });
     const userRole = this.authService.getUserRole()?? 0; // Método que devuelve el rol del usuario
-
+    if(this.NombreUsuario===''||this.NombreUsuario!==''){
+      const userName = this.authService.getNombre()?? ''.replace(/"/g, ''); 
+      this.NombreUsuario =userName;
+    }
+  
     // Filtrar los elementos según el rol
     this.filteredItems = this.items.filter(item => 
       item.requiredRole ? item.requiredRole.includes(userRole) : true
+      
     );
-    this.NombreUsuario = localStorage.getItem('NombreUsuario')?.replace(/"/g, '');
+  
 
-    console.log(this.NombreUsuario)
+   // console.log(this.NombreUsuario)
   }
   Cerrarsesion(): void {
     // Obtén las credenciales del almacenamiento local
     const userCredentials = localStorage.getItem('userCredentials');
-console.log(userCredentials)
+//console.log(userCredentials)
     // Verifica que las credenciales existen antes de llamar a logout
     if (userCredentials) {
       this.authService.logout(userCredentials).subscribe({
@@ -64,6 +70,8 @@ console.log(userCredentials)
           // Redirige al usuario al login después de un logout exitoso
           localStorage.removeItem('userCredentials');
           localStorage.removeItem('NombreUsuario');
+          localStorage.removeItem('datospersonales');
+          this.NombreUsuario=''
           this.router.navigate(['/login']);
         },
         error: (err) => {

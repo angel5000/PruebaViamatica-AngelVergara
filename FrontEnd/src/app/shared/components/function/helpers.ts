@@ -3,14 +3,14 @@ import { IconsService } from '../../services/Icon.services';
 import { COLORS_BADGE } from './variables';
 import { IconifyIcon } from '@iconify/iconify'; 
 
-export function convertDateToRequest(date: string | number | Date | null, format: 'date' | 'datetime' | 'periodo') {
+export function convertDateToRequest(date, format: 'date' | 'datetime' | 'periodo') {
     switch (format) {
         case "date":
             return date == null ? null : formatDate(new Date(date), 'yyyy-MM-dd', 'en-ES');
         case "periodo":
             return date == null ? null : formatDate(new Date(date), 'yyyy-MM', 'en-US');
         case "datetime":
-            return date == null ? null : formatDate(new Date(date), 'yyyy-MM-dd hh:mm:ss', 'en-US');
+            return date == null ? null : formatDate(new Date(date), 'yyyy-MM-dd hh:mm:ss a', 'en-US');
 
     }
 }

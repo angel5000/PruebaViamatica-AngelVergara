@@ -34,24 +34,12 @@ namespace Pru.Api.Controllers
 
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser([FromBody] UsuarioRequest requestDto)
+        public async Task<IActionResult> RegisterUser([FromForm] UsuarioRequest requestDto)
         {
             var response = await IAdminApplication.RegisterUser(requestDto);
 
-            if (response.IsSucces)
-            {
-                return Ok(new
-                {
-                    response.Message,
-                    response.AdditionalData
-                });  // Retorna un OK con los datos adicionales (como los IDs generados)
-            }
-
-            return StatusCode(500, new
-            {
-                response.Message,
-                //response.Errors
-            });  // Si hubo un error, retorna un código 500 con el mensaje de error
+            return Ok(response);
+           
         }
 
 

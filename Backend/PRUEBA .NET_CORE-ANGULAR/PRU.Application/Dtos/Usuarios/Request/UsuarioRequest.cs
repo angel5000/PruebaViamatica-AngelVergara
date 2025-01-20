@@ -17,7 +17,7 @@ namespace PRU.Application.Dtos.Usuarios.Request
         public DateOnly? FechaNacimiento { get; set; }
 
 
-        public string? StatadoPersona { get; set; }
+        public string? StadoPersona { get; set; }
         public string? UserName { get; set; }
 
         public string? Password { get; set; }
@@ -25,7 +25,8 @@ namespace PRU.Application.Dtos.Usuarios.Request
 
         public string? SesionActive { get; set; }
     
-        public string? StatadoUsuario { get; set; }
+        public string? StadoUsuario { get; set; }
+        public int Rol { get; set; }
 
     }
 }

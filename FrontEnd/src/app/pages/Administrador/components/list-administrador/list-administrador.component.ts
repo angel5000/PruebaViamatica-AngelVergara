@@ -17,9 +17,10 @@ import { ComponentSettings } from './list.cofing';
 export class ListAdministradorComponent implements OnInit {
   component:any;
   identifi?:any
+
   mode = new FormControl('push' as MatDrawerMode);
-constructor(public AdminServices:AdministradorService, private authService: AuthService
-  , public _dialog: MatDialog){
+constructor(public AdminServices:AdministradorService, private authService: AuthService,
+   public _dialog: MatDialog){
 
 }
 
@@ -32,6 +33,7 @@ constructor(public AdminServices:AdministradorService, private authService: Auth
       console.log('Rol del usuario:', userRole);
       console.log('ID del usuario:', userId);
       console.log("input",this.component.getInputs)
+     
       this.formatGetInputs()
       }
 
@@ -70,16 +72,10 @@ constructor(public AdminServices:AdministradorService, private authService: Auth
 
 
 
-
-
-
-
-
-
-
-
-
-
+      setGetInputsProviders(refresh:boolean){
+        this.component.filters.refresh=refresh;
+        this.formatGetInputs()
+      }
 
 
 
@@ -88,7 +84,7 @@ constructor(public AdminServices:AdministradorService, private authService: Auth
         let usuario= e.row
         switch(action){
        
-    case "edit":this.Dialog(usuario)
+    case "edit":this.Dialog(usuario,true)
     break
     case "remove" :console.log("eliminar")
     break
@@ -96,17 +92,30 @@ constructor(public AdminServices:AdministradorService, private authService: Auth
         return false
       }
     
-      Dialog(row:UsuarioResponse){
+openDialogRegister(){
+  this._dialog.open(AdminDialogComponent, {
+  disableClose: true,
+  width: '400px',
+  data:{mode:'register', ocultar:false},
+  }).afterClosed().subscribe((res)=>{
+    if(res){
+      console.log("resp:", res);
+      this.setGetInputsProviders(true)
+    }
+  })
+}
+      Dialog(row:UsuarioResponse , ocultar: boolean){
+
         const dialogConfig = new MatDialogConfig()
-        dialogConfig.data=row
+        dialogConfig.data={ ...row, ocultar };
         let dialogref = this._dialog.open(AdminDialogComponent,{
-          data:dialogConfig,
+          data:dialogConfig.data,
           disableClose:true,
-          width: '400px'
+          width: '420px'
         })
         dialogref.afterClosed().subscribe((res)=>{
           if(res){
-           // this.setGetInputsProviders(true);
+            this.setGetInputsProviders(true)
           }
         })
       }

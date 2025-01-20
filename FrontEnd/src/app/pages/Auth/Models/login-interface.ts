@@ -7,3 +7,12 @@ export interface Login{
         credenciales: string
 
         }
+        export interface UserData{
+            identificacion: string
+            userName: string
+    nombres: string
+    apellidos: string
+    fechaNacimiento: Date
+    fechaIngreso: Date
+}
+            

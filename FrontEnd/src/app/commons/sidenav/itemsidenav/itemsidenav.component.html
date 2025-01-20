@@ -7,6 +7,6 @@
    fxLayout="row" 
    matRipple 
    routerLinkActive="active">
-  <mat-icon class="item-icon" fxFlex="none"></mat-icon>
+  <mat-icon class="item-icon" fxFlex="none"><i [ngClass]="item.icons"></i></mat-icon>
   <span class="item-label" fxFlex="auto">{{ item?.label }}</span>
 </a>

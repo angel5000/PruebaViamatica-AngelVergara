@@ -98,13 +98,13 @@ namespace PRU.Application.Services
                 var outputParam10 = new SqlParameter
                 {
                     ParameterName = "@FechaIngreso",
-                    SqlDbType = SqlDbType.Date,
+                    SqlDbType = SqlDbType.DateTime,
                     Direction = ParameterDirection.Output
                 };
                 var outputParam11 = new SqlParameter
                 {
                     ParameterName = "@FechaCierre",
-                    SqlDbType = SqlDbType.Date,
+                    SqlDbType = SqlDbType.DateTime,
                     Direction = ParameterDirection.Output
                 };
                 var parametros = new[]
@@ -165,8 +165,9 @@ namespace PRU.Application.Services
                         Apellidos = (string)outputParam7.Value,
                         Identificacion = (string)outputParam8.Value,
                         FechaNacimiento = DateOnly.FromDateTime((DateTime)outputParam9.Value),
-                         FechaIngreso = (DateTime)outputParam10.Value,
-                          FechaCierre =(DateTime)outputParam11.Value
+                        FechaIngreso = outputParam10.Value != DBNull.Value ? (DateTime)outputParam10.Value : DateTime.MinValue,
+                        FechaCierre = outputParam11.Value != DBNull.Value ? (DateTime)outputParam11.Value : DateTime.MinValue
+
                     };
 
                     return response;
@@ -189,7 +190,7 @@ namespace PRU.Application.Services
             catch (Exception e)
             {
                 response.IsSucces = false;
-                response.Message = "Error en el proceso de inicio de sesión";
+                response.Message = $"Error en el proceso de inicio de sesión { e.Message} ";
                 response.Data = 0;
                 Console.WriteLine(e.Message);
                 return response;

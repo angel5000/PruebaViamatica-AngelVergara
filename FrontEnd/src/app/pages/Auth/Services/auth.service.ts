@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { BaseResponse } from '../../../shared/models/BaseApiResponse'; 
-import { Login, Logout } from '../Models/login-interface'; 
+import { Login, Logout, UserData } from '../Models/login-interface'; 
 import { environment as env } from '../../../../enviroments/environment';  
 import { endpoint as end, httpOptions } from '../../../shared/apis/endpoints'; 
 import { catchError, map } from 'rxjs/operators';
@@ -24,6 +24,7 @@ this.user= new BehaviorSubject<BaseResponse>(
 )*/
 
   }
+  private formDataUser: FormData | null = null; // Propiedad para guardar el FormData
 
   login(req:Login): Observable<BaseResponse>{
 //    localStorage.setItem("authType","Interno");
@@ -32,9 +33,12 @@ return this.http.post<BaseResponse>(requestURL, req, httpOptions).pipe(
 map((resp:BaseResponse)=>{
 
 if(resp.isSucces){
+
   console.log(resp.isSucces)
-//localStorage.setItem("token",JSON.stringify(resp.data))
-//this.user.next(resp.data)
+  console.log(resp.dataPersonal.fechaIngreso)
+  localStorage.setItem('datospersonales', JSON.stringify(resp.dataPersonal));
+ 
+
 
 if (resp.data!=null && resp.additionalData!=null) {
   const rol= resp.data;
@@ -49,6 +53,7 @@ if (resp.data!=null && resp.additionalData!=null) {
   };
 
   // Almacenar el objeto de credenciales en localStorage
+
   localStorage.setItem('userCredentials', JSON.stringify(resp.dataPersonal.userName));
   localStorage.setItem('NombreUsuario', JSON.stringify(resp.dataPersonal.nombres));
 }
@@ -72,6 +77,27 @@ return resp;
 })
 );
 }
+ _builFormDataUser(user: UserData): void {
+  const formData = new FormData();
+
+  formData.append("userName", user.userName.toString());              
+  formData.append("nombres", user.nombres.toString());                
+  formData.append("apellidos", user.apellidos.toString());            
+  formData.append("fechaNacimiento", user.fechaNacimiento.toString());
+  formData.append("fechaIngreso", user.fechaIngreso.toString());     
+  formData.append("identificacion", user.identificacion.toString());            
+
+ 
+  this.formDataUser = formData;
+}
+getFormDataUser(): FormData | null {
+  const datospersonales = JSON.parse(localStorage.getItem('datospersonales') || '{}');
+
+  if (datospersonales && typeof datospersonales === 'object') {
+    this._builFormDataUser(datospersonales); // Construir el FormData
+  } 
+  return this.formDataUser;
+}
 
   getUserRole(): number | null {
     return JSON.parse(localStorage.getItem('userRole') || 'null');
@@ -83,6 +109,9 @@ return resp;
     return JSON.parse(localStorage.getItem('userId') || 'null');
   }
 
+  getNombre(): number | null {
+    return JSON.parse(localStorage.getItem('NombreUsuario') || 'null');
+  }
   
   logout(credentials: string): Observable<BaseResponse> {
     const requestURL = `${env.api}${end.LOGOUT}`;

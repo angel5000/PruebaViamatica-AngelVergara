@@ -1,31 +1,46 @@
-<div class="card overflow-hidden flex-auto size mx-5 mb-5">
+<div class="card w-full h-full flex flex-col mb-5 sizecard">
 
-<div class="w-90  flex flex-col mx-5 my-5
-">
 
-<mat-drawer-container class="bg-transparent flex-auto flex">
-    <mat-drawer-content class="p-gutter pt-0 flex-auto flex items-start">
-    <div class="px-2 pt-10  bg-primary h-full  flex-auto rounded sizeborder">
+    <div class="px-2 pt-1  bg-primary h-full  flex-auto rounded sizeborder">
 
-        <h2 class="headline   text-2xl font-bold bg-red-100     text-primary-contrast m-0 flex items-center w-full max-w-xxxl mr-6">
 
-            <span class="ml-4 block">Gestion de Usuarios</span>
-        </h2>
 
-        <div class="flex items-center justify-end w-full">
+
+
+        <h2 class="headline   text-2xl font-bold bg-red-100     text-primary-contrast m-0 flex items-center w-full max-w-xxl mr-6">
+
+            <span class="ml-4 block mt-3">Manejo de Usuarios</span>
             
-           
+        </h2>
+        <div class="itemslieal">
+        <div class="mt-5">
+            <button matTooltip="Registrar usuario" type="button"
+            class="btn btn-success mx-5 sizebt" (click)="    
+            openDialogRegister()">
+            Registrar Usuario
+            <i class="bi bi-person-add"></i>
+        </button>
+        <span class="ml-5">Registro Masivo</span>
         </div>
+
+    </div>
+  <div class=" justify-end w-full  itemsspan">
+   
+    <div class="flex items-center justify-end w-full items">
+      
         <app-upload-excel></app-upload-excel>
+       
+    </div>
+  </div>
+       
+       
     </div>
 
-</mat-drawer-content>
 
 
-</mat-drawer-container>
 
 
-    <div class="-mt-14 pt-0 overflow-hidden flex divtb">
+    <div class="mt-14 pt-0 overflow-hidden flex divtb ">
         <mat-drawer-container class="bg-transparent flex-auto flex">
             <mat-drawer-content class="p-gutter pt-0 flex-auto flex items-start">
                 <div class="card h-full overflow-hidden flex-auto">
@@ -42,11 +57,15 @@
 
         </mat-drawer-container>
     </div>
-</div>
+
 </div>
 
+
+
+
+
 <div class="footer">
-    <div fxFlex="auto" fxLayout="row" fxLayoutAlign="center center" class="footer-content">
+    <div fxLayoutAlign="center center" class="footer-content">
       <div class="footer-text">
         PRUEBA VIAMATICA
       </div>

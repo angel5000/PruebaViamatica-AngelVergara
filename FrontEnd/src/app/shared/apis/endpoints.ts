@@ -6,6 +6,7 @@ export const endpoint={
     LOGOUT: 'AuthControlles/Logout',
     UPLOAD_EXCEL: 'Admin/registerbyExcel',
     USUARIOS_EDIT: 'Admin/EditbyAdmin/',
+    USUARIOS_REGISTER:'Admin/register',
     USUARIOBYID: 'Admin/',
     
 }

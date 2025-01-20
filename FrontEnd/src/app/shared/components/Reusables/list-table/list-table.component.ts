@@ -39,7 +39,7 @@ export class ListTableComponent <T> implements OnInit, AfterViewInit, OnChanges 
   @Input() service?: DefaultService;
   @Input() colums?: TableColumns<T>[];
   @Input() getInputs?: any;
-  @Input() Numrecords?: number=3;
+  @Input() Numrecords?: number=10;
   @Input() IDenti?: number=0;
   @Input() sortBy?: string;
   @Input() sortDir: string = "asc";

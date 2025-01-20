@@ -233,7 +233,7 @@ namespace PRU.Application.Services
         {
             Console.WriteLine("id: " + requestDto.Identificacion);
             Console.WriteLine("nombre: " + requestDto.Nombres);
-            if (!_validaciones.ValidarIdentificacion(requestDto.Identificacion!.Trim()))
+            if (!_validaciones.ValidarIdentificacion(requestDto.Identificacion!))
             {
                 Console.WriteLine("id: " + requestDto.Identificacion);
                 return new BaseResponse<bool>
@@ -286,8 +286,10 @@ namespace PRU.Application.Services
             var mailParam = new SqlParameter("@Mail", correoGenerado);
             var userNameParam = new SqlParameter("@UserName", requestDto.UserName);
             var passwordParam = new SqlParameter("@Password", requestDto.Password);
-            var statusParam = new SqlParameter("@Status", "Activo");  // Asumiendo que el estado es "Activo"
-            var sesionActiveParam = new SqlParameter("@SesionActive", "S");  // "S" o "N" dependiendo del estado
+            var statusParam = new SqlParameter("@Status", requestDto.StadoPersona);
+            var statuspersonaParam = new SqlParameter("@StatusPersona", requestDto.StadoPersona);
+            var sesionActiveParam = new SqlParameter("@SesionActive", requestDto.SesionActive);
+            var RolParam = new SqlParameter("@ROL", requestDto.Rol);
 
             // Parámetros de salida
             var personaIdParam = new SqlParameter("@PersonaId", SqlDbType.Int) { Direction = ParameterDirection.Output };
@@ -297,8 +299,10 @@ namespace PRU.Application.Services
             {
                 // Ejecutar el procedimiento almacenado
                 await _context.Database.ExecuteSqlRawAsync(
-                    "EXEC sp_RegistrarPersonaYUsuario @Identificacion, @Nombres, @Apellidos, @FechaNacimiento, @Mail, @UserName, @Password, @Status, @SesionActive, @PersonaId OUTPUT, @UsuarioId OUTPUT",
-                    identificacionParam, nombresParam, apellidosParam, fechaNacimientoParam, mailParam, userNameParam, passwordParam, statusParam, sesionActiveParam, personaIdParam, usuarioIdParam
+      "EXEC sp_RegistrarPersonaYUsuario @Identificacion, @Nombres, @Apellidos, @FechaNacimiento, " +
+      "@Mail, @UserName, @Password, @Status,  @StatusPersona,@SesionActive,@ROL , @PersonaId OUTPUT, @UsuarioId OUTPUT",
+   identificacionParam, nombresParam, apellidosParam, fechaNacimientoParam, mailParam,
+   userNameParam, passwordParam, statusParam, statuspersonaParam, sesionActiveParam,RolParam,personaIdParam, usuarioIdParam
                 );
 
                 // Obtener los ID generados para Persona y Usuario
@@ -308,10 +312,9 @@ namespace PRU.Application.Services
                 return new BaseResponse<bool>
                 {
                     IsSucces = true,
-                    Data = true,  // Indica que la operación fue exitosa
+                    Data = true,  
                     Message = "Registro exitoso",
-                    TotalRecords = 1,  // Puedes ajustar este valor según el caso
-                    //Errors = null,
+                     TotalRecords = 1, 
                     AdditionalData = new { PersonaId = personaId, UsuarioId = usuarioId }
                 };
             }

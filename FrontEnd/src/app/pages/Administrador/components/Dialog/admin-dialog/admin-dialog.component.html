@@ -1,28 +1,50 @@
 <form  (ngSubmit)="productSave()" [formGroup]="form">
     <div mat-dialog-title class="flex justify-center">
-        <h2 class="headline m-0 text-xl text-accent">
+        <h2 class="headline mr-5 mt-3 text-xl  text-accent">
             <strong>
                 {{data.mode == 'register' ? 'Registrar nuevo usuario' : 'Actualizar usuario'}}
             </strong>
         </h2>
-        <button class="text-secondary" mat-dialog-close mat-icon-button>
-            <mat-icon></mat-icon>
+        <button class="text-secondary " mat-dialog-close mat-icon-button>
+            <mat-icon><i class="bi bi-x-lg "></i></mat-icon>
         </button>
     </div>
 
     <mat-dialog-content>
 
-
+        <mat-form-field *ngIf="!ocultar" class="w-full mb-4" [hidden]="ocultar">
+            <mat-label>Identificacion</mat-label>
+            <input matInput formControlName="identificacion" maxlength="10"(input)="onInput($event)"/>
+            <mat-error *ngIf="form?.get('identificacion')?.hasError('required')">
+                El campo Identificacion es requerido
+            </mat-error>
+            <mat-error *ngIf="form?.get('identificacion')?.hasError('identificacionInvalida') && !ocultar">
+                C.I.de 10 dígitos y no contener 4 caracteres consecutivos iguales.
+              </mat-error>
+        </mat-form-field>
       
-            <mat-form-field class="w-full">
+            <mat-form-field class="w-full mb-4">
                 <mat-label>Usuario</mat-label>
-                <input matInput formControlName="userName" />
+                <input matInput formControlName="userName" maxlength="20" minlength="8" />
                 <mat-error *ngIf="form?.get('userName')?.hasError('required')">
                     El campo Usuario es requerido
                 </mat-error>
+                <mat-error *ngIf="form?.get('userName')?.hasError('invalidUsername')">
+ El usuario debe contener entre 8 y 20 caracteres alfanumericos, sin signos, almenos una mayuscula
+ y un numero
+                  </mat-error>
             </mat-form-field>
 
-        
+            <mat-form-field *ngIf="!ocultar" class="w-full mb-4" [hidden]="ocultar">
+                <mat-label>Contraseña</mat-label>
+                <input matInput  formControlName="password" maxlength="50">
+                <mat-error *ngIf="form?.get('password')?.hasError('required')&&!ocultar">
+                    El campo Contraseña es requerido
+                </mat-error>
+                <mat-error *ngIf="form?.get('password')?.hasError('invalidPassword') && !ocultar">
+                    La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial.
+                  </mat-error>
+            </mat-form-field>
        
 
             <mat-form-field class="w-full">
@@ -74,13 +96,19 @@
                 </mat-error>
             </mat-form-field>
     
-
+            <mat-form-field *ngIf="!ocultar" class="w-full" [hidden]="ocultar">
+                <mat-label>Rol</mat-label>
+                <input matInput formControlName="rol" />
+                <mat-error *ngIf="form?.get('rol')?.hasError('required')&&!ocultar">
+                    El campo Rol es requerido
+                </mat-error>
+            </mat-form-field>
 
 
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
         <button mat-button mat-dialog-close type="button">CANCELAR</button>
-        <button color="purple" class="bg-accent text-accent-contrast" mat-button type="submit">GUARDAR</button>
+        <button color="purple" class="bg-accent text-accent-contrast" mat-button type="submit" [disabled]="!form.valid">GUARDAR</button>
     </mat-dialog-actions>
 </form>

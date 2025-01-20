@@ -22,8 +22,8 @@ namespace PRU.Application.Commons.Validations
         public string GenerarCorreo(string nombres, string apellidos, string identificacion)
         {
             // Reemplazar los espacios por puntos en los nombres y apellidos
-            nombres = nombres.Replace(" ", ".");
-            apellidos = apellidos.Replace(" ", ".");
+            nombres = nombres.Replace(" ", "");
+            apellidos = apellidos.Replace(" ", "");
 
             // Generar el correo base con los nombres y apellidos modificados
             var correoBase = $"{nombres[0].ToString().ToLower()}{apellidos.ToLower()}@mail.com";
@@ -40,11 +40,12 @@ namespace PRU.Application.Commons.Validations
             return correo;
         }
 
-        public bool ValidarUsuario(string nombreUsuario)
-        {
-            var regex = new Regex(@"^[A-Za-z0-9]{8,20}$");
-            return regex.IsMatch(nombreUsuario);
-        }
+      public bool ValidarUsuario(string nombreUsuario)
+{
+    var regex = new Regex(@"^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9]{8,20}$");
+    return regex.IsMatch(nombreUsuario);
+}
+
         public bool ValidarContraseña(string contraseña)
         {
             var regex = new Regex(@"^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$");
@@ -96,30 +97,7 @@ namespace PRU.Application.Commons.Validations
 
 
 
-
-
-
-
-        public void Logout(string userName)
-        {
-            var usuario = _context.Usuarios.FirstOrDefault(u => u.UserName == userName || u.Mail == userName);
-
-            if (usuario != null)
-            {
-                usuario.SesionActive = "Inactivo";
-                _context.SaveChanges();
-            }
-        }
-        public int IntentosFallidos(int resultado)
-        {
-            int user = 0;
-            if (resultado==0)
-            {
-                user+= 1;
-
-            }
-            return user;
-        }
+       
         public string VerificacionRoles(int resultado)
         {
             string rol = "";
@@ -134,21 +112,6 @@ namespace PRU.Application.Commons.Validations
             return rol;
         }
 
-
-        /*else
-    {
-
-        usuario.IntentosFallidos++;
-
-        if (usuario.IntentosFallidos >= 3)
-        {
-            usuario.Status = "Bloqueado";
-        }
-
-        _context.SaveChanges();
-        return false;
-    }
-      */
 
     }
 }

@@ -1,0 +1,23 @@
+.size
+{
+  
+    width: 85%;
+    box-shadow:rgba(0, 0, 0, 0.05) 15px 5px 11px;
+  
+}
+.sizecard
+{
+    width: 85%;
+    place-items: center;
+    height: 100%;
+  margin-left: 8%;
+  margin-top: 2%;
+  box-shadow:rgba(0, 0, 0, 0.04) 15px 5px 11px;
+}
+.display{
+    display: grid;
+    gap: 16px;
+    place-items: start;
+    width: 100%;
+    margin: 0;
+}

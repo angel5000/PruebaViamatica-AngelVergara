@@ -1,7 +1,7 @@
 import { Component, HostBinding, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../pages/Auth/Services/auth.service';
-import { Navigationitem, NavigationItem } from './navigations';
+import { Navigationitem} from './navigations';
 
 @Component({
   selector: 'app-itemsidenav',

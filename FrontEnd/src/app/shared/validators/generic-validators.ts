@@ -1,6 +1,37 @@
-import { AbstractControl, UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-export class GenericValidators {
+
+
+export function passwordValidator(): ValidatorFn {
+    const regex = new RegExp("^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$");
+    
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (control.value && !regex.test(control.value)) {
+        return { invalidPassword: true }; // Error personalizado
+      }
+      return null; // Contraseña válida
+    };
+  }
+  export class GenericValidators {
+
+
+/**
+   * Valida que un nombre de usuario contenga entre 8 y 20 caracteres,
+   * al menos un número, al menos una letra mayúscula, y solo caracteres alfanuméricos.
+   * @param control Control de formulario a validar
+   * @returns Error si no cumple el formato, null si es válido
+   */
+static validUsername(control: AbstractControl): ValidationErrors | null {
+    const regex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9]{8,20}$/;
+    if (control.value && !regex.test(control.value)) {
+      return { invalidUsername: true };
+    }
+    return null;
+  }
+
+
+
+
     /**
     * Validar que todos los caracteres sean solo números o caracteres de alfabeto
     * @param control valor de control de formulario
@@ -82,18 +113,30 @@ export class GenericValidators {
             return null;
         }
     }
-    /**
-    * Validar que todos los caracteres sean solo números o caracteres de alfabeto
-    * @param control valor de control de formulario
-    */
-     static dni(control: AbstractControl): { [key: string]: boolean } | null {
-        if (control.value != null && control.value.toString().trim() != "") {
-            if (/^(?!00000000$)([0-9]{8})$/.test(control.value)) return null;
-            else return { 'dni': true };
-        } else {
-            return null;
-        }
+   /**
+   * Validar que la identificación sea un número de 10 dígitos y no contenga
+   * 4 dígitos consecutivos iguales.
+   * @param control valor de control de formulario
+   */
+   static identificacion(control: AbstractControl): { [key: string]: boolean } | null {
+    const value = control.value;
+
+    // Verificar que el valor sea un número de 10 dígitos
+    const regex = /^\d{10}$/;
+    if (!regex.test(value)) {
+      return { 'identificacionInvalida': true };
     }
+
+    // Verificar que no haya 4 caracteres consecutivos iguales
+    for (let i = 0; i < value.length - 3; i++) {
+      if (value[i] === value[i + 1] && value[i + 1] === value[i + 2] && value[i + 2] === value[i + 3]) {
+        return { 'identificacionInvalida': true };
+      }
+    }
+
+    // Si pasa ambas validaciones, es válida
+    return null;
+  }
 
      /**
     * Validar que todos los caracteres sean solo números o caracteres de alfabeto

@@ -3,7 +3,10 @@
     <mat-sidenav #sidenav [mode]="mode.value || 'over'">
         <div class="background">
             <div class="divh2">
-                <h2>Control de datos</h2>
+                <h1 class="headline  text-2xl font-bold bg-red-100     text-primary-contrast m-0 flex items-center w-full max-w-xxxl mr-6">
+                  <span class="mr-4">Control de Datos</span>
+                  <i class=" bi bi-kanban"></i>
+                </h1>
                 <button class="position-absolute  end-0 translate-middle-y mx-2
                   " type="button" 
                         (click)="sidenav.toggle()">
@@ -15,9 +18,13 @@
             </div>
         </div>
         <div class="contenedor-item">
+
+          <div >
             <app-itemsidenav *ngFor="let item of items;" [item]="item"></app-itemsidenav>
         </div>
 
+        </div>
+      
     </mat-sidenav>
 
     <mat-sidenav-content>
@@ -42,7 +49,7 @@
                           <span>
                             
                             <div class="dropdown">
-                              <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <button class="btn btn-secondary dropdown-toggle " type="button" data-bs-toggle="dropdown" aria-expanded="false">
                               {{NombreUsuario}}
                               </button>
                               <ul class="dropdown-menu">

@@ -64,7 +64,19 @@ class:{
 ]
 const tableColumns: TableColumns<UsuarioResponse>[] = [
     {
-      label: "NOMBRE",
+      label: "Nombres",
+      csslabel: ["font-bold", "text-sm"],
+      property: "nombres",
+      cssProperty: ["font-semibold", "text-sm", "text-left"],
+      type: "text",
+      sticky: true,
+      sort: true,
+      sortProperty: "nombres", // SortProperty solo en esta columna
+      visible: true,
+      download: true,
+    },
+    {
+      label: "UserName",
       csslabel: ["font-bold", "text-sm"],
       property: "userName",
       cssProperty: ["font-semibold", "text-sm", "text-left"],
