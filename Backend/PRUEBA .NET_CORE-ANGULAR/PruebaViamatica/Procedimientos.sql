@@ -35,8 +35,10 @@ create PROCEDURE sp_RegistrarPersonaYUsuario
     @Mail NVARCHAR(120),
     @UserName NVARCHAR(50),
     @Password NVARCHAR(50),
-    @Status CHAR(20),
+    @Status varCHAR(20),
+	 @StatusPersona varCHAR(20),
     @SesionActive CHAR(1),
+	@ROL INT,
     @PersonaId INT OUTPUT,
     @UsuarioId INT OUTPUT
 AS
@@ -60,18 +62,19 @@ BEGIN
 
         -- Inserta la nueva persona
         INSERT INTO Personas (Nombres, Apellidos, Identificacion, FechaNacimiento, [Status])
-        VALUES (@Nombres, @Apellidos, @Identificacion, @FechaNacimiento, 'Activo');
+        VALUES (@Nombres, @Apellidos, @Identificacion, @FechaNacimiento, @StatusPersona);
         
         -- Obtén el ID de la persona recién insertada
         SET @PersonaId = SCOPE_IDENTITY();
 
         -- Inserta el nuevo usuario asociado a la persona
         INSERT INTO Usuarios (UserName, [Password], Mail, SesionActive, Persona_IdPersona2, [Status])
-        VALUES (@UserName, @Password, @Mail, @SesionActive, @PersonaId, 'Activo');
+        VALUES (@UserName, @Password, @Mail, @SesionActive, @PersonaId, @Status);
 
         -- Obtén el ID del usuario recién insertado
         SET @UsuarioId = SCOPE_IDENTITY();
-
+		INSERT INTO RolUsuarios(Rol_idRol,Usuarios_idUsuarios)
+		VALUES(@ROL,@UsuarioId)
         -- Confirma la transacción
         COMMIT TRANSACTION;
     END TRY
@@ -102,17 +105,17 @@ EXEC sp_RegistrarPersonaYUsuario
 SELECT @PersonaId AS PersonaId, @UsuarioId AS UsuarioId;
 
 create PROCEDURE InicioSesion 
-    @Login NVARCHAR(50), -- Puede ser UserName o Mail
+    @Login NVARCHAR(50), 
     @Password NVARCHAR(50),
     @Result INT OUTPUT,
-    @Rol INT OUTPUT, -- Variable de salida para el rol del usuario
-    @UsuarioId INT OUTPUT, -- Variable de salida para el ID del usuario
-    @UserName NVARCHAR(50) OUTPUT, -- Variable de salida para el UserName
-    @Mail NVARCHAR(50) OUTPUT, -- Variable de salida para el Mail
-    @Nombres NVARCHAR(100) OUTPUT, -- Variable de salida para el Nombres
-    @Apellidos NVARCHAR(100) OUTPUT, -- Variable de salida para el Apellidos
-    @Identificacion NVARCHAR(50) OUTPUT, -- Variable de salida para el Identificacion
-    @FechaNacimiento DATE OUTPUT, -- Variable de salida para el FechaNacimiento
+    @Rol INT OUTPUT, -- 
+    @UsuarioId INT OUTPUT, 
+    @UserName NVARCHAR(50) OUTPUT, 
+    @Mail NVARCHAR(50) OUTPUT, 
+    @Nombres NVARCHAR(100) OUTPUT, 
+    @Apellidos NVARCHAR(100) OUTPUT, 
+    @Identificacion NVARCHAR(50) OUTPUT, 
+    @FechaNacimiento DATE OUTPUT, 
 	@FechaCierre DATETIME OUTPUT,
 	  @FechaIngreso DATETIME OUTPUT
 AS
@@ -137,7 +140,7 @@ BEGIN
 		@FechaCierre=s.FechaCierre
     FROM Usuarios u
     INNER JOIN Personas p ON u.Persona_IdPersona2 = p.idPersona
-	INNER JOIN Sessions s on u.idUsuario=s.idPersona
+	Left JOIN Sessions s on u.idUsuario=s.idPersona
     WHERE u.UserName = @Login OR u.Mail = @Login order by FechaIngreso asc;
 
     IF @Status = 'Bloqueado'
@@ -229,8 +232,8 @@ DECLARE @FechaIngreso DATETIME;
 DECLARE @FechaCierre DATETIME;
 
 EXEC InicioSesion 
-    @Login = 'angelvergarap', 
-    @Password = 'C@rllopez2024', 
+    @Login = 'Narcisax23', 
+    @Password = 'Helado500@', 
     @Rol = @Rol OUTPUT, 
     @Result = @Resultado OUTPUT, 
     @UsuarioId = @id OUTPUT,
@@ -260,7 +263,7 @@ SELECT
 select*from Usuarios
 select*from Sessions
 EXEC CerrarSesion 
-    @Login = 'juanperez90'
+    @Login = 'Narcisax23'
   
 
 
@@ -305,7 +308,7 @@ BEGIN
 END;
 
 EXEC CerrarSesion 
-    @Login = 'angelvergarap'
+    @Login = 'canelax23'
   
 
 -- Mostrar el resultado
