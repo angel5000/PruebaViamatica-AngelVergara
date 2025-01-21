@@ -129,22 +129,21 @@ BEGIN
     DECLARE @RolId INT;
 
     -- Verificar si el usuario existe y obtener datos iniciales
-    SELECT 
-        @Status = u.Status,
-        @UsuarioId = u.IdUsuario,
-        @UserName = u.UserName,
-        @Mail = u.Mail,
-        @Nombres = p.Nombres,
-        @Apellidos = p.Apellidos,
-        @Identificacion = p.Identificacion,
-        @FechaNacimiento = p.FechaNacimiento,
-        @FechaIngreso = s.FechaIngreso,
-        @FechaCierre = s.FechaCierre
-    FROM Usuarios u
-    INNER JOIN Personas p ON u.Persona_IdPersona2 = p.idPersona
-    LEFT JOIN Sessions s ON u.IdUsuario = s.idPersona
-    WHERE u.UserName = @Login OR u.Mail = @Login
-    ORDER BY s.FechaIngreso DESC;
+   SELECT 
+    @Status = u.Status,
+    @UsuarioId = u.IdUsuario,
+    @UserName = u.UserName,
+    @Mail = u.Mail,
+    @Nombres = p.Nombres,
+    @Apellidos = p.Apellidos,
+    @Identificacion = p.Identificacion,
+    @FechaNacimiento = p.FechaNacimiento,
+    @FechaIngreso = (SELECT MAX(s.FechaIngreso) FROM Sessions s WHERE s.idPersona = u.IdUsuario),
+    @FechaCierre = s.FechaCierre
+FROM Usuarios u
+INNER JOIN Personas p ON u.Persona_IdPersona2 = p.idPersona
+LEFT JOIN Sessions s ON u.IdUsuario = s.idPersona
+WHERE u.UserName = @Login OR u.Mail = @Login;
 
     IF @Status = 'Bloqueado'
     BEGIN
@@ -467,7 +466,6 @@ BEGIN
             ON u.IdUsuario = i.IdUsuario
         WHERE i.IntentosFallidos >= 3;
 
-        -- Mensaje informativo (opcional)
         PRINT 'Usuario bloqueado debido a múltiples intentos fallidos de inicio de sesión.';
     END
 END;
@@ -489,12 +487,10 @@ BEGIN
 
     DECLARE @EsAdmin INT;
 
-    -- Verificar si el usuario es admin
     SELECT @EsAdmin = CASE WHEN Rol_idRol = 1 THEN 1 ELSE 0 END
     FROM RolUsuarios
     WHERE Usuarios_idUsuarios = @UsuarioId;
 
-    -- Consulta con filtros y paginación
     SELECT 
         u.idUsuario,
         u.UserName,
