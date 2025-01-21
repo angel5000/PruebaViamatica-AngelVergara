@@ -8,6 +8,7 @@ export const endpoint={
     USUARIOS_EDIT: 'Admin/EditbyAdmin/',
     USUARIOS_REGISTER:'Admin/register',
     USUARIOBYID: 'Admin/',
+    SESIONES: 'Sesions/ListaSesiones',
     
 }
     export const httpOptions ={

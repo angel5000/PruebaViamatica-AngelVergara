@@ -33,7 +33,6 @@ import icSale from "@iconify/icons-ic/twotone-point-of-sale"
   export class IconsService {
   
     getIcon(icon:string){
-   console.log(icon)
       if(icon=="icClient"){
         return   icClient;
       }

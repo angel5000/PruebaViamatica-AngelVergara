@@ -108,7 +108,7 @@ create PROCEDURE InicioSesion
     @Login NVARCHAR(50), 
     @Password NVARCHAR(50),
     @Result INT OUTPUT,
-    @Rol INT OUTPUT, -- 
+    @Rol INT OUTPUT, 
     @UsuarioId INT OUTPUT, 
     @UserName NVARCHAR(50) OUTPUT, 
     @Mail NVARCHAR(50) OUTPUT, 
@@ -116,17 +116,19 @@ create PROCEDURE InicioSesion
     @Apellidos NVARCHAR(100) OUTPUT, 
     @Identificacion NVARCHAR(50) OUTPUT, 
     @FechaNacimiento DATE OUTPUT, 
-	@FechaCierre DATETIME OUTPUT,
-	  @FechaIngreso DATETIME OUTPUT
+    @FechaCierre DATETIME OUTPUT,
+    @FechaIngreso DATETIME OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
 
+    BEGIN TRANSACTION; -- Inicia la transacción
+
     DECLARE @IntentosFallidos INT;
     DECLARE @Status CHAR(20);
     DECLARE @RolId INT;
-	
-    -- Verificar si el usuario existe y obtener el estado y el ID de usuario
+
+    -- Verificar si el usuario existe y obtener datos iniciales
     SELECT 
         @Status = u.Status,
         @UsuarioId = u.IdUsuario,
@@ -136,22 +138,25 @@ BEGIN
         @Apellidos = p.Apellidos,
         @Identificacion = p.Identificacion,
         @FechaNacimiento = p.FechaNacimiento,
-		@FechaIngreso=s.FechaIngreso,
-		@FechaCierre=s.FechaCierre
+        @FechaIngreso = s.FechaIngreso,
+        @FechaCierre = s.FechaCierre
     FROM Usuarios u
     INNER JOIN Personas p ON u.Persona_IdPersona2 = p.idPersona
-	Left JOIN Sessions s on u.idUsuario=s.idPersona
-    WHERE u.UserName = @Login OR u.Mail = @Login order by FechaIngreso asc;
+    LEFT JOIN Sessions s ON u.IdUsuario = s.idPersona
+    WHERE u.UserName = @Login OR u.Mail = @Login
+    ORDER BY s.FechaIngreso DESC;
 
     IF @Status = 'Bloqueado'
     BEGIN
         SET @Result = -1; -- Usuario bloqueado
+		  SET @Rol =0;
+        ROLLBACK; -- Deshacer los cambios
         RETURN;
     END
 
-    -- Verificar si el usuario existe y la contraseña coincide
+    -- Verificar credenciales
     IF EXISTS (
-        SELECT 'A'
+        SELECT 1
         FROM Usuarios
         WHERE (UserName = @Login OR Mail = @Login)
           AND Password = @Password
@@ -159,44 +164,46 @@ BEGIN
     BEGIN
         -- Verificar si ya tiene una sesión activa
         IF EXISTS (
-            SELECT 'A'
+            SELECT 1
             FROM Usuarios
             WHERE (UserName = @Login OR Mail = @Login)
               AND SesionActive = 'A'
         )
         BEGIN
             SET @Result = 2; -- Sesión ya activa
-            -- Obtener el rol del usuario
-            SELECT TOP 1 
-                @RolId = Rol_idRol
-            FROM RolUsuarios
-            WHERE Usuarios_idUsuarios = @UsuarioId;
-
-            -- Asignar el nombre del rol basado en el ID del rol
-            SET @Rol = @RolId;
-
+            ROLLBACK; -- Deshacer los cambios
             RETURN;
         END
 
-        -- Actualizar SesionActiva a 'A' para el usuario
+        -- Actualizar SesionActive
         UPDATE Usuarios
         SET SesionActive = 'A'
         WHERE UserName = @Login OR Mail = @Login;
 
-        -- Insertar en la tabla Sessions
+        -- Insertar nueva sesión
         INSERT INTO Sessions (FechaIngreso, idPersona)
         VALUES (GETDATE(), @UsuarioId);
 
-        -- Obtener el rol del usuario
+        -- Actualizar la última sesión como exitosa
+        UPDATE Sessions
+        SET SesionExitosa = 1
+        WHERE idPersona = @UsuarioId
+          AND FechaIngreso = (
+              SELECT MAX(FechaIngreso)
+              FROM Sessions
+              WHERE idPersona = @UsuarioId
+          );
+
+        -- Obtener rol del usuario
         SELECT TOP 1 
             @RolId = Rol_idRol
         FROM RolUsuarios
         WHERE Usuarios_idUsuarios = @UsuarioId;
 
-        -- Asignar el nombre del rol basado en el ID del rol
         SET @Rol = @RolId;
-
         SET @Result = 1; -- Inicio de sesión exitoso
+
+        COMMIT; -- Confirmar los cambios
     END
     ELSE
     BEGIN
@@ -205,15 +212,28 @@ BEGIN
         SET IntentosFallidos = IntentosFallidos + 1
         WHERE UserName = @Login OR Mail = @Login;
 
-        SELECT @IntentosFallidos = IntentosFallidos
-        FROM Usuarios
-        WHERE UserName = @Login OR Mail = @Login;
+        -- Actualizar sesiones fallidas
+        IF @UsuarioId IS NOT NULL
+        BEGIN
+            INSERT INTO Sessions (FechaIngreso, idPersona)
+            VALUES (GETDATE(), @UsuarioId);
 
-        PRINT 'Intentos fallidos: ' + CAST(@IntentosFallidos AS NVARCHAR) + '/3';
+            UPDATE Sessions
+            SET SesionFallida = SesionFallida + 1
+            WHERE idPersona = @UsuarioId
+              AND FechaIngreso = (
+                  SELECT MAX(FechaIngreso)
+                  FROM Sessions
+                  WHERE idPersona = @UsuarioId
+              );
+        END
 
         SET @Result = 0; -- Usuario o contraseña incorrectos
+        ROLLBACK; -- Deshacer los cambios
+        RETURN;
     END
-END
+END;
+
 
 
 select*from Sessions
@@ -232,8 +252,8 @@ DECLARE @FechaIngreso DATETIME;
 DECLARE @FechaCierre DATETIME;
 
 EXEC InicioSesion 
-    @Login = 'Narcisax23', 
-    @Password = 'Helado500@', 
+    @Login = 'angelvergarap', 
+    @Password = 'C@rllopez2024', 
     @Rol = @Rol OUTPUT, 
     @Result = @Resultado OUTPUT, 
     @UsuarioId = @id OUTPUT,
@@ -263,10 +283,117 @@ SELECT
 select*from Usuarios
 select*from Sessions
 EXEC CerrarSesion 
-    @Login = 'Narcisax23'
+    @Login = 'angelvergarap'
   
+create PROCEDURE TodasSesiones
+      @IdPersona NVARCHAR(50)
+
+	
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+	  Select FechaIngreso, FechaCierre, SesionExitosa, SesionFallida  from Sessions where idPersona=@IdPersona
+
+	END
+
+create PROCEDURE SESIONES
+    @IdPersona INT,              -- ID de persona como INT
+    @FechaInicio DATETIME = NULL, -- Fecha de inicio como DATETIME, opcional
+    @FechaFin DATETIME = NULL,    -- Fecha de fin como DATETIME, opcional
+    @NumPage INT = 1,            -- Página actual para paginación
+    @NumRecordsPage INT = 10,    -- Número de registros por página
+    @Order NVARCHAR(10) = 'asc', -- Orden de los resultados (asc/desc)
+    @Sort NVARCHAR(50) = 'FechaIngreso', -- Campo por el que se ordenará (por defecto FechaIngreso)
+    @TotalRecords INT OUTPUT     -- Total de registros sin paginación
+AS
+BEGIN
+    SET NOCOUNT ON;
 
 
+    -- Calcular el total de registros filtrados (sin paginación)
+    SELECT @TotalRecords = COUNT(*)
+    FROM Sessions s
+    WHERE s.idPersona = @IdPersona
+      AND (@FechaInicio IS NULL OR s.FechaIngreso >= @FechaInicio)
+      AND (@FechaFin IS NULL OR s.FechaIngreso <= @FechaFin);
+
+    -- Consulta con filtros y paginación
+    SELECT 
+        s.FechaIngreso,
+        s.FechaCierre,
+        s.SesionExitosa,
+        s.SesionFallida,
+        r.TotalFallidos,
+        r.TotalRegistros,
+        r.PrimeraFecha,
+        r.UltimaFecha
+    FROM Sessions s
+    INNER JOIN (
+        -- Subconsulta para calcular los totales
+        SELECT 
+            SUM(SesionFallida) AS TotalFallidos,
+            COUNT(*) AS TotalRegistros,
+            MIN(FechaIngreso) AS PrimeraFecha,
+            MAX(FechaIngreso) AS UltimaFecha,
+            idPersona
+        FROM Sessions
+        WHERE idPersona = @IdPersona
+          AND (@FechaInicio IS NULL OR FechaIngreso >= @FechaInicio)  -- Filtro opcional por fecha inicio
+          AND (@FechaFin IS NULL OR FechaIngreso <= @FechaFin)        -- Filtro opcional por fecha fin
+        GROUP BY idPersona
+    ) r ON s.idPersona = r.idPersona
+    WHERE s.idPersona = @IdPersona
+      AND (@FechaInicio IS NULL OR s.FechaIngreso >= @FechaInicio)  -- Filtro opcional por fecha inicio
+      AND (@FechaFin IS NULL OR s.FechaIngreso <= @FechaFin)        -- Filtro opcional por fecha fin
+    ORDER BY 
+        CASE WHEN @Order = 'asc' THEN
+            CASE WHEN @Sort = 'FechaIngreso' THEN s.FechaIngreso END
+        END ASC,
+        CASE WHEN @Order = 'desc' THEN 
+            CASE WHEN @Sort = 'FechaIngreso' THEN s.FechaIngreso END
+        END DESC
+    OFFSET (@NumPage - 1) * @NumRecordsPage ROWS 
+    FETCH NEXT @NumRecordsPage ROWS ONLY;
+END;
+
+
+ALTER LOGIN [DESKTOP-BUQ5QOC\angeldvvp] WITH DEFAULT_LANGUAGE = us_english;
+SET LANGUAGE 'us_english';
+DECLARE @TotalRecords INT;
+EXEC SESIONES 
+    @IdPersona = 1,                  
+    @FechaInicio = '2025-01-16 00:00:00', 
+    @FechaFin = '2025-01-17 23:59:59',
+	@TotalRecords = @TotalRecords OUTPUT;
+
+	SELECT @TotalRecords AS TotalRecords;
+	
+
+	SELECT * FROM Sessions 
+WHERE TRY_CONVERT(datetime, FechaIngreso, 120) IS NULL;
+
+SELECT 
+    SUM(SesionFallida) AS TotalFallidos,    
+    COUNT(*) AS TotalRegistros,              
+    MIN(FechaIngreso) AS PrimeraFecha,      
+    MAX(FechaIngreso) AS UltimaFecha        
+FROM Sessions
+WHERE idPersona = 1
+  AND FechaIngreso BETWEEN '2025-01-01 00:00:00' AND '2025-01-20 23:59:59';
+
+
+SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Sessions' AND COLUMN_NAME = 'FechaIngreso';
+
+
+
+
+
+
+
+
+	EXEC SESIONES
+	@IdPersona=1
 create PROCEDURE CerrarSesion
     @Login NVARCHAR(50)
 AS

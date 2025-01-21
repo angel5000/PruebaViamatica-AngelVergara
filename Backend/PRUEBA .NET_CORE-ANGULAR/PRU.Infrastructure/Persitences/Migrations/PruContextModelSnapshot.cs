@@ -136,6 +136,12 @@ namespace PRU.Infrastructure.Persitences.Migrations
                     b.Property<DateTime?>("FechaCierre")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("SesionExitosa")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SesionFallida")
+                        .HasColumnType("int");
+
                     b.HasKey("idPersona", "FechaIngreso");
 
                     b.ToTable("Sessions");

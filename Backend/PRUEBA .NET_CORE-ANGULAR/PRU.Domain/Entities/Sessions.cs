@@ -11,6 +11,8 @@ namespace PRU.Domain.Entities
         public DateTime?  FechaIngreso { get; set; }
         public DateTime? FechaCierre { get; set; }
         public int idPersona { get; set; }
+        public int SesionExitosa { get; set; }
+        public int SesionFallida { get; set; }
 
         public virtual Usuarios Usuario { get; set; } = null!;
 

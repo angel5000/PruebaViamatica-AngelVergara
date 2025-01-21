@@ -9,6 +9,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IconModule } from '@visurel/iconify-angular';
 import { startWith, switchMap } from 'rxjs';
+import { SesionResponse } from '../../../../pages/Servicios/Models/SesionesRespones';
 import { BaseResponse } from '../../../models/BaseApiResponse';
 import { TableColumns, TableFooter } from '../../../models/list-table-interface';
 import { getEsPaginatorIntl } from '../../../paginator-intl/es-paginator-intl';
@@ -44,6 +45,7 @@ export class ListTableComponent <T> implements OnInit, AfterViewInit, OnChanges 
   @Input() sortBy?: string;
   @Input() sortDir: string = "asc";
   @Input() footer: TableFooter<T>[] = [];
+@Output() totalFallidos: EventEmitter<number> = new EventEmitter<number>();
 
   @Output() rowClick  = new EventEmitter<{ action: string; row: T }>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -121,21 +123,11 @@ this.dataSource.sort= this.sort;
        
        );
       })
-/*,switchMap(()=>{
-      // this._spinner.show("modal-table")
-       return this.service!.GetAll(
-         this.paginator!.pageSize,
-         this.sort!.active,
-         this.sort!.direction,
-         this.paginator!.pageIndex,
-         this.getInputs
-       );
-      }) */
-
 
       ).subscribe((data:BaseResponse)=>{
         if (data.isSucces) {
           this.setData(data);
+          this.emitTotalFallidos(data);
           console.log("Datos recibidos: ", data.data);
         } else {
           console.warn("Error al cargar los datos");
@@ -148,18 +140,21 @@ this.dataSource.sort= this.sort;
        if(data.isSucces){
    
    if (data.isSucces) {
-    this.dataSource.data = data.data; // Asegúrate de que `data.data` tiene las columnas correctas
-    this.paginatorOptions.pageLenght = data.totalRecords || data.data.length; // Ajusta el total si es necesario
+    this.dataSource.data = data.data;
+    this.paginatorOptions.pageLenght = data.totalRecords || data.data.length; 
     this.setVisibleColumns();
   } else {
     console.error("Error al asignar datos");
   }
-  /* if(data.footer)this.setFooter(data.footer);
-   console.log(data.data);
-       }else{
-   this._alert.warn("Atencion","Error al cargar los datos" )
-   console.log(data.data);
-       }*/
+  
+ 
       }
      }
+     private emitTotalFallidos(data: BaseResponse) {
+      let totalFallidos = 0;
+      (data.data || []).forEach((sesiones: SesionResponse) => {
+        totalFallidos = sesiones.sesionFallidaTotales;
+      });
+      this.totalFallidos.emit(totalFallidos); 
+    }
 }

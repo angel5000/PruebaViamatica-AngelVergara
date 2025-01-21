@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
 import { convertDateToRequest } from '../../../../../shared/components/function/helpers';
 import { AuthService } from '../../../../Auth/Services/auth.service';
+import { SesionResponse } from '../../../../Servicios/Models/SesionesRespones';
+import { DialogSesionesComponent } from '../Dialog/dialog-sesiones/dialog-sesiones.component';
 
 @Component({
   selector: 'app-bienvenida',
@@ -24,13 +28,15 @@ form: FormGroup
 
 
 constructor(   private _fb:FormBuilder
-,private authService: AuthService) { 
+,private authService: AuthService, public _dialog: MatDialog) { 
  this.initForm();
 
 }
   ngOnInit(): void {
     this.Userdata()
+    
   }
+ 
 Userdata(): void {
   const formData = this.authService.getFormDataUser();
 
@@ -50,4 +56,25 @@ Userdata(): void {
       fechaIngreso: fechaconvertida|| '',
     });
   }
+  Dialog(){
+
+    let dialogref = this._dialog.open(DialogSesionesComponent,{
+      data:{mode:'Datos sesiones',},
+      disableClose:true,
+      width: '850px',
+    
+    })
+    dialogref.afterClosed().subscribe((res)=>{
+      if(res){
+       // this.setGetInputsProviders(true)
+      }
+    })
+  }
+
+
+
+
+
+
+
 }

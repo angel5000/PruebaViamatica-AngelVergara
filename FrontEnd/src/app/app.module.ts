@@ -16,6 +16,7 @@ import { SidenavModule } from "./commons/sidenav/sidenav-modules";
 import { SharedModule } from './shared/shared.module';
 import { ItemsidenavComponent } from './commons/sidenav/itemsidenav/itemsidenav.component';
 import { MatSortModule } from '@angular/material/sort';
+import { ToastrModule } from 'ngx-toastr';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { MatSortModule } from '@angular/material/sort';
     MatSnackBarModule,
     MatInputModule,
     MatFormFieldModule,
-
+    BrowserAnimationsModule, 
+    ToastrModule.forRoot(), 
     SharedModule
 ],
   /*

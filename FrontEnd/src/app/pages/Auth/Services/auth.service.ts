@@ -7,6 +7,7 @@ import { environment as env } from '../../../../enviroments/environment';
 import { endpoint as end, httpOptions } from '../../../shared/apis/endpoints'; 
 import { catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 @Injectable({
   providedIn: 'root'
 })
@@ -17,7 +18,7 @@ public get userToken():BaseResponse{
 }*/
 
 
-  constructor(private http:HttpClient) { 
+  constructor(private http:HttpClient,private toastr: ToastrService) { 
     /*
 this.user= new BehaviorSubject<BaseResponse>(
   JSON.parse(localStorage.getItem("token"))
@@ -25,7 +26,12 @@ this.user= new BehaviorSubject<BaseResponse>(
 
   }
   private formDataUser: FormData | null = null; // Propiedad para guardar el FormData
-
+  showSuccess(mensaje:string) {
+    this.toastr.success(mensaje, 'Éxito');
+  }
+  showError(mensaje:string) {
+    this.toastr.error(mensaje, 'Error');
+  }
   login(req:Login): Observable<BaseResponse>{
 //    localStorage.setItem("authType","Interno");
 const requestURL=  `${env.api}${end.GENERATE_TOKEN}`
@@ -33,7 +39,8 @@ return this.http.post<BaseResponse>(requestURL, req, httpOptions).pipe(
 map((resp:BaseResponse)=>{
 
 if(resp.isSucces){
-
+  
+  this.showSuccess(resp.message);
   console.log(resp.isSucces)
   console.log(resp.dataPersonal.fechaIngreso)
   localStorage.setItem('datospersonales', JSON.stringify(resp.dataPersonal));
@@ -65,12 +72,14 @@ if (resp.dataPersonal) {
 }
 }else{
   console.log(resp.message)
+  this.showError(resp.message);
 }
 return resp;
 
 }),  catchError((error) => {
   // Aquí puedes manejar el error de manera adecuada
   console.error('Error al hacer login', error);
+  this.showError(error);
   // Puedes devolver un objeto de respuesta de error si lo necesitas
  
   return of(error);  // Retorna una respuesta de error para que el flujo continúe

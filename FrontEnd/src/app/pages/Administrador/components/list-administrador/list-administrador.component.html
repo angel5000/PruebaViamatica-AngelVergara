@@ -2,27 +2,40 @@
 
 
     <div class="px-2 pt-1  bg-primary h-full  flex-auto rounded sizeborder">
+        <div class="flex justify-between" >
+            <app-search-box class="w-100 mt-4" [searchOptions]="component.searchOptions
+            " (search)="search($event)">
+      
+            </app-search-box>
+            <app-resetfilters class="mt-3 mr-5" (buttonClick)="resetFilters()">
+                
+            </app-resetfilters>
+
+        </div>
 
 
-
-
-
+        
         <h2 class="headline   text-2xl font-bold bg-red-100     text-primary-contrast m-0 flex items-center w-full max-w-xxl mr-6">
-
+           
             <span class="ml-4 block mt-3">Manejo de Usuarios</span>
             
         </h2>
         <div class="itemslieal">
+          
         <div class="mt-5">
+        
             <button matTooltip="Registrar usuario" type="button"
             class="btn btn-success mx-5 sizebt" (click)="    
             openDialogRegister()">
             Registrar Usuario
             <i class="bi bi-person-add"></i>
         </button>
-        <span class="ml-5">Registro Masivo</span>
+     
+
         </div>
 
+
+        
     </div>
   <div class=" justify-end w-full  itemsspan">
    
@@ -31,6 +44,8 @@
         <app-upload-excel></app-upload-excel>
        
     </div>
+
+
   </div>
        
        

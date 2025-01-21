@@ -12,6 +12,8 @@ import { ListTableComponent } from '../../shared/components/Reusables/list-table
 import { UploadExcelComponent } from '../../shared/components/Reusables/UploadExcel/upload-excel.component';
 import { IconDirective } from '@visurel/iconify-angular';
 import { AdminDialogComponent } from './components/Dialog/admin-dialog/admin-dialog.component';
+import { SearchBoxComponent } from '../../shared/components/Search-box/search-box/search-box.component';
+import { ResetfiltersComponent } from '../../shared/components/Reusables/Resetfilters/resetfilters/resetfilters.component';
 
 
 
@@ -29,7 +31,8 @@ import { AdminDialogComponent } from './components/Dialog/admin-dialog/admin-dia
     SharedModule,
    ListTableComponent,
    UploadExcelComponent,
-  
+  SearchBoxComponent,
+  ResetfiltersComponent
   ]
 })
 export class ListAdministradorModule { }

@@ -9,10 +9,10 @@ export interface SearchOptions{
     }
     
     export interface FilterBox{
-        searchValue:number;
-        searchData: string;
+        searchValue?:number;
+        searchData?: string;
     }
     export interface DateRange{
-        startDate:string;
-        endDate: string;
+        startDate?:string;
+        endDate?: string;
     }

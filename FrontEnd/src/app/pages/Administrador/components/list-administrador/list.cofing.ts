@@ -1,10 +1,12 @@
 import { BaseResponse } from "../../../../shared/models/BaseApiResponse";
 import { TableColumns } from "../../../../shared/models/list-table-interface";
 import { MenuItems } from "../../../../shared/models/menu-items.interfaces";
+import { SearchOptions } from "../../../../shared/models/SearchOptions.interface";
+import { GenericValidators } from "../../../../shared/validators/generic-validators";
 import { UsuarioResponse } from "../../Models/UsuariosResponse";
 
 
-/*
+
 const searchOptions: SearchOptions[] =[
     {
         label:"Nombre",
@@ -15,25 +17,8 @@ const searchOptions: SearchOptions[] =[
         min_lenght:2,
         icon:"icName"
     },
-    {
-        label:"Email",
-        value:2,
-        placeholder: "Buscar por Email",
-        validation:[GenericValidators.emailValidation],
-        validation_desc:"Solo se permite letras y numeros en esta busqueda",
-        
-        icon:"icMail"
-    },
-    {
-        label:"Numero de Documento",
-        value:3,
-        placeholder: "Buscar por Numero documento",
-        validation:[GenericValidators.document],
-        validation_desc:"Solo se permite documentos validos",
-      
-        icon:"icDescription"
-    }
-]*/
+    
+]
 const menuItems :MenuItems[]=
 
 [
@@ -214,7 +199,7 @@ export const ComponentSettings={
     filters:filters,
     datesFilterArray:['Fecha de creación'],
     filters_dates_active:false,
-    //searchOptions: searchOptions,
+    searchOptions: searchOptions,
     filename: "listado de proveedores"
   //  columnsFilter:tableColumns.map((column)=>{return {label: column.label, property: column.property, type: column.type}})
     

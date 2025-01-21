@@ -1,0 +1,104 @@
+:host {
+    bottom: 0;
+    display: block;
+    width: 100%;
+    z-index: var(--footer-z-index);
+  }
+
+  .footer {
+    background: var(--footer-background, #2c3e50); /* Fondo por defecto */
+    color: var(--footer-color, #ecf0f1); /* Color de texto por defecto */
+    height: auto; /* Permitir que el footer se ajuste al contenido */
+    padding: 10px 20px; /* Padding ajustado */
+    position: relative;
+    bottom:0 ;
+    margin: 0;
+    z-index: var(--footer-z-index);
+    text-align: center;
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+.size
+{
+  place-items: center;
+    width: 90%;
+    height: 20%;
+
+}
+.itemslieal{
+  display: flex;
+justify-content:space-between;
+
+}
+.filtrodt{
+    display: flex;
+    justify-content:space-between;
+margin-bottom: 2%;
+margin-top: 2%;
+}
+span{
+    color: black;  
+    margin-right: 0%; 
+    max-width: 100%;
+    width: 100%;
+}
+.sizecard
+{
+    width: 90%;
+    place-items: center;
+max-height: 450px; 
+    margin-left: 8%;
+    margin-top: 2%; /* Ajusta este valor si causa el espacio */
+    box-shadow: rgba(0, 0, 0, 0.04) 15px 5px 11px;
+    margin-bottom: 0;
+}
+.titulo{
+    place-items: end;
+}
+.items{
+  max-width: 50%;
+  place-items: end;
+  height: 50%;
+}
+
+
+.divtb{
+  place-items: center;
+    margin-top: 0%;
+ 
+     /* Asegura que esté encima de otros elementos */
+  
+}
+span{
+ 
+  place-items: start;
+
+}
+
+.scrolltb{
+    margin-bottom: 6%;
+    overflow-y: auto;
+    max-height: 50%;
+   
+}
+  .footer-text {
+    margin: 0;
+    font-size: 14px;
+    font-weight: normal;
+    color: inherit;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .footer {
+      padding: 10px;
+    }
+
+    .footer-text {
+      font-size: 12px;
+    }
+  }

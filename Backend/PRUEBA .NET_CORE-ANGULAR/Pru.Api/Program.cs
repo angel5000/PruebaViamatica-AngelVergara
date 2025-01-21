@@ -23,6 +23,7 @@ builder.Services.AddScoped<Validaciones>();
 
 builder.Services.AddScoped<IUsuariosApplication, UsuariosApplication>();
 
+builder.Services.AddScoped<ISesiones, Sesiones>();
 builder.Services.AddScoped<IAdministrador, Administrador>();
 builder.Services.AddScoped<IAuth, Auth>();
 /*builder.Services.AddControllers()

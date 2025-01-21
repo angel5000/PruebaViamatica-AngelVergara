@@ -4,6 +4,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatDrawerMode } from '@angular/material/sidenav';
 import { BaseResponse } from '../../../../shared/models/BaseApiResponse';
 import { RowClick } from '../../../../shared/models/RowClick.interface';
+import { FilterBox } from '../../../../shared/models/SearchOptions.interface';
 import { AuthService } from '../../../Auth/Services/auth.service';
 import { UsuarioResponse } from '../../Models/UsuariosResponse';
 import { AdministradorService } from '../../Services/administrador.service';
@@ -15,6 +16,29 @@ import { ComponentSettings } from './list.cofing';
   styleUrl: './list-administrador.component.scss'
 })
 export class ListAdministradorComponent implements OnInit {
+resetFilters() {
+  this.component.filters={ ...this.component.resetFilters};
+       
+  this.setGetInputsProviders(true);
+}
+
+
+
+search(data:FilterBox){
+  if( this.component.filters.textFilter=data.searchData===""){
+    console.log("datos ",this.component.filters.textFilter=data.searchData)
+    this.component.filters={ ...this.component.resetFilters};
+       
+    this.setGetInputsProviders(true);
+  }else{
+    this.component.filters.numFilter=data.searchValue
+    this.component.filters.textFilter=data.searchData
+    this.setGetInputsProviders(true);
+  }
+    
+     
+      }
+
   component:any;
   identifi?:any
 

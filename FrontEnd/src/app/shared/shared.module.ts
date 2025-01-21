@@ -10,13 +10,16 @@ import { SidenavComponent } from '../commons/sidenav/sidenav.component';
 import { MatSortModule } from '@angular/material/sort';
 import { UploadExcelComponent } from './components/Reusables/UploadExcel/upload-excel.component';
 import { ListTableComponent } from './components/Reusables/list-table/list-table.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 
 
 @NgModule({
-  declarations: [],
+  declarations: [  ],
   imports: [
-    CommonModule
+    CommonModule,
+  
     
   ],
   exports: [
@@ -26,6 +29,8 @@ import { ListTableComponent } from './components/Reusables/list-table/list-table
     ReactiveFormsModule,
     IconModule,
     MatInputModule,
+ 
+  
    // ContainerModule,
     //ScrollbarModule,
     //FlexLayoutModule,

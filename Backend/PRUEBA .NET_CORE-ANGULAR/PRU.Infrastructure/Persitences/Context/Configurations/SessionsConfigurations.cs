@@ -15,6 +15,13 @@ namespace PRU.Infrastructure.Persitences.Context.Configurations
         {
             builder.HasKey(e => new { e.idPersona, e.FechaIngreso });
 
+            builder.Property(e => e.SesionExitosa)
+              .HasColumnType("int")
+                .IsRequired();
+            builder.Property(e => e.SesionFallida)
+              .HasColumnType("int")
+                .IsRequired();
+
             builder.HasOne(e => e.Usuario)
                 .WithMany(u => u.Sesiones)
                 .HasForeignKey(e => e.idPersona)

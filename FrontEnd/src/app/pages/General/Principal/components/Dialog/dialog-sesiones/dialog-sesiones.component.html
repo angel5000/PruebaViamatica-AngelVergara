@@ -1,0 +1,55 @@
+
+<div class="overflow-hidden flex-auto titulo ">
+    
+    <button class="block" mat-dialog-close mat-icon-button>
+        <mat-icon><i class="bi bi-x-lg "></i></mat-icon>
+    </button>
+ 
+</div>
+
+<div class="overflow-hidden flex-auto items-start">
+    <h2 class="mr-5 text-2xl ">
+        <strong>
+        <span class="ml-4 block mb-2">Registros!</span>
+        </strong>
+    
+    </h2>
+
+</div>
+
+
+
+
+<div class="card overflow-hidden flex-auto  sizecard">
+
+<div class="filtrodt items-start">
+    <h2 class=" font-bold bg-red-100   text-1xl ">
+    <span class="mr-3 mt-2 block" >Filtros por Fecha:</span>
+</h2>
+
+    <app-filter-date class="ml-4" (rangeDate)="searchDadteRange($event)"[start]="component.filters.startDate" 
+    [end]="component.filters.endDate" ></app-filter-date>
+</div>
+<div class="scrolltb">
+    <label>Total de sesiones fallidas: {{ totalFallidos }}</label>
+<div class=" pt-0 overflow-hidden flex divtb ">
+    <mat-drawer-container class="bg-transparent flex-auto flex">
+        <mat-drawer-content class="p-gutter pt-0 flex-auto flex items-start">
+            <div class="card h-full overflow-hidden flex-auto">
+                <app-list-table (rowClick)="rowClick($event)" [service]="sesionserv" [getInputs]="component.getInputs"
+                    [colums]="component.tableColumns" [sortBy]="component.initialSort"
+                    [getInputs]="component.getInputs" [IDenti]="identifi"
+                    (totalFallidos)="recibirTotalFallidos($event)">
+                    >
+
+                </app-list-table>
+            </div>
+
+        </mat-drawer-content>
+
+      
+    </mat-drawer-container>
+</div>
+</div>
+</div>
+<br><br>
