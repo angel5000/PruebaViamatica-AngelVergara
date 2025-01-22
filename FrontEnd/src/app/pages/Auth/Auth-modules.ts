@@ -11,9 +11,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 
 
-
-
-
 @NgModule({
   declarations: [
     LoginComponent
@@ -23,7 +20,8 @@ import { ToastrModule } from 'ngx-toastr';
     CommonModule,
     RouterModule,
     SharedModule,
-    ToastrModule
+    ToastrModule,
+   
   ]
 })
 export class AuthModule { }

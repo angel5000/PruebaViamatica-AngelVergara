@@ -1,5 +1,12 @@
 // Módulo de clientes
 
+export const SesionEstado = [
+    { value: 'A', label: 'Activos'},
+    { value: 'I', label: 'Inactivos'},
+    { value: '', label: 'Todos'}
+];
+
+
 export const tipoPersonas = [
     { value: 1, label: 'Persona Natural' },
     { value: 2, label: 'Persona Jurídica' }

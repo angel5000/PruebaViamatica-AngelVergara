@@ -1,0 +1,67 @@
+<div class="card overflow-hidden flex-auto  mb-5 sizecard">
+    <h1 class="headline  text-4xl font-bold bg-red-100   text-primary-contrast m-0 flex items-center w-full max-w-xxxl mr-6">
+
+        <span class="ml-4 block mb-5 mt-4">Recuperar Contraseña</span>
+    </h1>
+
+<div>
+
+    <div class="w-full h-full login-fondo">
+        <div class="login">
+        <div class="avatar">
+        
+        </div>
+        <h2>
+            Iniciar sesion
+        
+        </h2>
+        <h3>
+            Bienvenido
+        </h3>
+        
+        
+        
+        <form [formGroup]="form" class="login-form" (ngSubmit)="Recuperar()">
+        <mat-form-field  class="textbox">
+        <mat-label >
+            Email
+        </mat-label>
+        <input matInput formControlName="credenciales">
+      
+        </mat-form-field>
+        
+        <mat-form-field  class="textbox">
+            <mat-label >
+            Contraseña
+            </mat-label>
+            <input matInput formControlName="password" [type]="inputType">
+          
+        <button (click)="toggleVisibility()" mat-icon-button matSuffix matTooltip="{{!visible ? 'Ver contraseña':'Ocultar Contraseña'}}"
+        type="button">
+      
+        </button>
+        
+            </mat-form-field>
+            <button type="submit" color="primary" mat-raised-button>
+        Iniciar Sesion 
+        </button>
+     
+        </form>
+    
+        </div>
+        </div>
+        
+
+    
+
+
+
+</div>
+
+
+
+
+
+
+
+    </div>

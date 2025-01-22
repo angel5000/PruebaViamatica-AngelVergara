@@ -26,6 +26,7 @@ builder.Services.AddScoped<IUsuariosApplication, UsuariosApplication>();
 builder.Services.AddScoped<ISesiones, Sesiones>();
 builder.Services.AddScoped<IAdministrador, Administrador>();
 builder.Services.AddScoped<IAuth, Auth>();
+builder.Services.AddScoped<IDashboardApplication, DashboardApplication>();
 /*builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {

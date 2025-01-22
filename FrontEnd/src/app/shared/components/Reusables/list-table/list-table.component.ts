@@ -40,7 +40,7 @@ export class ListTableComponent <T> implements OnInit, AfterViewInit, OnChanges 
   @Input() service?: DefaultService;
   @Input() colums?: TableColumns<T>[];
   @Input() getInputs?: any;
-  @Input() Numrecords?: number=10;
+  @Input() Numrecords?: number=5;
   @Input() IDenti?: number=0;
   @Input() sortBy?: string;
   @Input() sortDir: string = "asc";
@@ -55,7 +55,7 @@ export class ListTableComponent <T> implements OnInit, AfterViewInit, OnChanges 
   visibleColumns: Array<keyof T | string> ;
   visibleFooter: Array<keyof T | string| object> ;
   paginatorOptions={
-    pageSizeOptions:[this.Numrecords || 3, 20, 50],
+    pageSizeOptions:[this.Numrecords || 5,10, 20, 50],
     pageSize:this.Numrecords,
     pageLenght: 0,
 

@@ -129,7 +129,37 @@ BEGIN
     DECLARE @RolId INT;
 
     -- Verificar si el usuario existe y obtener datos iniciales
-   SELECT 
+  
+
+    IF @Status = 'Bloqueado'
+    BEGIN
+        SET @Result = -1; -- Usuario bloqueado
+		  SET @Rol =0;
+        ROLLBACK; -- Deshacer los cambios
+        RETURN;
+    END
+	 IF @Status = 'Inactivo'
+    BEGIN
+        SET @Result = -2; -- Usuario bloqueado
+		  SET @Rol =0;
+		  	set @Status = null;
+  set  @UsuarioId = 0;
+  set  @UserName = null;
+ set   @Mail = null;
+   set @Nombres = null;
+  set  @Apellidos =null;
+  set  @Identificacion = null;
+ set   @FechaNacimiento = null;
+   set @FechaIngreso = null;
+  set  @FechaCierre = null;
+        ROLLBACK; -- Deshacer los cambios
+        RETURN;
+    END
+
+
+		 IF @Status = 'Activo'
+		 begin
+select
     @Status = u.Status,
     @UsuarioId = u.IdUsuario,
     @UserName = u.UserName,
@@ -145,22 +175,17 @@ INNER JOIN Personas p ON u.Persona_IdPersona2 = p.idPersona
 LEFT JOIN Sessions s ON u.IdUsuario = s.idPersona
 WHERE u.UserName = @Login OR u.Mail = @Login;
 
-    IF @Status = 'Bloqueado'
-    BEGIN
-        SET @Result = -1; -- Usuario bloqueado
-		  SET @Rol =0;
-        ROLLBACK; -- Deshacer los cambios
-        RETURN;
-    END
+
 
     -- Verificar credenciales
     IF EXISTS (
         SELECT 1
         FROM Usuarios
         WHERE (UserName = @Login OR Mail = @Login)
-          AND Password = @Password
+          AND Password = @Password  AND Status ='Activo'
     )
     BEGIN
+	 
         -- Verificar si ya tiene una sesión activa
         IF EXISTS (
             SELECT 1
@@ -175,14 +200,13 @@ WHERE u.UserName = @Login OR u.Mail = @Login;
         END
 
         -- Actualizar SesionActive
-        UPDATE Usuarios
+      	  UPDATE Usuarios
         SET SesionActive = 'A'
         WHERE UserName = @Login OR Mail = @Login;
-
-        -- Insertar nueva sesión
-        INSERT INTO Sessions (FechaIngreso, idPersona)
+		 INSERT INTO Sessions (FechaIngreso, idPersona)
         VALUES (GETDATE(), @UsuarioId);
-
+        -- Insertar nueva sesión
+      
         -- Actualizar la última sesión como exitosa
         UPDATE Sessions
         SET SesionExitosa = 1
@@ -201,10 +225,13 @@ WHERE u.UserName = @Login OR u.Mail = @Login;
 
         SET @Rol = @RolId;
         SET @Result = 1; -- Inicio de sesión exitoso
+	
+
+		
 
         COMMIT; -- Confirmar los cambios
     END
-    ELSE
+	ELSE
     BEGIN
         -- Incrementar intentos fallidos
         UPDATE Usuarios
@@ -230,8 +257,201 @@ WHERE u.UserName = @Login OR u.Mail = @Login;
         SET @Result = 0; -- Usuario o contraseña incorrectos
         ROLLBACK; -- Deshacer los cambios
         RETURN;
+	
+
+
+	end
+
+    	
     END
 END;
+
+
+
+create PROCEDURE InicioSesion  
+    @Login NVARCHAR(50), 
+    @Password NVARCHAR(50),
+    @Result INT OUTPUT,
+    @Rol INT OUTPUT, 
+    @UsuarioId INT OUTPUT, 
+    @UserName NVARCHAR(50) OUTPUT, 
+    @Mail NVARCHAR(50) OUTPUT, 
+    @Nombres NVARCHAR(100) OUTPUT, 
+    @Apellidos NVARCHAR(100) OUTPUT, 
+    @Identificacion NVARCHAR(50) OUTPUT, 
+    @FechaNacimiento DATE OUTPUT, 
+    @FechaCierre DATETIME OUTPUT,
+    @FechaIngreso DATETIME OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION; -- Inicia la transacción
+
+        DECLARE @IntentosFallidos INT;
+        DECLARE @Status CHAR(20);
+        DECLARE @RolId INT;
+
+        -- Verificar estado del usuario (ejemplo simplificado para claridad)
+        SELECT @Status = Status, @UsuarioId = IdUsuario
+        FROM Usuarios
+        WHERE UserName = @Login OR Mail = @Login;
+
+        IF @Status = 'Bloqueado'
+        BEGIN
+            SET @Result = -1; -- Usuario bloqueado
+            SET @Rol = 0;
+            ROLLBACK TRANSACTION; -- Deshacer los cambios
+            RETURN;
+        END
+        ELSE IF @Status = 'Inactivo'
+        BEGIN
+            SET @Result = -2; -- Usuario inactivo
+            SET @Rol = 0;
+            -- Limpiar los valores de salida
+            SET @UsuarioId = 0;
+            SET @UserName = NULL;
+            SET @Mail = NULL;
+            SET @Nombres = NULL;
+            SET @Apellidos = NULL;
+            SET @Identificacion = NULL;
+            SET @FechaNacimiento = NULL;
+            SET @FechaIngreso = NULL;
+            SET @FechaCierre = NULL;
+            ROLLBACK TRANSACTION; -- Deshacer los cambios
+            RETURN;
+        END
+
+        -- Verificar credenciales y estado activo
+        IF EXISTS (
+            SELECT 1
+            FROM Usuarios
+            WHERE (UserName = @Login OR Mail = @Login)
+              AND Password = @Password
+              AND Status = 'Activo'
+        )
+        BEGIN
+		select
+    @Status = u.Status,
+    @UsuarioId = u.IdUsuario,
+    @UserName = u.UserName,
+    @Mail = u.Mail,
+    @Nombres = p.Nombres,
+    @Apellidos = p.Apellidos,
+    @Identificacion = p.Identificacion,
+    @FechaNacimiento = p.FechaNacimiento,
+    @FechaIngreso = (SELECT MAX(s.FechaIngreso) FROM Sessions s WHERE s.idPersona = u.IdUsuario),
+    @FechaCierre = s.FechaCierre
+FROM Usuarios u
+INNER JOIN Personas p ON u.Persona_IdPersona2 = p.idPersona
+LEFT JOIN Sessions s ON u.IdUsuario = s.idPersona
+WHERE u.UserName = @Login OR u.Mail = @Login;
+
+
+
+            -- Insertar nueva sesión
+            INSERT INTO Sessions (FechaIngreso, idPersona)
+            VALUES (GETDATE(), @UsuarioId);
+
+            -- Verificar si ya tiene una sesión activa
+            IF EXISTS (
+                SELECT 1
+                FROM Usuarios
+                WHERE (UserName = @Login OR Mail = @Login)
+                  AND SesionActive = 'A'
+            )
+            BEGIN
+                SET @Result = 2; -- Sesión ya activa
+                ROLLBACK TRANSACTION; -- Deshacer los cambios
+                RETURN;
+            END
+
+            -- Actualizar estado de sesión
+            UPDATE Usuarios
+            SET SesionActive = 'A'
+            WHERE UserName = @Login OR Mail = @Login;
+
+            -- Registrar sesión exitosa
+            UPDATE Sessions
+            SET SesionExitosa = 1
+            WHERE idPersona = @UsuarioId
+              AND FechaIngreso = (
+                  SELECT MAX(FechaIngreso)
+                  FROM Sessions
+                  WHERE idPersona = @UsuarioId
+              );
+
+            -- Obtener rol del usuario
+            SELECT TOP 1 @RolId = Rol_idRol
+            FROM RolUsuarios
+            WHERE Usuarios_idUsuarios = @UsuarioId;
+
+            SET @Rol = @RolId;
+            SET @Result = 1; -- Inicio de sesión exitoso
+
+            COMMIT TRANSACTION; -- Confirmar los cambios
+        END
+        ELSE
+        BEGIN
+            -- Incrementar intentos fallidos
+            UPDATE Usuarios
+            SET IntentosFallidos = IntentosFallidos + 1
+            WHERE UserName = @Login OR Mail = @Login;
+
+            -- Registrar sesión fallida
+            INSERT INTO Sessions (FechaIngreso, idPersona)
+            VALUES (GETDATE(), @UsuarioId);
+
+            UPDATE Sessions
+            SET SesionFallida = SesionFallida + 1
+            WHERE idPersona = @UsuarioId
+              AND FechaIngreso = (
+                  SELECT MAX(FechaIngreso)
+                  FROM Sessions
+                  WHERE idPersona = @UsuarioId
+              );
+
+            SET @Result = 0; -- Credenciales incorrectas
+            ROLLBACK TRANSACTION; -- Deshacer los cambios
+            RETURN;
+        END
+    END TRY
+    BEGIN CATCH
+        -- Manejar errores y asegurarse de que la transacción sea cerrada
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+
+        -- Opcional: registrar detalles del error
+        THROW;
+    END CATCH
+END;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -251,8 +471,8 @@ DECLARE @FechaIngreso DATETIME;
 DECLARE @FechaCierre DATETIME;
 
 EXEC InicioSesion 
-    @Login = 'angelvergarap', 
-    @Password = 'C@rllopez2024', 
+    @Login = 'juanperez90', 
+    @Password = 'P@ssw0rd123', 
     @Rol = @Rol OUTPUT, 
     @Result = @Resultado OUTPUT, 
     @UsuarioId = @id OUTPUT,
@@ -282,11 +502,12 @@ SELECT
 select*from Usuarios
 select*from Sessions
 EXEC CerrarSesion 
-    @Login = 'angelvergarap'
+    @Login = 'juanperez90'
   
+  update Usuarios set Status='Activo'
 create PROCEDURE TodasSesiones
       @IdPersona NVARCHAR(50)
-
+	  commit
 	
 AS
 BEGIN
@@ -742,27 +963,240 @@ EXEC ActualizarUsuarioYPersona
     @StatusPersona = 'Activo';
 
 
-create PROCEDURE ConsultarUsuarioPorId
-    @idUsuario INT
+create PROCEDURE ConsultarEstadosUsuarios
+    @Filtro INT = NULL, -- 1: Última sesión, 2: Todas las sesiones, 3: Omitir fechas
+    @SesionActiva CHAR(1) = NULL, -- Filtro opcional para sesiones activas ('A' o NULL para no filtrar)
+    @SesionFallida INT = NULL, -- Filtro opcional para sesiones fallidas (1 = fallidas, 0 = exitosas)
+    @Estado NVARCHAR(50) = NULL, -- Filtro opcional para estados (Activo, Inactivo, Bloqueado)
+    @idUsuario INT, -- ID del usuario que realiza la consulta
+    @NumPage INT = 1, -- Número de página
+    @NumRecordsPage INT = 10, -- Número de registros por página
+    @Sort NVARCHAR(50) = 'idUsuario', -- Columna para ordenar
+    @Order NVARCHAR(10) = 'asc', -- Dirección de orden ('asc' o 'desc')
+    @TotalRecords INT OUTPUT -- Total de registros
 AS
 BEGIN
-    SET NOCOUNT ON;
+    -- Configurar el nivel de aislamiento para evitar bloqueos en tablas grandes
+    SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
-    SELECT 
-        u.UserName, 
-        u.SesionActive, 
-        u.Status , 
-		p.idPersona,
-        p.Nombres, 
-        p.Apellidos, 
-        p.FechaNacimiento, 
-        p.Status
-    FROM 
-        Usuarios u
-    INNER JOIN 
-        Personas p ON u.Persona_IdPersona2= p.IdPersona
-    WHERE 
-        u.IdUsuario = @idUsuario;
-END
+    -- Validar si el usuario tiene rol 1
+    IF NOT EXISTS (
+        SELECT 1
+        FROM [PRUEBAUSUARIOS].[dbo].[RolUsuarios] ru
+        WHERE ru.Usuarios_idUsuarios = @idUsuario AND ru.Rol_idRol = 1
+    )
+    BEGIN
+        -- Si no tiene rol 1, devolver -1
+        SELECT -1 AS Resultado;
+        RETURN;
+    END
 
-EXEC ConsultarUsuarioPorId @idUsuario = 1;
+    -- Declarar variables para cálculos
+    DECLARE @Offset INT = (@NumPage - 1) * @NumRecordsPage;
+
+    -- Filtro 1: Consultar última sesión
+    IF @Filtro = 1
+    BEGIN
+        WITH UltimaSesion AS (
+            SELECT 
+                s.idPersona,
+                s.FechaIngreso,
+                s.FechaCierre,
+                s.SesionExitosa,
+                s.SesionFallida,
+                ROW_NUMBER() OVER (PARTITION BY s.idPersona ORDER BY s.FechaIngreso DESC) AS RowNum
+            FROM 
+                [PRUEBAUSUARIOS].[dbo].[Sessions] s
+        )
+		  SELECT 
+            @TotalRecords = COUNT(*)
+        FROM 
+            [PRUEBAUSUARIOS].[dbo].[Sessions] s
+        INNER JOIN 
+            [PRUEBAUSUARIOS].[dbo].[Usuarios] u
+        ON 
+            u.idUsuario = s.idPersona
+        WHERE 
+            s.RowNum = 1
+            AND (@SesionActiva IS NULL OR u.SesionActive = @SesionActiva)
+            AND (@SesionFallida IS NULL OR s.SesionFallida = @SesionFallida)
+            AND (@Estado IS NULL OR u.Status = @Estado);
+
+        SELECT 
+            u.idUsuario,
+            u.UserName,
+            u.SesionActive,
+            u.Status,
+            u.IntentosFallidos,
+            us.FechaIngreso,
+            us.FechaCierre,
+            us.SesionExitosa,
+            us.SesionFallida
+        FROM 
+            [PRUEBAUSUARIOS].[dbo].[Usuarios] u
+        INNER JOIN 
+            UltimaSesion us
+        ON 
+            u.idUsuario = us.idPersona
+        WHERE 
+            us.RowNum = 1 -- Solo la última sesión
+            AND (@SesionActiva IS NULL OR u.SesionActive = @SesionActiva)
+            AND (@SesionFallida IS NULL OR us.SesionFallida = @SesionFallida)
+            AND (@Estado IS NULL OR u.Status = @Estado)
+        ORDER BY 
+            CASE WHEN @Order = 'asc' THEN 
+                CASE WHEN @Sort = 'idUsuario' THEN u.idUsuario END
+            END ASC,
+            CASE WHEN @Order = 'desc' THEN 
+                CASE WHEN @Sort = 'idUsuario' THEN u.idUsuario END
+            END DESC
+        OFFSET @Offset ROWS FETCH NEXT @NumRecordsPage ROWS ONLY;
+    END
+
+    -- Filtro 2: Consultar todas las sesiones
+    ELSE IF @Filtro = 2
+    BEGIN
+	 SELECT 
+            @TotalRecords = COUNT(*)
+        FROM 
+            [PRUEBAUSUARIOS].[dbo].[Usuarios] u
+        LEFT JOIN 
+            [PRUEBAUSUARIOS].[dbo].[Sessions] s
+        ON 
+            u.idUsuario = s.idPersona
+        WHERE 
+            (@SesionActiva IS NULL OR u.SesionActive = @SesionActiva)
+            AND (@SesionFallida IS NULL OR s.SesionFallida = @SesionFallida)
+            AND (@Estado IS NULL OR u.Status = @Estado);
+        SELECT 
+           
+
+            u.idUsuario,
+            u.UserName,
+            u.SesionActive,
+            u.Status,
+            CASE 
+                WHEN s.FechaIngreso IS NULL AND s.SesionExitosa IS NULL AND s.SesionFallida IS NULL THEN 'Sin sesión activa'
+                ELSE CAST(ISNULL(s.FechaIngreso, '') AS NVARCHAR(50))
+            END AS FechaIngreso,
+            CASE 
+                WHEN s.FechaIngreso IS NULL AND s.SesionExitosa IS NULL AND s.SesionFallida IS NULL THEN 'Sin sesión activa'
+                ELSE CAST(ISNULL(s.SesionExitosa, '') AS NVARCHAR(50))
+            END AS SesionExitosa,
+            CASE 
+                WHEN s.FechaIngreso IS NULL AND s.SesionExitosa IS NULL AND s.SesionFallida IS NULL THEN 'Sin sesión activa'
+                ELSE CAST(ISNULL(s.SesionFallida, '') AS NVARCHAR(50))
+            END AS SesionFallida
+        FROM 
+            [PRUEBAUSUARIOS].[dbo].[Usuarios] u
+        LEFT JOIN 
+            [PRUEBAUSUARIOS].[dbo].[Sessions] s
+        ON 
+            u.idUsuario = s.idPersona
+        WHERE 
+            (@SesionActiva IS NULL OR u.SesionActive = @SesionActiva)
+            AND (@SesionFallida IS NULL OR s.SesionFallida = @SesionFallida)
+            AND (@Estado IS NULL OR u.Status = @Estado)
+        ORDER BY 
+            CASE WHEN @Order = 'asc' THEN 
+                CASE WHEN @Sort = 'idUsuario' THEN u.idUsuario END
+            END ASC,
+            CASE WHEN @Order = 'desc' THEN 
+                CASE WHEN @Sort = 'idUsuario' THEN u.idUsuario END
+            END DESC
+        OFFSET @Offset ROWS FETCH NEXT @NumRecordsPage ROWS ONLY;
+    END
+
+    -- Filtro 3: Consultar sin fechas
+    ELSE IF @Filtro = 3
+    BEGIN
+	 SELECT 
+            @TotalRecords = COUNT(*)
+        FROM 
+            [PRUEBAUSUARIOS].[dbo].[Usuarios] u
+        WHERE 
+            (@SesionActiva IS NULL OR u.SesionActive = @SesionActiva)
+            AND (@Estado IS NULL OR u.Status = @Estado);
+        SELECT 
+            COUNT(*) OVER() AS TotalRecords,
+            u.idUsuario,
+            u.UserName,
+            u.SesionActive,
+            u.Status,
+            u.IntentosFallidos
+        FROM 
+            [PRUEBAUSUARIOS].[dbo].[Usuarios] u
+        WHERE 
+            (@SesionActiva IS NULL OR u.SesionActive = @SesionActiva)
+            AND (@Estado IS NULL OR u.Status = @Estado)
+        ORDER BY 
+            CASE WHEN @Order = 'asc' THEN 
+                CASE WHEN @Sort = 'idUsuario' THEN u.idUsuario END
+            END ASC,
+            CASE WHEN @Order = 'desc' THEN 
+                CASE WHEN @Sort = 'idUsuario' THEN u.idUsuario END
+            END DESC
+        OFFSET @Offset ROWS FETCH NEXT @NumRecordsPage ROWS ONLY;
+    END
+END;
+
+
+DECLARE @Total INT;
+
+EXEC ConsultarEstadosUsuarios
+@idUsuario=1,
+@Filtro=2,
+@TotalRecords = @Total OUTPUT
+select @total as totalrecors
+
+@SesionActiva = 'A';
+@Estado='Activo',
+
+select*from Usuarios
+select*from Sessions
+
+DECLARE @Resultado INT;
+DECLARE @Rol INT;
+DECLARE @id INT;
+DECLARE @UserName NVARCHAR(50);
+DECLARE @Mail NVARCHAR(50);
+DECLARE @Nombres NVARCHAR(100);
+DECLARE @Apellidos NVARCHAR(100);
+DECLARE @Identificacion NVARCHAR(50);
+DECLARE @FechaNacimiento DATE;
+DECLARE @FechaIngreso DATETIME;
+DECLARE @FechaCierre DATETIME;
+
+EXEC InicioSesion 
+    @Login = 'angelvergarap', 
+    @Password = 'C@rllopez2024', 
+    @Rol = @Rol OUTPUT, 
+    @Result = @Resultado OUTPUT, 
+    @UsuarioId = @id OUTPUT,
+    @UserName = @UserName OUTPUT,
+    @Mail = @Mail OUTPUT,
+    @Nombres = @Nombres OUTPUT,
+    @Apellidos = @Apellidos OUTPUT,
+    @Identificacion = @Identificacion OUTPUT,
+    @FechaNacimiento = @FechaNacimiento OUTPUT,
+	@FechaCierre=@FechaCierre OUTPUT,
+	  @FechaIngreso = @FechaIngreso OUTPUT;
+
+-- Mostrar los resultados
+SELECT 
+    @Resultado AS Resultado,
+    @Rol AS Rol,
+    @id AS UsuarioId,
+    @UserName AS UserName,
+    @Mail AS Mail,
+    @Nombres AS Nombres,
+    @Apellidos AS Apellidos,
+    @Identificacion AS Identificacion,
+    @FechaNacimiento AS FechaNacimiento,
+	@FechaIngreso AS FechaIngreso,
+	@FechaCierre as FechaCierre;
+
+select*from Usuarios
+select*from Sessions
+EXEC CerrarSesion 
+    @Login = 'angelvergarap'

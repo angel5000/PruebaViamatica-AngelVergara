@@ -9,6 +9,8 @@ export const endpoint={
     USUARIOS_REGISTER:'Admin/register',
     USUARIOBYID: 'Admin/',
     SESIONES: 'Sesions/ListaSesiones',
+    DASHBOARD: 'Dashboard/Dashboard',
+    DASHBOARDCOUNT: 'Dashboard/DashboardCount',
     
 }
     export const httpOptions ={

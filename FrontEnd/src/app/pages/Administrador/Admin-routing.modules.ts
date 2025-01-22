@@ -15,4 +15,4 @@ component: ListAdministradorComponent
   imports: [RouterModule.forChild(routes)],
   exports: []
 })
-export class AuthRoutingModule { }
+export class AdminRoutingModule { }

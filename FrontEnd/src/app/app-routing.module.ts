@@ -2,13 +2,16 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { LayoutsComponent } from './commons/layouts/layouts.component';
 import { SidenavComponent } from './commons/sidenav/sidenav.component';
+import { DashboardComponent } from './pages/Administrador/components/Dashboard/Components/dashboard/dashboard.component';
 import { ListAdministradorComponent } from './pages/Administrador/components/list-administrador/list-administrador.component';
 import { LoginComponent } from './pages/Auth/components/login/login.component';
+
 import { BienvenidaComponent } from './pages/General/Principal/components/bienvenida/bienvenida.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { RecuperarcontrasenaComponent } from './pages/RecuperarContrasena/recuperarcontrasena/recuperarcontrasena.component';
 import { AuthGuard } from './shared/components/guardas/Authguards';
 
-const routes: Routes = [
+ const routes: Routes = [
   {
     path: '',
     redirectTo: 'bienvenido', // Redirige al login
@@ -28,14 +31,30 @@ const routes: Routes = [
       path: 'bienvenido',
       component: BienvenidaComponent,
       loadChildren: () => import('./pages/General/Principal/components/bienvenida-modules').then((m) => m.BienvenidaModule)
-   //  ,canActivate: [AuthGuard]
+    // ,canActivate: [AuthGuard]
+    },
+    {
+    
+      path: 'dashboard',
+      component: DashboardComponent,
+      loadChildren: () => import('./pages/Administrador/components/Dashboard/dashboard-modules').then((m) => m.DashboardModule)
+      ,canActivate: [AuthGuard]
+    },
+   
+  {
+    
+      path: 'recuperar',
+      component:RecuperarcontrasenaComponent,
+      loadChildren: () => import('./pages/RecuperarContrasena/Recuperamodel').then((m) => m.RecuperaContraModule)
     },
     {
     
       path: 'login',
-      component: LoginComponent,
+    component:LoginComponent,
       loadChildren: () => import('./pages/Auth/Auth-modules').then((m) => m.AuthModule)
     },
+  
+    
    
     { path: '**', component: NotFoundComponent },
    

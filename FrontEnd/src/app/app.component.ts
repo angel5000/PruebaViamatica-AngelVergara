@@ -4,7 +4,7 @@ import { Platform } from '@angular/cdk/platform';
 
 
 import icDashboard from '@iconify/icons-ic/twotone-dashboard';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
@@ -28,7 +28,7 @@ title=""
   mode = new FormControl('push' as MatDrawerMode);
   items: Navigationitem[] = [
     { icons:'bi bi-house fs-4',route: '/bienvenido', label: 'Principal' },
-    { icons:'bi bi-speedometer',route: '/admin-dashboard', label: 'Dashboard',requiredRole: [1] },
+    { icons:'bi bi-speedometer',route: '/dashboard', label: 'Dashboard',requiredRole: [1] },
     { icons:'bi bi-people',route: '/administrador', label: 'Manejo de usuarios',requiredRole: [1] },
     { icons:'bi bi-person',route: '/datos', label: 'Usuario',requiredRole: [2]},
 
@@ -40,10 +40,16 @@ title=""
   }
   ngOnInit(): void {
     
-    this.router.events.subscribe(() => {
-      // Oculta el sidenav en la página de login
-      this.showSidenav = this.router.url !== '/login';
+    const hiddenRoutes = ['/login', '/recuperar', '/notfound'];
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        // Oculta el sidenav si la URL está en las rutas ocultas
+        this.showSidenav = !hiddenRoutes.includes(this.router.url);
+      }
     });
+
+
     const userRole = this.authService.getUserRole()?? 0; // Método que devuelve el rol del usuario
     if(this.NombreUsuario===''||this.NombreUsuario!==''){
       const userName = this.authService.getNombre()?? ''.replace(/"/g, ''); 

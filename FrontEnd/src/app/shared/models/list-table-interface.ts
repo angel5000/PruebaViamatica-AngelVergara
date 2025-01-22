@@ -7,7 +7,7 @@ export interface TableColumns<T>{
     cssSubProperty?: string[];
     type: "text" | "datetime" | "time" | "icon"
      |"button" | "badge"|"image"|"currency"|"textUppercase"|"number"|"quantityPurcharse"
-     |"unitpurcharseprice"|"totalamount";
+     |"unitpurcharseprice"|"totalamount"|"badge2"|"badge3"|"badge4"|"badge5";
     visible: boolean;
     sort: boolean;
     sortProperty?: string;
