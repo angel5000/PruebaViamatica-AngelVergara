@@ -10,11 +10,14 @@ import { UploadExcelService } from '../../../services/UploadExcel-Services';
 })
 export class UploadExcelComponent {
   selectedFile: File | null = null;
-
+  fileSelected: boolean = false;
   constructor(private fileUploadService: UploadExcelService) {}
   onFileChange(event: any): void {
     if (event.target.files.length > 0) {
       this.selectedFile = event.target.files[0];
+      this.fileSelected = true;
+    }else {
+      this.fileSelected = false; 
     }
   }
   upload() {

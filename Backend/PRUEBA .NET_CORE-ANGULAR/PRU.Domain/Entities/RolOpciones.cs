@@ -12,5 +12,7 @@ namespace PRU.Domain.Entities
         public int idOpciones { get; set; }
 
         public virtual ICollection<Rol_rol_Opciones> Rol_rol_Opciones { get; set; } = new List<Rol_rol_Opciones>();
-    }
+        public virtual ICollection<AsignaRoles> AsignaRoles { get; set; } = new List<AsignaRoles>();
+    
+}
 }

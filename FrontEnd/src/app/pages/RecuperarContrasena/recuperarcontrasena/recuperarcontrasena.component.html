@@ -6,44 +6,94 @@
 
 <div>
 
-    <div class="w-full h-full login-fondo">
+    <div class="w-10 h-full login-fondo">
         <div class="login">
         <div class="avatar">
         
         </div>
         <h2>
-            Iniciar sesion
-        
+    SISTEMA RECUPERACION DE CONTRASEÑA
         </h2>
-        <h3>
-            Bienvenido
-        </h3>
+       
         
         
         
         <form [formGroup]="form" class="login-form" (ngSubmit)="Recuperar()">
-        <mat-form-field  class="textbox">
+            <mat-form-field  class="textbox" matTooltip="Numero de cedula">
+                <mat-label >
+                    Identificacion
+                </mat-label>
+                <input matInput formControlName="identificacion">
+                <mat-error *ngIf="form?.get('identificacion')?.hasError('required')">
+                    El campo Identificacion es requerido
+                </mat-error>
+                <mat-error *ngIf="form?.get('identificacion')?.hasError('identificacionInvalida')">
+                    C.I.de 10 dígitos y no contener 4 caracteres consecutivos iguales.
+                  </mat-error>
+                </mat-form-field>
+                
+
+
+            <mat-form-field  class="textbox" >
         <mat-label >
-            Email
+            Correo Electronico
         </mat-label>
-        <input matInput formControlName="credenciales">
-      
+        <input matInput formControlName="email">
+        <mat-error *ngIf="form?.get('email')?.hasError('required')">
+            El correo es requerido
+           </mat-error>
+        <mat-error *ngIf="form?.get('email')?.hasError('emailValidation')">
+           Verifique su direccion de correo
+          </mat-error>
         </mat-form-field>
         
+
+
         <mat-form-field  class="textbox">
             <mat-label >
             Contraseña
             </mat-label>
-            <input matInput formControlName="password" [type]="inputType">
+            <input matInput formControlName="nuevaContrasena" [type]="inputType">
           
         <button (click)="toggleVisibility()" mat-icon-button matSuffix matTooltip="{{!visible ? 'Ver contraseña':'Ocultar Contraseña'}}"
         type="button">
       
         </button>
-        
+        <mat-error *ngIf="form.get('nuevaContrasena')?.hasError('required')">
+            La contraseña es obligatoria
+          </mat-error>
+    
+          <mat-error *ngIf="form?.get('nuevaContrasena')?.hasError('invalidPassword')">
+            La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial.
+          </mat-error>
+
             </mat-form-field>
+
+
+            <mat-form-field  class="textbox">
+                <mat-label >
+                Confirmar Contraseña
+                </mat-label>
+                <input matInput formControlName="confirNuevaContrasena" [type]="inputType">
+              
+            <button (click)="toggleVisibility()" mat-icon-button matSuffix matTooltip="{{!visible ? 'Ver contraseña':'Ocultar Contraseña'}}"
+            type="button">
+          
+            </button>
+          
+            <mat-error *ngIf="form.hasError('passwordMismatch')">
+                Las contraseñas no coinciden
+              </mat-error>
+                </mat-form-field>
+
+
+
+
+
+
+<br>
             <button type="submit" color="primary" mat-raised-button>
-        Iniciar Sesion 
+        Cambiar contraseña 
         </button>
      
         </form>

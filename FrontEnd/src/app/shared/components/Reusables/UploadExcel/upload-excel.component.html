@@ -3,11 +3,11 @@
   
 <div class="flex justify-between sizediv">
    
-    <input class="form-control size" type="file" id="formFile" (change)="onFileChange($event)">
+    <input class="form-control size" type="file" id="formFile" accept=".xls, .xlsx" (change)="onFileChange($event)">
    
     <button matTooltip="Subir Archivo Excel" type="button"
     
-    class="btn btn-success mx-5 sizebt"(click)="upload()">
+    class="btn btn-success mx-5 sizebt"(click)="upload()"  [disabled]="!fileSelected">
     
     Subir Archivo
  <i class="bi bi-file-earmark-arrow-up-fill"></i>

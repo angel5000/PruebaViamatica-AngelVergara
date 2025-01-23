@@ -23,6 +23,24 @@ namespace PRU.Infrastructure.Persitences.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("PRU.Domain.Entities.AsignaRoles", b =>
+                {
+                    b.Property<int>("IdUsuario")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Opcion_IdOpcion")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.HasKey("IdUsuario", "Opcion_IdOpcion");
+
+                    b.HasIndex("Opcion_IdOpcion");
+
+                    b.ToTable("AsignaRoles");
+                });
+
             modelBuilder.Entity("PRU.Domain.Entities.Persona", b =>
                 {
                     b.Property<int>("idPersona")
@@ -191,6 +209,25 @@ namespace PRU.Infrastructure.Persitences.Migrations
                     b.ToTable("Usuarios");
                 });
 
+            modelBuilder.Entity("PRU.Domain.Entities.AsignaRoles", b =>
+                {
+                    b.HasOne("PRU.Domain.Entities.Usuarios", "Usuario")
+                        .WithMany("AsignaRoles")
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PRU.Domain.Entities.RolOpciones", "Opcion")
+                        .WithMany("AsignaRoles")
+                        .HasForeignKey("Opcion_IdOpcion")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Opcion");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("PRU.Domain.Entities.Rol_Usuarios", b =>
                 {
                     b.HasOne("PRU.Domain.Entities.Rol", "Rol")
@@ -263,11 +300,15 @@ namespace PRU.Infrastructure.Persitences.Migrations
 
             modelBuilder.Entity("PRU.Domain.Entities.RolOpciones", b =>
                 {
+                    b.Navigation("AsignaRoles");
+
                     b.Navigation("Rol_rol_Opciones");
                 });
 
             modelBuilder.Entity("PRU.Domain.Entities.Usuarios", b =>
                 {
+                    b.Navigation("AsignaRoles");
+
                     b.Navigation("RolUsuarios");
 
                     b.Navigation("Sesiones");

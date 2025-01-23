@@ -24,6 +24,7 @@ namespace PRU.Domain.Entities
         public virtual ICollection<Rol_Usuarios> RolUsuarios { get; set; } = new List<Rol_Usuarios>();
         public virtual Persona Persona { get; set; } = null!;
         public virtual ICollection<Sessions> Sesiones { get; set; } = new List<Sessions>();
+        public virtual ICollection<AsignaRoles> AsignaRoles { get; set; } = new List<AsignaRoles>();
 
     }
 }

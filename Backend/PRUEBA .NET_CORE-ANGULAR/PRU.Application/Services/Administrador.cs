@@ -89,6 +89,74 @@ namespace PRU.Application.Services
 
         }
 
+        public async Task<BaseResponse<bool>> EliminarUsuario(int id, int idAdmin)
+        {
+            var response = new BaseResponse<bool>();
+            var resultado = 0;
+            try
+            {
+                using var connection = (SqlConnection)_context.Database.GetDbConnection(); // Obtener la conexión del DbContext.
+
+                try
+                {
+                    await connection.OpenAsync(); // Abrir la conexión asíncronamente si no está abierta.
+
+                    using (var command = new SqlCommand("EliminarUsuario", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        // Parámetros del procedimiento almacenado
+                        command.Parameters.AddWithValue("@IdAdmin", idAdmin);
+                        command.Parameters.AddWithValue("@UsuarioId", id);
+                        var paramResultado = command.CreateParameter();
+                        paramResultado.ParameterName = "@Resultado";
+                        paramResultado.DbType = DbType.Int32; // Especificar que el tipo es entero
+                        paramResultado.Direction = ParameterDirection.Output; // Definir como parámetro de salida
+                        command.Parameters.Add(paramResultado);
+                        await command.ExecuteNonQueryAsync();
+                        resultado = (int)paramResultado.Value;
+                       
+                        if (resultado==1)
+                        {
+                            
+                                response.IsSucces = true;
+                                response.Message = "EXITO AL ELIMINAR USUARIO";
+                            response.AdditionalData = resultado;
+
+                        }
+                        if (resultado == -1)
+                        {
+                            response.IsSucces = false;
+                            response.Message = "OCURRIO UN ERROR AL ELIMINAR AL USUARIO, VERIFIQUE EL ID DEL USUARIO, " +
+                                "O QUIZA NO TENGA PERMISOS PARA REALIZAR ESTA ACCION";
+                          
+                            response.AdditionalData = resultado;
+                        }
+
+                        
+                    }
+
+
+
+                }
+                catch (SqlException ex)
+                {
+                    response.IsSucces = false;
+                    response.Message = $"Error inesperado: {ex.Message}";
+                    response.Data = false;
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+                return response;
+            
+        }
+
+
+
+
 
         public async Task<BaseResponse<IEnumerable<UsuariosAdmResponseDto>>> ListaUsuarios(int usuarioId, BaseFilterRequest filters)
         {
@@ -194,7 +262,7 @@ namespace PRU.Application.Services
                         {
                             idUsuario = Convert.ToInt32(reader["idUsuario"]),
                             UserName = reader["UserName"]?.ToString(),
-                            Password = reader["Password"]?.ToString(),
+                          
                             Mail = reader["Mail"]?.ToString(),
                             SesionActive = reader["SesionActive"]?.ToString(),
                             StatusUsuario = reader["StatusUsuario"]?.ToString(),

@@ -43,13 +43,13 @@
       </div>
 
 
-        <div class="card   mt-5 mx-4 mb-5 contenedor">
+        <div class="card  mt-5 mx-4 mb-5 contenedor h-full">
             <div class="vstack gap-3">
                 <div class="bg-light border ">Sesiones</div>
                 <mat-dialog-content class="contenedor">
 
 
-                    <div class="card mt-0 mx-4 mb-0 contenedor w-90">
+                    <div class="card mt-0 mx-4 mb-0 contenedor w-90 ">
 <span class="mb-4 mt-2 headline font-bold bg-red-100 "> Lista de Sesiones Activas </span>
 <div class="items-start w-100 ml-5">
     <select class="form-select mb-2 w-80  " aria-label="Default select example" [(ngModel)]="component.filters.textFilter"
@@ -64,7 +64,7 @@
 </div>
 
 
-<app-list-table [service]="DashboarServices" [getInputs]="component.getInputs"
+<app-list-table   [service]="DashboarServices" [getInputs]="component.getInputs"
 [colums]="component.tableColumns" [sortBy]="component.initialSort"
 [getInputs]="component.getInputs" [IDenti]="identifi">
 

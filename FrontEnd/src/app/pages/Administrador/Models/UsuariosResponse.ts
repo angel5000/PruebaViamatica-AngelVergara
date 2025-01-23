@@ -1,7 +1,6 @@
 export interface UsuarioResponse {
     idUsuario: number;
     userName: string;
-    password: string;
     mail: string;
     sesionActive: string;
     intentosFallidos: number;
@@ -14,6 +13,9 @@ export interface UsuarioResponse {
  
 
 badgeColor:string;
+badgeColor2:string;
+badgeColor3:string;
+badgeColor4:string;
 icEdit:any;
 icDelete:any;
 }

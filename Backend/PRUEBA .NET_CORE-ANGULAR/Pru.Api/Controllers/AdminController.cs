@@ -81,7 +81,14 @@ namespace Pru.Api.Controllers
             var response = await IAdminApplication.UserbyId(idUsuario);
             return Ok(response);
         }
+        [HttpPut("DeletUser/{idAdmin:int}")]
+        public async Task<IActionResult> EliminarUsuario(int idAdmin, int idUsuario)
+        {
+            var response = await IAdminApplication.EliminarUsuario (idUsuario, idAdmin);
+            return Ok(response);
 
+
+        }
 
 
 

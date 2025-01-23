@@ -14,6 +14,7 @@ import { IconDirective } from '@visurel/iconify-angular';
 import { AdminDialogComponent } from './components/Dialog/admin-dialog/admin-dialog.component';
 import { SearchBoxComponent } from '../../shared/components/Search-box/search-box/search-box.component';
 import { ResetfiltersComponent } from '../../shared/components/Reusables/Resetfilters/resetfilters/resetfilters.component';
+import { ToastrModule } from 'ngx-toastr';
 
 
 
@@ -32,7 +33,9 @@ import { ResetfiltersComponent } from '../../shared/components/Reusables/Resetfi
    ListTableComponent,
    UploadExcelComponent,
   SearchBoxComponent,
-  ResetfiltersComponent
+  ResetfiltersComponent,
+  ToastrModule,
+   
   ]
 })
 export class ListAdministradorModule { }

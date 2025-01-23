@@ -128,17 +128,7 @@ namespace PRU.Application.Services
                 {
             new SqlParameter("@Login", requestDto.Credenciales ?? (object)DBNull.Value),
             new SqlParameter("@Password", requestDto.Password ?? (object)DBNull.Value),
-            /*   new SqlParameter("@Rol", requestDto ?? (object)DBNull.Value),
-            new SqlParameter("@UsuarioId", requestDto.Password ?? (object)DBNull.Value),
-               new SqlParameter("@UserName", requestDto.Credenciales ?? (object)DBNull.Value),
-            new SqlParameter("@Nombres", requestDto.Password ?? (object)DBNull.Value),
-             new SqlParameter("@Rol", requestDto.Credenciales ?? (object)DBNull.Value),
-            new SqlParameter("@Apellidos", requestDto.Password ?? (object)DBNull.Value),
-
-             new SqlParameter("@Identificacion", requestDto.Credenciales ?? (object)DBNull.Value),
-            new SqlParameter("@FechaNacimiento", requestDto.Password ?? (object)DBNull.Value),
-             new SqlParameter("@FechaCierre", requestDto.Credenciales ?? (object)DBNull.Value),
-            new SqlParameter("@FechaIngreso", requestDto.Password ?? (object)DBNull.Value),*/
+          
           
             outputParam,
             outputParam2,
@@ -160,7 +150,7 @@ namespace PRU.Application.Services
                 
                 if ((int)outputParam.Value == 0) { Console.WriteLine($"nulo {parametros}");
                     response.IsSucces = false;
-                    response.Message = "Credenciales incorrectas, Intentelo denuevo";
+                    response.Message = "Credenciales no exiten, Intentelo denuevo";
                     response.Data =0;
                     return response;
 
@@ -213,7 +203,14 @@ namespace PRU.Application.Services
                         response.Data = resultado;
                         return response;
                     }
-                    else
+                else if (resultado == -2)
+                {
+                    response.IsSucces = false;
+                    response.Message = "Credenciales o contraseña incorrectas";
+                    response.Data = resultado;
+                    return response;
+                }
+                else
                     {
                         response.IsSucces = false;
                         response.Message = "Usuario/correo no existente, verifique su informacion...";
@@ -225,7 +222,7 @@ namespace PRU.Application.Services
             catch (Exception e)
             {
                 response.IsSucces = false;
-                response.Message = $"Error en el proceso de inicio de sesión { e.Message} ";
+                response.Message = $"Error en el proceso de inicio de sesión {e.Message} ";
                 response.Data = 0;
                 Console.WriteLine(e.Message);
                 return response;

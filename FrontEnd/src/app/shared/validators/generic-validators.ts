@@ -1,7 +1,31 @@
 import { AbstractControl, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 
-
+export function PasswordMatchValidator(passwordField: string, confirmPasswordField: string): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+        const password = formGroup.get(passwordField)?.value;
+        const confirmPassword = formGroup.get(confirmPasswordField)?.value;
+    
+        return password === confirmPassword ? null : { passwordMismatch: true };
+      };
+  }
+  
+  /**
+   * Validador para validar criterios de contraseña (mínimo 8 caracteres, mayúsculas, minúsculas y números).
+   */
+  export function PasswordComplexityValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) return null;
+  
+      // Al menos 8 caracteres, una letra mayúscula, una minúscula y un número
+      const complexityPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  
+      return complexityPattern.test(value)
+        ? null
+        : { invalidPasswordd: 'La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números.' };
+    };
+}
 export function passwordValidator(): ValidatorFn {
     const regex = new RegExp("^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$");
     

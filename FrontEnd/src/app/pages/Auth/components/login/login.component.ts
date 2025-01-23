@@ -56,7 +56,9 @@ export class LoginComponent implements OnInit {
         
         
         }
-
+RecuperarContra(){
+  this.router.navigate(["/recuperar"]);
+}
         toggleVisibility() {
           if (this.visible) {
             this.inputType = "password";

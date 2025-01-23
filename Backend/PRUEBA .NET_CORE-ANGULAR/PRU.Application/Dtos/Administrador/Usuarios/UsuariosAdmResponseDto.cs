@@ -11,11 +11,9 @@ namespace PRU.Application.Dtos.Administrador.Usuarios
 
         public int idUsuario { get; set; }
         public string? UserName { get; set; }
-        public string? Password { get; set; }
         public string? Mail { get; set; }
         public string? SesionActive { get; set; }
         public int IntentosFallidos { get; set; }
-     
         public string? StatusUsuario { get; set; }
         public string? Nombres { get; set; }
         public string? Apellidos { get; set; }

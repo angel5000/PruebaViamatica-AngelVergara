@@ -129,6 +129,7 @@ if(this.data!=null&&this.ocultar===true){
  UserRegister() {
     this.UserServices.UsuarioRegister(this.form.value).subscribe((resp)=>{
       console.log('Respuesta del servidor:', resp);
+      
       if(resp.isSucces){
         
   //this._alert.success('Excelente', resp.message)

@@ -49,10 +49,10 @@ emitDates() {
   const endDateControl = this.range.get('endDate').value;
 
   const startDate = startDateControl 
-    ? moment(startDateControl).format('YYYY-MM-DD') 
+    ? moment(startDateControl).utc().add(1, 'day').startOf('day').format('YYYY-MM-DD') 
     : null;
   const endDate = endDateControl 
-    ? moment(endDateControl).format('YYYY-MM-DD') 
+    ? moment(endDateControl).utc().add(1, 'day').startOf('day').format('YYYY-MM-DD') 
     : null;
 
   const data = {
@@ -62,6 +62,7 @@ emitDates() {
 
   this.rangeDate.emit(data);
 }
+
 
 }
 

@@ -16,7 +16,6 @@ export class AuthGuard implements CanActivate {
     // Verifica si el usuario está autenticado
     const user = this.authService.getUserId();
     const role = this.authService.getUserRole();
-    console.log(this.authService.getUserId(), role)
    /* if (route.url[0].path === 'bienvenido' && role ===null&& user === null) {
       this.router.navigate(['/login']);
       return false; // Usuario con rol 2 puede acceder a 'bienvenido'
@@ -56,10 +55,7 @@ export class AuthGuard implements CanActivate {
           this.router.navigate(['/notfound']);
           return false;
         }
-        if (route.url[0].path === 'bienvenido'&&role!==null) {
-          this.router.navigate(['/bienvenido']);
-          return true;
-        }
+      
        // return true;
       }else{
         if (route.url[0].path === 'bienvenido') {
@@ -68,8 +64,8 @@ export class AuthGuard implements CanActivate {
         }
       }
       
-      // Si no está autenticado, redirige al login
-     this.router.navigate(['/login']);
-      return false;
+  //    // Si no está autenticado, redirige al login
+    // this.router.navigate(['/login']);
+     return true;
     }
 }

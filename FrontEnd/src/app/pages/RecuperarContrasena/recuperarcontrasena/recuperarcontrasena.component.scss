@@ -23,12 +23,12 @@
   }
   
   .login {
-    position: fixed;
-    z-index: 3;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
-    width: 90%;
+ //   position: fixed;
+   // z-index: 3;
+    top: 10%;
+    left: 10%;
+    translate: -50% -1%;
+    width: 100%;
     padding: 70px 30px 44px;
     border-radius: 15px;
     background: white;
@@ -38,7 +38,7 @@
   
   @media (width >= 450px) {
     .login {
-      width: 380px;
+      width: 580px;
     }
   }
   
@@ -78,15 +78,25 @@
     display: grid;
     gap: 16px;
     place-items: center;
-    width: 100%;
+    max-width: 100%;
+   // width: 500px;
     margin: 0;
   }
   
   .textbox {
-    width: 100%;
+    width: 70%;
     position: relative;
     color: #222222;
   }
   a{
     color: #157ae1;
   }
+  .sizecard
+{
+    width: 85%;
+    place-items: center;
+    height: 100%;
+  margin-left: 8%;
+  margin-top: 2%;
+  box-shadow:rgba(0, 0, 0, 0.04) 15px 5px 11px;
+}

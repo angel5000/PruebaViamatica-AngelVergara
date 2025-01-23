@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PRU.Application.Interfaces;
 using PRU.Application.Services;
+using PRU.Application.Commons.Validations;
 
 namespace PRU.Application.Extension
 {
@@ -23,7 +24,16 @@ namespace PRU.Application.Extension
 
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddScoped<IUsuariosApplication, UsuariosApplication>();
+            services.AddScoped<Validaciones>();
+
+           services.AddScoped<IUsuariosApplication, UsuariosApplication>();
+
+           services.AddScoped<ISesiones, Sesiones>();
+           services.AddScoped<IAdministrador, Administrador>();
+           services.AddScoped<IAuth, Auth>();
+           services.AddScoped<IDashboardApplication, DashboardApplication>();
+           services.AddScoped<IRecuperaContraseñaApplication, RecuperaContraseñaApplication>();
+            services.AddScoped<IRolesOpcionesApplication, RolesOpcionesApplication>();
             return services;
 
         }

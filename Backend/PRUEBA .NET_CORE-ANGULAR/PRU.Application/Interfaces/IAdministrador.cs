@@ -16,6 +16,6 @@ namespace PRU.Application.Interfaces
         Task<BaseResponse<bool>> RegisterUser(UsuarioRequest requestDto);
         Task<BaseResponse<bool>> EditUser(UserEditResponse requestDto, int id);
         Task<BaseResponse<UserEditResponse>> UserbyId(int id);
-
+        Task<BaseResponse<bool>> EliminarUsuario(int id, int idAdmin);
     }
 }

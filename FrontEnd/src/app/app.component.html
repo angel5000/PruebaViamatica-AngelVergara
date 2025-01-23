@@ -22,9 +22,37 @@
           <div >
             <app-itemsidenav *ngFor="let item of items;" [item]="item"></app-itemsidenav>
         </div>
-
+       
         </div>
+        <div class="card overflow-hidden flex-auto  mb-1 carduser">
+
+
+
+          
+          <h1 class="headline  text-1xl font-bold bg-red-100   text-primary-contrast m-0 flex items-center w-full max-w-xxxl mr-6">
       
+           
+              <span class="ml-4 block mb-5 mt-2">Usuario</span>
+              
+          </h1>
+         
+          <div class="card overflow-hidden flex-auto divperfil">
+            <div class="itemslieal">
+            <div class="avatar">
+              <img src="assets/img/demo/landscape.jpg" >
+              </div>
+           
+
+              <button class="btperfil btn btn-outline-secondary" >
+                 <span class="ml-0 block ">Perfil <i class=" ml-4 bi bi-box-arrow-up-right"></i></span>
+                 </button>
+            </div>
+            </div>
+
+
+
+
+    </div> 
     </mat-sidenav>
 
     <mat-sidenav-content>
@@ -53,9 +81,9 @@
                               {{NombreUsuario}}
                               </button>
                               <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" >Perfil</a></li>
-                                <li><a class="dropdown-item" (click)="Cerrarsesion()" >Cerra sesion </a></li>
-                            
+                              
+                                <li><a class="dropdown-item " (click)="Cerrarsesion()" ><i class="bi bi-box-arrow-in-right"></i> Cerrar sesion</a> </li>
+                              
                               </ul>
                             </div>
                            

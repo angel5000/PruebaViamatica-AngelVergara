@@ -8,12 +8,15 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { getIcon } from '../../../shared/components/function/helpers';
 import { UsuarioResponseEdit } from '../Models/Usuariobyid';
+import { Console } from 'console';
+import { ToastrService } from 'ngx-toastr';
+import { RolesOpcionesResponse } from '../Models/RolesReponse';
 @Injectable({
   providedIn: 'root'
 })
 export class AdministradorService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private toastr: ToastrService) { }
 
   GetAll(size: number, sort: string, order: string, page: number, getInputs: number,id:number): Observable<BaseResponse> {
     const requestURL = `${env.api}${end.LIST_USUARIOS}?idUsuario=${id}${getInputs}&NumPage=${page+1}&Records=${size}`;
@@ -21,24 +24,40 @@ export class AdministradorService {
     console.log("aqui1")
 
     return this.http.get<BaseResponse>(requestURL).pipe(map((resp) => {
-      (resp.data || []).forEach(function (product: UsuarioResponse) {
-       /* switch (product.state) {
-          case 0: product.badgeColor = 'text-gray bg gray-light'
-          console.log("estado:", product.state)
+      (resp.data || []).forEach(function (usuario: UsuarioResponse) {
+      
+        switch (usuario.sesionActive) {
+          case "I": usuario.badgeColor = 'text-gray bg gray-light'
+          
             break
-          case 1: product.badgeColor = 'text-green bg-green-light'
-          console.log("estado:", product.state)
-            break
-          default:
-            product.badgeColor = 'text-gray bg-gray-light'
-            console.log("estado:", product.state)
+          case "A": usuario.badgeColor = 'text-green bg-green-light'
+      
             break
         
-        }*/
+        }
+        switch (usuario.statusUsuario) {
+          case "Activo": usuario.badgeColor2 = 'text-green bg-green-light'
+          
+            break
+          case "Bloqueado": usuario.badgeColor2 = 'text-orange bg-red'
       
-     
-        product.icEdit = getIcon("icEdit", "Editar Producto", true, "edit");
-        product.icDelete = getIcon("icDelete", "Eliminar Producto", true, "Remove");
+            break
+            case "Inactivo": usuario.badgeColor2 = 'text-gray bg gray-light'
+      
+            break
+        
+        }
+        switch (usuario.statusPersona) {
+          case "Activo": usuario.badgeColor3 = 'text-green bg-green-light'
+          
+            break
+          case "Inactivo": usuario.badgeColor3 = 'text-gray bg gray-light'
+      
+            break
+        
+        }
+        usuario.icEdit = getIcon("icEdit", "Editar Producto", true, "edit");
+        usuario.icDelete = getIcon("icDelete", "Eliminar Producto", true, "Remove");
       
       })
       return resp;
@@ -112,6 +131,44 @@ export class AdministradorService {
    
     return formData;
   }
+  EliminarUsuario(idUsuario:Number, idAdmin:number):Observable<void>{
+    const requestURL=  `${env.api}${end.USUARIOS_ELIMINAR}${idAdmin}?idUsuario=${idUsuario}`;
+    return this.http.put(requestURL,"").pipe(map((resp:BaseResponse)=>{
+      console.log(resp);
+  if(resp.isSucces){
+    console.log(resp);
+   this.showSuccess(resp.message)
+  }if(!resp.isSucces){
+this.showError(resp.message)
+  }
+    
+  
+    }))
+  
+  }
+  showSuccess(msj:string) {
+    this.toastr.success(msj, 'Éxito');
+  }
+  showError (msj:string) {
+    this.toastr.error(msj, 'Error');
+  }
+
+  RolesOpciones(iduser:number): Observable<BaseResponse> {
+    const requestURL = `${env.api}${end.ROLESOPCIONES}?idUsuario=${iduser}`;
+
+    return this.http.get<BaseResponse>(requestURL).pipe(map((resp) => {
+     
+      return resp;
+
+    }))
+  }
+
+ 
+
+
+
+
+
 }
 
 

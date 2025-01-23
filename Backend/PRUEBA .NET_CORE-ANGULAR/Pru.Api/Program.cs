@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
 var Cors = "Cors";
 builder.Services.AddInjectionInfrastructure(Configuration);
-//builder.Services.AddInjectionApplication(Configuration);
+builder.Services.AddInjectionApplication(Configuration);
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -19,14 +19,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<Validaciones>();
 
-builder.Services.AddScoped<IUsuariosApplication, UsuariosApplication>();
-
-builder.Services.AddScoped<ISesiones, Sesiones>();
-builder.Services.AddScoped<IAdministrador, Administrador>();
-builder.Services.AddScoped<IAuth, Auth>();
-builder.Services.AddScoped<IDashboardApplication, DashboardApplication>();
 /*builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {

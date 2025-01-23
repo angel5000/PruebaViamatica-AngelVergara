@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatDrawerMode } from '@angular/material/sidenav';
+import Swal from 'sweetalert2';
 import { BaseResponse } from '../../../../shared/models/BaseApiResponse';
 import { RowClick } from '../../../../shared/models/RowClick.interface';
 import { FilterBox } from '../../../../shared/models/SearchOptions.interface';
@@ -10,12 +11,19 @@ import { UsuarioResponse } from '../../Models/UsuariosResponse';
 import { AdministradorService } from '../../Services/administrador.service';
 import { AdminDialogComponent } from '../Dialog/admin-dialog/admin-dialog.component';
 import { ComponentSettings } from './list.cofing'; 
+import { ToastrService } from 'ngx-toastr';
+import { Console } from 'console';
+import { actualizarPermiso } from './list.cofing';
 @Component({
   selector: 'app-list-administrador',
   templateUrl: './list-administrador.component.html',
   styleUrl: './list-administrador.component.scss'
 })
 export class ListAdministradorComponent implements OnInit {
+  component:any;
+  identifi?:any
+
+
 resetFilters() {
   this.component.filters={ ...this.component.resetFilters};
        
@@ -39,13 +47,12 @@ search(data:FilterBox){
      
       }
 
-  component:any;
-  identifi?:any
+
 
   mode = new FormControl('push' as MatDrawerMode);
 constructor(public AdminServices:AdministradorService, private authService: AuthService,
    public _dialog: MatDialog){
-
+   
 }
 
   ngOnInit(): void {
@@ -59,6 +66,25 @@ constructor(public AdminServices:AdministradorService, private authService: Auth
       console.log("input",this.component.getInputs)
      
       this.formatGetInputs()
+
+      this.AdminServices.RolesOpciones (userId).subscribe(opciones => {
+        const data = opciones.data;
+        // Buscar una opción específica en el array usando 'find'
+        const opcion = data.find((item) => item.opcion_IdOpcion === 4&&item.activo===true); 
+        const editar = data.find((item) => item.opcion_IdOpcion === 2&&item.activo===true); 
+       if(opcion!==undefined){
+
+        actualizarPermiso.prototype.PermisoEliminar(true)
+
+       }if(editar!==undefined){
+        actualizarPermiso.prototype.PermisoEditar(true)
+       }
+      
+      
+      });
+
+
+
       }
 
 
@@ -110,7 +136,7 @@ constructor(public AdminServices:AdministradorService, private authService: Auth
        
     case "edit":this.Dialog(usuario,true)
     break
-    case "remove" :console.log("eliminar")
+    case "remove" :this.EliminarUsuario(usuario.idUsuario,this.identifi,usuario)
     break
         }
         return false
@@ -143,4 +169,34 @@ openDialogRegister(){
           }
         })
       }
+
+      EliminarUsuario(idUsuario:number, idAdmin:number,dtuser: UsuarioResponse) {
+        
+        Swal.fire({
+          title:`¿Esta seguro que desea eliminar al usuario: ${dtuser.userName}, ${dtuser.apellidos}? `,
+          text:"Se borrara permanentemente",
+          icon:"warning",
+          showCancelButton:true,
+          focusCancel:true,
+          confirmButtonColor:'rgb(210,155,253)',
+          cancelButtonColor:'rgb(79,109,253)',
+          cancelButtonText:'cancelar',
+          confirmButtonText:'OK',
+          width:430
+        
+        
+        }).then((result)=>{
+        if(result.isConfirmed){
+          this.AdminServices.EliminarUsuario(idUsuario, idAdmin).subscribe(()=>
+          this.setGetInputsProviders(true))
+       
+        }
+        
+        })
+        
+        
+
+
+      }
+     
 }
