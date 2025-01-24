@@ -18,15 +18,12 @@ export class UploadExcelService {
 
   constructor(private http: HttpClient) {}
 
-  uploadExcel(file: File): Observable<any> {
+  uploadExcel(file: File): Observable<BaseResponse> {
     const formData: FormData = new FormData();
     formData.append('archivo', file, file.name);  // 'file' debe coincidir con el nombre del campo en el backend
+    return this.http.post<BaseResponse>(`${env.api}${end.UPLOAD_EXCEL}`, formData);
+ 
 
-    return this.http.post<any>(`${env.api}${end.UPLOAD_EXCEL}`, formData, {
-      headers: {
-        'Accept': 'application/json',  // O cualquier cabecera que tu API necesite
-      }
-    });
-  }
+}
 
 }

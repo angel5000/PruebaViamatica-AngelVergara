@@ -18,11 +18,11 @@
     <form [formGroup]="form" class="login-form" (ngSubmit)="Login()">
     <mat-form-field  class="textbox">
     <mat-label >
-        Email
+        Credenciales
     </mat-label>
-    <input matInput formControlName="credenciales">
+    <input matInput formControlName="credenciales" matTooltip="Usuario o Correo Electronico">
     <mat-error *ngIf="form.get('credenciales')?.hasError('required')">
-    Campo Email es requerido
+    Campo Credencial es requerido
     </mat-error>
     </mat-form-field>
     

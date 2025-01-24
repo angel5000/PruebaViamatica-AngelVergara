@@ -10,7 +10,7 @@ export interface UsuarioResponse {
     identificacion: string;
     fechaNacimiento: Date;
     statusPersona: string;
- 
+    idPersona: number;
 
 badgeColor:string;
 badgeColor2:string;

@@ -1,4 +1,5 @@
 export interface UsuarioResponseEdit {
+    idUsuario: number
     userName: string
     sesionActive: string
     statusUsuario: string

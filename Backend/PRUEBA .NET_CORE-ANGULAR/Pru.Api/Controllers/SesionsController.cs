@@ -20,7 +20,7 @@ namespace Pru.Api.Controllers
 
         }
         [HttpGet("ListaSesiones")]
-        public async Task<IActionResult> ListaUsuarios(int idUsuario, [FromQuery] BaseFilterRequest filters)
+        public async Task<IActionResult> ListaUsuarios(int idUsuario, [FromQuery] BaseFilterRequestDates filters)
         {
             var response = await ISesionsApplication.ListaSesiones(idUsuario, filters);
             return Ok(response);

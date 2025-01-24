@@ -57,7 +57,7 @@
           
         <button (click)="toggleVisibility()" mat-icon-button matSuffix matTooltip="{{!visible ? 'Ver contraseña':'Ocultar Contraseña'}}"
         type="button">
-      
+        <i class="bi" [ngClass]="{ 'bi-eye': !visible, 'bi-eye-slash': visible }"></i>
         </button>
         <mat-error *ngIf="form.get('nuevaContrasena')?.hasError('required')">
             La contraseña es obligatoria
@@ -78,7 +78,7 @@
               
             <button (click)="toggleVisibility()" mat-icon-button matSuffix matTooltip="{{!visible ? 'Ver contraseña':'Ocultar Contraseña'}}"
             type="button">
-          
+           
             </button>
           
             <mat-error *ngIf="form.hasError('passwordMismatch')">
@@ -86,13 +86,8 @@
               </mat-error>
                 </mat-form-field>
 
-
-
-
-
-
 <br>
-            <button type="submit" color="primary" mat-raised-button>
+            <button type="submit" color="primary" [disabled]="!form.valid"     mat-raised-button>
         Cambiar contraseña 
         </button>
      

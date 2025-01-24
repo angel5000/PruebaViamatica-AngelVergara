@@ -89,7 +89,7 @@ export class AdministradorService {
 
   private _builFormDataUser(user: UsuarioResponseEdit): FormData {
     const formData = new FormData();
-  
+    formData.append("idUsuario", user.idUsuario.toString()); 
     formData.append("userName", user.userName.toString());              
     formData.append("nombres", user.nombres.toString());                
     formData.append("apellidos", user.apellidos.toString());            

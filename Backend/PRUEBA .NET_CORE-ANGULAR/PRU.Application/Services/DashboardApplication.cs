@@ -36,7 +36,7 @@ namespace PRU.Application.Services
             try
             {
                 
-                    using var connection = _context.Database.GetDbConnection(); // Usa la conexión de tu DbContext.
+                    using var connection = _context.Database.GetDbConnection(); 
                     await connection.OpenAsync();
 
                     using var command = connection.CreateCommand();
@@ -46,7 +46,7 @@ namespace PRU.Application.Services
            
                     using (var reader2 = command.ExecuteReader())
                     {
-                        // Procesar los resultados del procedimiento almacenado
+                        
                         while (reader2.Read())
                         {
                             // Aquí procesas cada fila obtenida del procedimiento almacenado
@@ -71,8 +71,7 @@ namespace PRU.Application.Services
                         response.Data = resultList;
                         response.IsSucces = true;
                     
-              
-
+            
                   
             }
             catch (Exception ex)
@@ -84,9 +83,8 @@ namespace PRU.Application.Services
             return response;
 
 
-
-
         }
+
 
         public async Task<BaseResponse<IEnumerable<DashboardResponse>>> ListInfodashboard(int usuarioId, BaseFilterRequestSimple filters)
         {
@@ -96,7 +94,7 @@ namespace PRU.Application.Services
             {
                 if (usuarioId > 0)
                 {
-                    using var connection = _context.Database.GetDbConnection(); // Usa la conexión de tu DbContext.
+                    using var connection = _context.Database.GetDbConnection(); 
                     await connection.OpenAsync();
 
                     using var command = connection.CreateCommand();
@@ -112,25 +110,25 @@ namespace PRU.Application.Services
 
                     var paramFiltro = command.CreateParameter();
                     paramFiltro.ParameterName = "@Filtro";
-                    paramFiltro.Value = filters.NumFilter ?? (object)DBNull.Value; // Usa el valor del filtro o NULL
+                    paramFiltro.Value = filters.NumFilter ?? (object)DBNull.Value; 
                     paramFiltro.DbType = System.Data.DbType.Int32;
                     command.Parameters.Add(paramFiltro);
 
                     var paramSesionActiva = command.CreateParameter();
                     paramSesionActiva.ParameterName = "@SesionActiva";
-                    paramSesionActiva.Value = filters.TextFilterSesion ?? (object)DBNull.Value; // Usa el valor de SesionActiva o NULL
+                    paramSesionActiva.Value = filters.TextFilterSesion ?? (object)DBNull.Value;
                     paramSesionActiva.DbType = System.Data.DbType.String;
                     command.Parameters.Add(paramSesionActiva);
 
                     var paramSesionFallida = command.CreateParameter();
                     paramSesionFallida.ParameterName = "@SesionFallida";
-                    paramSesionFallida.Value = filters.StateFilter ?? (object)DBNull.Value; // Usa el valor de SesionFallida o NULL
+                    paramSesionFallida.Value = filters.StateFilter ?? (object)DBNull.Value; 
                     paramSesionFallida.DbType = System.Data.DbType.Int32;
                     command.Parameters.Add(paramSesionFallida);
 
                     var paramEstado = command.CreateParameter();
                     paramEstado.ParameterName = "@Estado";
-                    paramEstado.Value = filters.StateFilterText ?? (object)DBNull.Value; // Usa el valor de Estado o NULL
+                    paramEstado.Value = filters.StateFilterText ?? (object)DBNull.Value; 
                     paramEstado.DbType = System.Data.DbType.String;
                     command.Parameters.Add(paramEstado);
                     var paramNumPage = command.CreateParameter();
@@ -140,8 +138,8 @@ namespace PRU.Application.Services
 
                     var paramNumRecordsPage = command.CreateParameter();
                     paramNumRecordsPage.ParameterName = "@NumRecordsPage";
-                    paramNumRecordsPage.Value = filters.NumRecordsPage; // Asignar el valor entero desde filters
-                    paramNumRecordsPage.DbType = DbType.Int32; // Especificar que el tipo es entero
+                    paramNumRecordsPage.Value = filters.NumRecordsPage; 
+                    paramNumRecordsPage.DbType = DbType.Int32; 
                     command.Parameters.Add(paramNumRecordsPage);
 
                     var paramTotalRecords = command.CreateParameter();
@@ -153,7 +151,7 @@ namespace PRU.Application.Services
 
                     using (var reader2 = command.ExecuteReader())
                     {
-                        // Procesar los resultados del procedimiento almacenado
+                       
                         while (reader2.Read())
                         {
                             // Aquí procesas cada fila obtenida del procedimiento almacenado
@@ -169,7 +167,7 @@ namespace PRU.Application.Services
                        
                         while (await reader.ReadAsync())
                         {
-                            // Mapear los resultados al modelo DashboardResponse
+                          
                             resultList.Add(new DashboardResponse
                             {
                                 idUsuario = reader.GetInt32(reader.GetOrdinal("idUsuario")),
@@ -177,14 +175,7 @@ namespace PRU.Application.Services
                                 SesionActive = reader.GetString(reader.GetOrdinal("SesionActive")),
                                 StatusUsuario = reader.GetString(reader.GetOrdinal("Status")),
                                 IntentosFallidos = reader.GetInt32(reader.GetOrdinal("IntentosFallidos")),
-                             
-                                /*FechaIngreso = reader["FechaIngreso"] != DBNull.Value
-                            ? Convert.ToDateTime(reader["FechaIngreso"])
-                            : (DateTime?)null,
-                                FechaCierre = reader.IsDBNull(reader.GetOrdinal("FechaCierre")) ? (DateTime?)null : reader.GetDateTime(reader.GetOrdinal("FechaCierre")),
-                                SesionExitosa = reader.IsDBNull(reader.GetOrdinal("SesionExitosa")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("SesionExitosa")),
-                                SesionFallida = reader.IsDBNull(reader.GetOrdinal("SesionFallida")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("SesionFallida"))*/
-
+                           
                             });
                         }
                         response.Data = resultList;
@@ -200,7 +191,7 @@ namespace PRU.Application.Services
                         
                         while (await reader.ReadAsync())
                         {
-                            // Mapear los resultados al modelo DashboardResponse
+                           
                             resultList.Add(new DashboardResponse
                             {
                                 idUsuario = reader.GetInt32(reader.GetOrdinal("idUsuario")),

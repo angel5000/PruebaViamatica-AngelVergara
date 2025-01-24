@@ -1,13 +1,12 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { LayoutsComponent } from './commons/layouts/layouts.component';
-import { SidenavComponent } from './commons/sidenav/sidenav.component';
 import { DashboardComponent } from './pages/Administrador/components/Dashboard/Components/dashboard/dashboard.component';
 import { ListAdministradorComponent } from './pages/Administrador/components/list-administrador/list-administrador.component';
 import { LoginComponent } from './pages/Auth/components/login/login.component';
 
 import { BienvenidaComponent } from './pages/General/Principal/components/bienvenida/bienvenida.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { PerfilComponent } from './pages/Perfil/Components/perfil/perfil.component';
 import { RecuperarcontrasenaComponent } from './pages/RecuperarContrasena/recuperarcontrasena/recuperarcontrasena.component';
 import { AuthGuard } from './shared/components/guardas/Authguards';
 
@@ -32,6 +31,13 @@ import { AuthGuard } from './shared/components/guardas/Authguards';
       component: BienvenidaComponent,
       loadChildren: () => import('./pages/General/Principal/components/bienvenida-modules').then((m) => m.BienvenidaModule)
      ,canActivate: [AuthGuard]
+    },
+    {
+    
+      path: 'perfil',
+      component: PerfilComponent,
+      loadChildren: () => import('./pages/Perfil/Perfil-module').then((m) => m.PerfilModule)
+    ,canActivate: [AuthGuard]
     },
     {
     

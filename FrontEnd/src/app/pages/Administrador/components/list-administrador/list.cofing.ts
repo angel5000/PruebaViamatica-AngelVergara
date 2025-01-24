@@ -19,155 +19,7 @@ const searchOptions: SearchOptions[] =[
     },
     
 ]
-const menuItems :MenuItems[]=
 
-[
-    {    type:"link",
-    id:"all",
-  //  icon: IconsService.prototype.getIcon("icViewHeadLine"),
-    label:"Todos"
-},
-{    type:"link",
-    id:"Activo",
-    value:1,
-
- //   icon: IconsService.prototype.getIcon("icLabel"),
-    label:"Activo",
-    class:{
-        icon: "text-green"
-    }
-},{    type:"link",
-id:"Inactivo",
-value:0,
-
-//icon: IconsService.prototype.getIcon("icLabel"),
-label:"Inactivo",
-class:{
-    icon: "text-gray"
-}
-}
-]/*
-const tableColumns: TableColumns<UsuarioResponse>[] = [
-    {
-      label: "Nombres",
-      csslabel: ["font-bold", "text-sm"],
-      property: "nombres",
-      cssProperty: ["font-semibold", "text-sm", "text-left"],
-      type: "text",
-      sticky: true,
-      sort: true,
-      sortProperty: "nombres", // SortProperty solo en esta columna
-      visible: true,
-      download: true,
-    },
-    {
-      label: "UserName",
-      csslabel: ["font-bold", "text-sm"],
-      property: "userName",
-      cssProperty: ["font-semibold", "text-sm", "text-left"],
-      type: "text",
-      sticky: true,
-      sort: true,
-      sortProperty: "userName", // SortProperty solo en esta columna
-      visible: true,
-      download: true,
-    },
-    {
-      label: "Email",
-      property: "mail",
-      type: "text",
-      csslabel: ["font-bold", "text-sm"],
-      cssProperty: ["font-semibold", "text-sm", "text-left"],
-      sticky: false,
-      sort: true,
-      visible: true,
-      download: true,
-    },
-    {
-      label: "Apellidos",
-      property: "apellidos",
-      type: "text",
-      csslabel: ["font-bold", "text-sm"],
-      cssProperty: ["font-semibold", "text-sm", "text-left"],
-      sticky: false,
-      sort: true,
-      visible: true,
-      download: true,
-    },
-    {
-      label: "Identificación",
-      property: "identificacion",
-      type: "text",
-      csslabel: ["font-bold", "text-sm"],
-      cssProperty: ["font-semibold", "text-sm", "text-left"],
-      sticky: false,
-      sort: true,
-      visible: true,
-      download: true,
-    },
-    {
-      label: "Fecha de Nacimiento",
-      property: "fechaNacimiento",
-      type: "text",
-      csslabel: ["font-bold", "text-sm"],
-      cssProperty: ["font-semibold", "text-sm", "text-left"],
-      sticky: false,
-      sort: true,
-      visible: true,
-      download: true,
-    },
-    {
-      label: "Estado del Usuario",
-      property: "statusUsuario",
-      type: "text",
-      csslabel: ["font-bold", "text-sm"],
-      cssProperty: ["font-semibold", "text-sm", "text-left"],
-      sticky: false,
-      sort: true,
-      visible: true,
-      download: true,
-    },
-    {
-      label: "Estado de Persona",
-      property: "statusPersona",
-      type: "text",
-      csslabel: ["font-bold", "text-sm"],
-      cssProperty: ["font-semibold", "text-sm", "text-left"],
-      sticky: false,
-      sort: true,
-      visible: true,
-      download: true,
-    },
-    {
-      label:"",
-      csslabel:[],
-      cssProperty:[""],
-      cssSubProperty:["bi bi-pen fs-5"],
-      property: "icEdit",
-      type:"icon",
-  action:"edit",
-  sticky:false,
-  sort:false,
-  visible:true,
-  download:false
-  
-  },
-  {
-      label:"",
-      csslabel:[],
-      cssProperty:['rounded'],
-      property: "icDelete",
-      cssSubProperty:["bi bi-trash3 fs-5"],
-      type:"icon",
-  action:"remove",
-  sticky:false,
-  sort:false,
-  visible:true ,
-  download:false
-  
-  }
-  ];*/
-  
   function getTableColumns() {
     return [
       {
@@ -346,20 +198,13 @@ export class actualizarPermiso {
 
 const getInputs: string="";
 export const ComponentSettings={
-   // icProvider: IconsService.prototype.getIcon("icProvider"),
    Permisos,
     tableColumns:getTableColumns(),
-    initialSort: "idUsuario",
-    initialSortDir: "desc",
     getInputs,
     resetFilters,
-    menuItems,
     filters:filters,
-    datesFilterArray:['Fecha de creación'],
     filters_dates_active:false,
     searchOptions: searchOptions,
-    filename: "listado de proveedores"
-  //  columnsFilter:tableColumns.map((column)=>{return {label: column.label, property: column.property, type: column.type}})
-    
+   
     }
   

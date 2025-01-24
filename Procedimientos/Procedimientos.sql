@@ -1,32 +1,7 @@
 
-select*from Usuarios
-select*from Personas
-delete Usuarios where idUsuario=7
-delete Personas where idPersona=7
-delete Sessions where idPersona=7
-select*from Sessions
-update Usuarios set SesionActive='I' where idUsuario=7
-select*from Roles
-select*from RolUsuarios
-select*from RolOpciones
-select*from RolRolOpciones
-insert into Roles (RolName)
-values('Administrador'),('Usuario')
+/*PROCEDIMIENTOS*/
 
-insert into RolUsuarios (Rol_idRol,Usuarios_idUsuarios)
-values(1,5)
-
-insert into RolOpciones(NombreOpciones)
-values('Crear_Admin'),('Editar_Admin'),('Modificar_Admin'),
-('Eliminar_Admin'),('VerReportes_Admin'),('Modificar_General')
-,('VerReporte_General'),('Eliminar_General'),('Crear_General')
-
-insert into RolRolOpciones(Rol_idRol,RolOpciones_idOpciones)
-values(1,1),(1,2),(1,3),(1,4),(1,5),(2,7),(2,6)
-
-
-
-
+/*REGISTRAR USUARIOS */
 create PROCEDURE sp_RegistrarPersonaYUsuario
     @Identificacion NVARCHAR(10),
     @Nombres NVARCHAR(60),
@@ -85,25 +60,7 @@ BEGIN
     END CATCH
 END
 
-
-DECLARE @PersonaId INT, @UsuarioId INT;
-
-EXEC sp_RegistrarPersonaYUsuario
-    @Identificacion = '0946584567', 
-    @Nombres = 'Angel David', 
-    @Apellidos = 'Vergara Paredes',
-    @FechaNacimiento = '2000-01-30', 
-    @Mail = 'angel.david@email.com', 
-    @UserName = 'angelvergarap', 
-    @Password = 'password123', 
-    @Status = 'Activo', 
-    @SesionActive = 'S',
-    @PersonaId = @PersonaId OUTPUT,
-    @UsuarioId = @UsuarioId OUTPUT;
-
-	update Usuarios set Password='P@ssw0rd123' where idUsuario=1
-SELECT @PersonaId AS PersonaId, @UsuarioId AS UsuarioId;
-
+/*INICIAR SESION*/
 create PROCEDURE InicioSesion  
     @Login NVARCHAR(50), 
     @Password NVARCHAR(50),
@@ -273,66 +230,7 @@ BEGIN
     END CATCH
 END;
 
-
-
-
-
-
-
-
-
-
-
-select*from Sessions
-
-
-DECLARE @Resultado INT;
-DECLARE @Rol INT;
-DECLARE @id INT;
-DECLARE @UserName NVARCHAR(50);
-DECLARE @Mail NVARCHAR(50);
-DECLARE @Nombres NVARCHAR(100);
-DECLARE @Apellidos NVARCHAR(100);
-DECLARE @Identificacion NVARCHAR(50);
-DECLARE @FechaNacimiento DATE;
-DECLARE @FechaIngreso DATETIME;
-DECLARE @FechaCierre DATETIME;
-
-EXEC InicioSesion 
-    @Login = 'juanperez90@mail.com', 
-    @Password = 'uoio', 
-    @Rol = @Rol OUTPUT, 
-    @Result = @Resultado OUTPUT, 
-    @UsuarioId = @id OUTPUT,
-    @UserName = @UserName OUTPUT,
-    @Mail = @Mail OUTPUT,
-    @Nombres = @Nombres OUTPUT,
-    @Apellidos = @Apellidos OUTPUT,
-    @Identificacion = @Identificacion OUTPUT,
-    @FechaNacimiento = @FechaNacimiento OUTPUT,
-	@FechaCierre=@FechaCierre OUTPUT,
-	  @FechaIngreso = @FechaIngreso OUTPUT;
-
--- Mostrar los resultados
-SELECT 
-    @Resultado AS Resultado,
-    @Rol AS Rol,
-    @id AS UsuarioId,
-    @UserName AS UserName,
-    @Mail AS Mail,
-    @Nombres AS Nombres,
-    @Apellidos AS Apellidos,
-    @Identificacion AS Identificacion,
-    @FechaNacimiento AS FechaNacimiento,
-	@FechaIngreso AS FechaIngreso,
-	@FechaCierre as FechaCierre;
-
-select*from Usuarios
-select*from Sessions
-EXEC CerrarSesion 
-    @Login = 'Narcisax23'
-  
-  update Usuarios set Status='Activo'
+/*SESIONES-DASHBOARD */
 
 
 create PROCEDURE SESIONES
@@ -395,43 +293,9 @@ BEGIN
     FETCH NEXT @NumRecordsPage ROWS ONLY;
 END;
 
-
-ALTER LOGIN [DESKTOP-BUQ5QOC\angeldvvp] WITH DEFAULT_LANGUAGE = us_english;
-SET LANGUAGE 'us_english';
-DECLARE @TotalRecords INT;
-EXEC SESIONES 
-    @IdPersona = 1,                  
-    @FechaInicio = '2025-01-16 00:00:00', 
-    @FechaFin = '2025-01-17 23:59:59',
-	@TotalRecords = @TotalRecords OUTPUT;
-
-	SELECT @TotalRecords AS TotalRecords;
-	
-
-	SELECT * FROM Sessions 
-WHERE TRY_CONVERT(datetime, FechaIngreso, 120) IS NULL;
-
-SELECT 
-    SUM(SesionFallida) AS TotalFallidos,    
-    COUNT(*) AS TotalRegistros,              
-    MIN(FechaIngreso) AS PrimeraFecha,      
-    MAX(FechaIngreso) AS UltimaFecha        
-FROM Sessions
-WHERE idPersona = 1
-  AND FechaIngreso BETWEEN '2025-01-01 00:00:00' AND '2025-01-20 23:59:59';
+/*CERRAR SESION*/
 
 
-SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Sessions' AND COLUMN_NAME = 'FechaIngreso';
-
-
-
-
-
-
-
-
-	EXEC SESIONES
-	@IdPersona=1
 create PROCEDURE CerrarSesion
     @Login NVARCHAR(50)
 AS
@@ -472,42 +336,9 @@ BEGIN
     WHERE idPersona = @idPersona  AND FechaCierre IS NULL;
 END;
 
-EXEC CerrarSesion 
-    @Login = 'canelax23'
+
   
-
--- Mostrar el resultado
-SELECT @Resultado AS Resultado;
-
-
-CREATE TRIGGER BloqueoUsuario
-ON Usuarios
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    -- Verifica si hay actualizaciones en la columna IntentosFallidos
-    IF EXISTS (
-        SELECT 1
-        FROM inserted i
-        INNER JOIN deleted d
-            ON i.IdUsuario = d.IdUsuario
-        WHERE i.IntentosFallidos >= 3 AND i.IntentosFallidos <> d.IntentosFallidos
-          AND i.Status <> 'Bloqueado'
-    )
-    BEGIN
-        -- Actualiza el estado del usuario a 'Bloqueado'
-        UPDATE Usuarios
-        SET Status = 'Bloqueado'
-        FROM Usuarios u
-        INNER JOIN inserted i
-            ON u.IdUsuario = i.IdUsuario
-        WHERE i.IntentosFallidos >= 3;
-
-        PRINT 'Usuario bloqueado debido a múltiples intentos fallidos de inicio de sesión.';
-    END
-END;
+  /*CONSULTA DE PERSONAS CON FILTROS APLICADOS-(ADMINISTRADOR)*/
 
 create PROCEDURE ConsultarUsuariosYPersonasConFiltros
     @UsuarioId INT,
@@ -517,7 +348,7 @@ create PROCEDURE ConsultarUsuariosYPersonasConFiltros
     @Sort NVARCHAR(50) = 'idUsuario',
     @NumFilter INT = NULL,
     @TextFilter NVARCHAR(100) = NULL,
-    @StateFilter INT = NULL,
+    @StateFilter varchar(20) = NULL,
     @StartDate NVARCHAR(10) = NULL,
     @EndDate NVARCHAR(10) = NULL,
     @TotalRecords INT OUTPUT
@@ -558,11 +389,11 @@ BEGIN
     SELECT 
         u.idUsuario,
         u.UserName,
-      
         u.Mail,
         u.SesionActive,
         u.Status AS StatusUsuario,
         u.IntentosFallidos,
+		p.idPersona,
         p.Nombres,
         p.Apellidos,
         p.Identificacion,
@@ -602,23 +433,45 @@ BEGIN
 END;
 
 
-DECLARE @Total INT;
-EXEC ConsultarUsuariosYPersonasConFiltros
-  @UsuarioId = 1,
-    @TotalRecords = @Total OUTPUT
-
-	SELECT @Total AS TotalRecords;
-
-  @NumFilter=1,
-  @TextFilter='Juan',
-  @Sort='Nombres',
-  @NumRecordsPage=2
 
 
+/*CONSULTAR POR ID */
 
+create PROCEDURE ConsultarUsuarioPorId
+    @idUsuario INT
+
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        u.UserName, 
+        u.SesionActive, 
+        u.Status , 
+		p.idPersona,
+		u.idUsuario,
+        p.Nombres, 
+        p.Apellidos, 
+        p.FechaNacimiento, 
+        p.Status
+    FROM 
+        Usuarios u
+    INNER JOIN 
+        Personas p ON u.Persona_IdPersona2= p.IdPersona
+    WHERE 
+        u.IdUsuario = @idUsuario;
+END
+
+
+
+
+
+
+/* ACTUALIZACION DE DATOS USUARIO Y PERSONA (ADMINISTRADOR) */
 
 create PROCEDURE ActualizarUsuarioYPersona
-    @IdUsuario INT,
+    @IdUsuarioAdmin INT,
+	@IdUsuario INT,
     @UserName NVARCHAR(50),
     @SesionActive char(1),
     @StatusUsuario NVARCHAR(50),
@@ -640,7 +493,7 @@ BEGIN
             INNER JOIN [PRUEBAUSUARIOS].[dbo].[Usuarios] AS U
                 ON RU.Usuarios_idUsuarios = U.idUsuario
             WHERE RU.Rol_idRol = 1
-              AND U.idUsuario= @IdUsuario
+              AND U.idUsuario= @IdUsuarioAdmin
         )
         BEGIN
             RAISERROR ('Permisos insuficientes: el usuario no es admin.', 16, 1);
@@ -656,7 +509,7 @@ BEGIN
             U.[SesionActive] = @SesionActive,
             U.[Status] = @StatusUsuario
         FROM [PRUEBAUSUARIOS].[dbo].[Usuarios] AS U
-        WHERE U.[idUsuario] = @IdPersona;
+        WHERE U.[idUsuario] = @IdUsuario;
 
         -- Verificar si la actualización en Usuarios afectó alguna fila
         IF @@ROWCOUNT = 0
@@ -702,33 +555,19 @@ END;
 
 
 
-select*from Usuarios
-select*from Personas
-
-update Usuarios set Mail='carfrankl29' where idUsuario=7
-EXEC ActualizarUsuarioYPersona
-    @IdUsuario = 1,
-    @UserName = 'angelvergarap',
-    @SesionActive = 'A',
-    @StatusUsuario = 'Activo',
-    @IdPersona = 1,
-    @Nombres = 'Angel David',
-    @Apellidos = 'Vergara Paredes',
-    @FechaNacimiento = '2000-01-30',
-    @StatusPersona = 'Activo';
-
+/*ESTADOS DE LOS USUARIOS (DASHBOARD)*/
 
 create PROCEDURE ConsultarEstadosUsuarios
-    @Filtro INT = NULL, -- 1: Última sesión, 2: Todas las sesiones, 3: Omitir fechas
-    @SesionActiva CHAR(1) = NULL, -- Filtro opcional para sesiones activas ('A' o NULL para no filtrar)
-    @SesionFallida INT = NULL, -- Filtro opcional para sesiones fallidas (1 = fallidas, 0 = exitosas)
-    @Estado NVARCHAR(50) = NULL, -- Filtro opcional para estados (Activo, Inactivo, Bloqueado)
-    @idUsuario INT, -- ID del usuario que realiza la consulta
-    @NumPage INT = 1, -- Número de página
-    @NumRecordsPage INT = 10, -- Número de registros por página
-    @Sort NVARCHAR(50) = 'idUsuario', -- Columna para ordenar
-    @Order NVARCHAR(10) = 'asc', -- Dirección de orden ('asc' o 'desc')
-    @TotalRecords INT OUTPUT -- Total de registros
+    @Filtro INT = NULL, 
+    @SesionActiva CHAR(1) = NULL,
+    @SesionFallida INT = NULL, 
+    @Estado NVARCHAR(50) = NULL, 
+    @idUsuario INT, 
+    @NumPage INT = 1, 
+    @NumRecordsPage INT = 10, 
+    @Sort NVARCHAR(50) = 'idUsuario', 
+    @Order NVARCHAR(10) = 'asc',
+    @TotalRecords INT OUTPUT 
 AS
 BEGIN
     -- Configurar el nivel de aislamiento para evitar bloqueos en tablas grandes
@@ -897,67 +736,9 @@ BEGIN
 END;
 
 
-DECLARE @Total INT;
+/* CONTADOR DE USUARIOS (DASHBOARD) */
 
-EXEC ConsultarEstadosUsuarios
-@idUsuario=1,
-@Filtro=2,
-@TotalRecords = @Total OUTPUT
-select @total as totalrecors
-
-@SesionActiva = 'A';
-@Estado='Activo',
-
-select*from Usuarios
-select*from Sessions
-
-DECLARE @Resultado INT;
-DECLARE @Rol INT;
-DECLARE @id INT;
-DECLARE @UserName NVARCHAR(50);
-DECLARE @Mail NVARCHAR(50);
-DECLARE @Nombres NVARCHAR(100);
-DECLARE @Apellidos NVARCHAR(100);
-DECLARE @Identificacion NVARCHAR(50);
-DECLARE @FechaNacimiento DATE;
-DECLARE @FechaIngreso DATETIME;
-DECLARE @FechaCierre DATETIME;
-
-EXEC InicioSesion 
-    @Login = 'angelvergarap', 
-    @Password = 'C@rllopez2024', 
-    @Rol = @Rol OUTPUT, 
-    @Result = @Resultado OUTPUT, 
-    @UsuarioId = @id OUTPUT,
-    @UserName = @UserName OUTPUT,
-    @Mail = @Mail OUTPUT,
-    @Nombres = @Nombres OUTPUT,
-    @Apellidos = @Apellidos OUTPUT,
-    @Identificacion = @Identificacion OUTPUT,
-    @FechaNacimiento = @FechaNacimiento OUTPUT,
-	@FechaCierre=@FechaCierre OUTPUT,
-	  @FechaIngreso = @FechaIngreso OUTPUT;
-
--- Mostrar los resultados
-SELECT 
-    @Resultado AS Resultado,
-    @Rol AS Rol,
-    @id AS UsuarioId,
-    @UserName AS UserName,
-    @Mail AS Mail,
-    @Nombres AS Nombres,
-    @Apellidos AS Apellidos,
-    @Identificacion AS Identificacion,
-    @FechaNacimiento AS FechaNacimiento,
-	@FechaIngreso AS FechaIngreso,
-	@FechaCierre as FechaCierre;
-
-select*from Usuarios
-select*from Sessions
-EXEC CerrarSesion 
-    @Login = 'angelvergarap'
-
-	create PROCEDURE ResumenDashboard
+CREATE PROCEDURE ResumenDashboard
 AS
 BEGIN
     -- Variables para almacenar los resultados
@@ -986,30 +767,30 @@ BEGIN
         @TotalSesionActivaA AS TotalSesionActiva;
 END;
 
-EXEC ResumenDashboard
 
 
-select*from Usuarios
-select*from Personas
-update Usuarios set Password='helado5@' where idUsuario =4
 
+/*CAMBIAR CONTRASEÑA*/
 
 create PROCEDURE CambiarContrasena
-    @Email NVARCHAR(255),             -- Correo electrónico del usuario
-    @Identificacion NVARCHAR(50),     -- Identificación de la persona
-    @NuevaContrasena NVARCHAR(255),   -- Nueva contraseña (ya encriptada si corresponde)
-    @ConfirNuevaContrasena NVARCHAR(255), -- Confirmación de la nueva contraseña
-    @Mensaje NVARCHAR(255) OUTPUT     -- Parámetro de salida para el mensaje
+    @Email NVARCHAR(255),             
+    @Identificacion NVARCHAR(50),     
+    @NuevaContrasena NVARCHAR(255),   
+    @ConfirNuevaContrasena NVARCHAR(255), 
+    @Mensaje NVARCHAR(255) OUTPUT ,
+	 @Resultado NVARCHAR(255) OUTPUT 
 AS
 BEGIN
     SET NOCOUNT ON;
-
+ 
+    
     -- Verificar si la nueva contraseña y la confirmación coinciden
     IF @NuevaContrasena != @ConfirNuevaContrasena
     BEGIN
         -- Devolver mensaje de error si las contraseñas no coinciden
         SET @Mensaje = 'La nueva contraseña y la confirmación no coinciden.';
-        RETURN;
+        SET @Resultado = 0;  -- Error
+        RETURN @Resultado;   -- Retornar 0 si hay un error
     END
 
     -- Verificar si el email y la identificación coinciden
@@ -1029,30 +810,21 @@ BEGIN
 
         -- Devolver mensaje de éxito
         SET @Mensaje = 'Contraseña actualizada correctamente.';
+        SET @Resultado = 1;  -- Éxito
+        RETURN @Resultado;   -- Retornar 1 si la operación fue exitosa
     END
     ELSE
     BEGIN
         -- Devolver mensaje de error si no se encuentra coincidencia
         SET @Mensaje = 'No se encontró ningún usuario con los datos proporcionados.';
+        SET @Resultado = 0;  -- Error
+        RETURN @Resultado;   -- Retornar 0 si hubo un error
     END
 END;
 
 
-select*from Usuarios
 
-DECLARE @Resultado NVARCHAR(255);
-
-
--- Cambiar contraseña
-EXEC CambiarContrasena
-    @Email = 'clopez.gomez@mail.com',
-    @Identificacion = '0987654321',
-    @NuevaContrasena = 'Helado5000$',
-	 @ConfirNuevaContrasena = 'Helado5000$',
-	  @Mensaje = @Resultado OUTPUT;
--- Verificar resultado
-SELECT @Resultado;
-
+/*ELIMINAR UN USUARIO (ADMINISTRADOR)*/
 
 CREATE PROCEDURE EliminarUsuario
     @UsuarioId INT,  -- ID del usuario que se va a eliminar
@@ -1080,21 +852,240 @@ BEGIN
     END
 END;
 
-DECLARE @Resultado INT;
 
 
-EXEC EliminarUsuario 
-@UsuarioId = 5, @IdAdmin = 1,
-
-  @Resultado= @Resultado OUTPUT;
--- Verificar resultado
-SELECT @Resultado;
-
-SELECT*FROM Usuarios
+/*VERIFICAR LAS OPCIONES DE LOS ROLES (ADMINISTRADOR- CRUDS) */
 
 
+CREATE PROCEDURE ROLESOPCIONES
+	  @IdUsuario INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+	SELECT Opcion_IdOpcion, Activo  FROM AsignaRoles WHERE IdUsuario=@IdUsuario
+	END;
+
+ /*ACTUALIZAR LOS DATOS DE USUARIO GENERAL*/
+
+create PROCEDURE ActualizarDatosUsuarioGeneral 
+    @IdUsuario INT,
+    @NuevoUserName NVARCHAR(50),
+    @Nombres NVARCHAR(50),
+    @Apellidos NVARCHAR(50),
+    @FechaNacimiento DATE
+   
+AS
+BEGIN
+    SET NOCOUNT ON;
+	IF EXISTS (
+        SELECT 1
+        FROM RolUsuarios r
+        WHERE r.Usuarios_idUsuarios = @IdUsuario AND r.Rol_idRol = 2
+    )
+    BEGIN
+    UPDATE u
+    SET 
+        u.UserName = @NuevoUserName
+    FROM Usuarios u
+    WHERE u.idUsuario = @IdUsuario;
+
+    UPDATE p
+    SET 
+        p.Nombres = @Nombres,
+        p.Apellidos = @Apellidos,
+        p.FechaNacimiento = @FechaNacimiento
+		
+    FROM Personas p
+    INNER JOIN Usuarios u ON p.idPersona = u.Persona_IdPersona2
+    WHERE u.idUsuario = @IdUsuario;
+	 SELECT 1 AS Resultado; -- Éxito
+	 END
+    ELSE
+    BEGIN
+	  SELECT 0 AS Resultado;
+        -- Si no es administrador, generar un mensaje de error
+        THROW 50000, 'El usuario no tiene permisos para actualizar estos datos.', 1;
+    END
+END;
 
 
+
+/*ACTUALIZAR DATOS SOLO PARA EL ADMINISTRADOR EN SI(NO OTROS)  */
+
+
+
+CREATE PROCEDURE ActualizarDatosAdmin 
+    @IdUsuario INT,
+    @NuevoUserName NVARCHAR(50),
+    @Nombres NVARCHAR(50),
+    @Apellidos NVARCHAR(50),
+    @FechaNacimiento DATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Verificar si el usuario es administrador
+    IF EXISTS (
+        SELECT 1
+        FROM RolUsuarios r
+        WHERE r.Usuarios_idUsuarios = @IdUsuario AND r.Rol_idRol = 1
+    )
+    BEGIN
+        -- Actualizar datos en la tabla Usuarios
+        UPDATE u
+        SET 
+            u.UserName = @NuevoUserName
+        FROM Usuarios u
+        WHERE u.idUsuario = @IdUsuario;
+
+        -- Actualizar datos en la tabla Personas
+        UPDATE p
+        SET 
+            p.Nombres = @Nombres,
+            p.Apellidos = @Apellidos,
+            p.FechaNacimiento = @FechaNacimiento
+            
+        FROM Personas p
+        INNER JOIN Usuarios u ON p.idPersona = u.Persona_IdPersona2
+        WHERE u.idUsuario = @IdUsuario;
+		  SELECT 1 AS Resultado; -- Éxito
+    END
+    ELSE
+    BEGIN
+	  SELECT 0 AS Resultado;
+        -- Si no es administrador, generar un mensaje de error
+        THROW 50000, 'El usuario no tiene permisos para actualizar estos datos.', 1;
+    END
+END;
+
+
+
+
+
+/*CONSULTAR LOS DATOS DEL PERFIL ADMINISTRADOR (SOLO PARA EL USUARIO ADMIN EN SI)*/
+create PROCEDURE ConsultarDatosAdmin 
+    @IdUsuario INT
+   
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Verificar si el usuario es administrador
+    IF EXISTS (
+        SELECT 1
+        FROM RolUsuarios r
+        WHERE r.Usuarios_idUsuarios = @IdUsuario AND r.Rol_idRol = 1
+    )
+    BEGIN
+       
+       Select top 1
+            p.Nombres ,
+            p.Apellidos ,
+            p.FechaNacimiento ,
+          p.Identificacion,
+		  u.UserName,
+		  u.Mail,
+		    (SELECT MAX(s.FechaIngreso) FROM Sessions s WHERE s.idPersona = u.IdUsuario)as FechaIngreso
+          
+        FROM Personas p
+        INNER JOIN Usuarios u ON p.idPersona = u.Persona_IdPersona2
+		 LEFT JOIN Sessions s ON u.IdUsuario = s.idPersona
+        WHERE u.idUsuario = @IdUsuario;
+		  SELECT 1 AS Resultado; -- Éxito
+    END
+    ELSE
+    BEGIN
+	  SELECT 0 AS Resultado;
+        -- Si no es administrador, generar un mensaje de error
+        THROW 50000, 'El usuario no tiene permisos para actualizar estos datos.', 1;
+    END
+END;
+
+
+
+/*CONSULTA DE DATOS DE PERFIL PARA EL USUARIO GENERAL */
+create PROCEDURE ConsultarDatosUsuarioGeneral 
+    @IdUsuario INT
+   
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Verificar si el usuario es administrador
+    IF EXISTS (
+        SELECT 1
+        FROM RolUsuarios r
+        WHERE r.Usuarios_idUsuarios = @IdUsuario AND r.Rol_idRol = 2
+    )
+    BEGIN
+       
+       Select top 1
+            p.Nombres ,
+            p.Apellidos ,
+            p.FechaNacimiento ,
+          p.Identificacion,
+		  u.UserName,
+		  u.Mail,
+		    (SELECT MAX(s.FechaIngreso) FROM Sessions s WHERE s.idPersona = u.IdUsuario)as FechaIngreso
+          
+        FROM Personas p
+        INNER JOIN Usuarios u ON p.idPersona = u.Persona_IdPersona2
+		 LEFT JOIN Sessions s ON u.IdUsuario = s.idPersona
+        WHERE u.idUsuario = @IdUsuario;
+		  SELECT 1 AS Resultado; -- Éxito
+    END
+    ELSE
+    BEGIN
+	  SELECT 0 AS Resultado;
+        -- Si no es administrador, generar un mensaje de error
+        THROW 50000, 'El usuario no tiene permisos para actualizar estos datos.', 1;
+    END
+END;
+
+
+
+
+
+
+
+/* TRIGGERS */
+
+/*TRIGGER QUE VERIFICA LOS INTENTOS FALLIDOS AL INTENTAR INICIAR SESION, ESTE CAMBIA
+SU ESTADO A BLOQUEADO PARA ASI NO PERMITIR SU INGRESO
+*/
+
+
+	CREATE TRIGGER BloqueoUsuario
+ON Usuarios
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Verifica si hay actualizaciones en la columna IntentosFallidos
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        INNER JOIN deleted d
+            ON i.IdUsuario = d.IdUsuario
+        WHERE i.IntentosFallidos >= 3 AND i.IntentosFallidos <> d.IntentosFallidos
+          AND i.Status <> 'Bloqueado'
+    )
+    BEGIN
+        -- Actualiza el estado del usuario a 'Bloqueado'
+        UPDATE Usuarios
+        SET Status = 'Bloqueado'
+        FROM Usuarios u
+        INNER JOIN inserted i
+            ON u.IdUsuario = i.IdUsuario
+        WHERE i.IntentosFallidos >= 3;
+
+        PRINT 'Usuario bloqueado debido a múltiples intentos fallidos de inicio de sesión.';
+    END
+END;
+
+
+/* TRIGER QUE VALIDA QUE LA CONTRASEÑA CUMPLA CON LOS CARACTERES CORRESPONDIENTES */
 
 create TRIGGER trgValidarContrasena
 ON Usuarios
@@ -1120,180 +1111,8 @@ BEGIN
     END
 END;
 
-/*
-drop PROCEDURE VerificarPermiso
-    @IdUsuario INT,          -- ID del usuario
-    @IdOpcion INT,           -- ID de la opción a verificar
-    @TienePermiso BIT OUTPUT -- Salida: 1 si tiene permiso, 0 si no
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    -- Verificar si el usuario tiene el permiso
-    IF EXISTS (
-        SELECT 1
-        FROM Usuarios u
-        JOIN RolUsuarios ru ON u.idUsuario = ru.Usuarios_idUsuarios
-        JOIN RolRolOpciones ro ON ru.Rol_idRol = ro.Rol_idRol
-        WHERE u.idUsuario = @IdUsuario AND ro.RolOpciones_idOpciones = @IdOpcion
-    )
-    BEGIN
-        SET @TienePermiso = 1; -- Tiene permiso
-    END
-    ELSE
-    BEGIN
-        SET @TienePermiso = 0; -- No tiene permiso
-    END
-END;
-
-    */
-
-	CREATE PROCEDURE VerificarPermiso
-    @IdUsuario INT,
-    @IdOpcion INT,
-    @TienePermiso BIT OUTPUT
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    -- Verificar permisos personalizados por usuario
-    SELECT TOP 1 @TienePermiso = Activo
-    FROM AsignaRoles
-    WHERE IdUsuario = @IdUsuario AND Opcion_IdOpcion = @IdOpcion;
-
-    -- Si no se encontró un permiso personalizado, usar los permisos del rol
-    IF @TienePermiso IS NULL
-    BEGIN
-        SELECT TOP 1 @TienePermiso = 1
-        FROM RolUsuarios ru
-        INNER JOIN RolOpciones ro ON ru.Rol_idRol = ro.idOpciones
-        WHERE ru.Usuarios_idUsuarios = @IdUsuario AND ro.idOpciones = @IdOpcion;
-    END
-
-    -- Si sigue siendo NULL, no tiene permiso
-    IF @TienePermiso IS NULL
-        SET @TienePermiso = 0;
-END;
-
-select*from AsignaRoles
-
-CRA
-
-
-	CREATE PROCEDURE ROLESOPCIONES
-	  @IdUsuario INT
-AS
-BEGIN
-    SET NOCOUNT ON;
-	SELECT Opcion_IdOpcion, Activo  FROM AsignaRoles WHERE IdUsuario=@IdUsuario
-	END;
-
-	EXEC ROLESOPCIONES
-    @IdUsuario = 1, 
-
-
-DECLARE @TienePermiso BIT; -- Declarar la variable de salida
-
--- Llamar al procedimiento almacenado y asignar el valor de salida
-EXEC VerificarPermiso 
-    @IdUsuario = 1, 
-    @IdOpcion = 1, 
-    @TienePermiso = @TienePermiso OUTPUT;
-
--- Mostrar el resultado
-SELECT @TienePermiso AS Permiso;
-
-SELECT*FROM RolOpciones
-SELECT*FROM RolUsuarios
-SELECT*FROM RolRolOpciones
-
-CREATE PROCEDURE ActualizarDatosUsuario 
-    @IdUsuario INT,
-    @NuevoUserName NVARCHAR(50),
-    @Nombres NVARCHAR(50),
-    @Apellidos NVARCHAR(50),
-    @FechaNacimiento DATE,
-    @Status NVARCHAR(20)
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    UPDATE u
-    SET 
-        u.UserName = @NuevoUserName
-    FROM Usuarios u
-    WHERE u.idUsuario = @IdUsuario;
-
-    UPDATE p
-    SET 
-        p.Nombres = @Nombres,
-        p.Apellidos = @Apellidos,
-        p.FechaNacimiento = @FechaNacimiento,
-        p.Status = @Status
-		
-    FROM Personas p
-    INNER JOIN Usuarios u ON p.idPersona = u.Persona_IdPersona2
-    WHERE u.idUsuario = @IdUsuario;
-END;
-
-EXEC ActualizarDatosUsuario 
-    @IdUsuario = 1, 
-    @NuevoUserName = 'NuevoNombre',
-    @Nombres = 'Juan',
-    @Apellidos = 'Pérez',
-    @FechaNacimiento = '1990-05-12',
-    @Status = 'Activo';
 
 
 
-CREATE PROCEDURE ActualizarDatosAdmin 
-    @IdUsuario INT,
-    @NuevoUserName NVARCHAR(50),
-    @Nombres NVARCHAR(50),
-    @Apellidos NVARCHAR(50),
-    @FechaNacimiento DATE,
-    @Status NVARCHAR(20)
-AS
-BEGIN
-    SET NOCOUNT ON;
 
-    -- Verificar si el usuario es administrador
-    IF EXISTS (
-        SELECT 1
-        FROM RolUsuarios r
-        WHERE r.Usuarios_idUsuarios = @IdUsuario AND r.Rol_idRol = 1
-    )
-    BEGIN
-        -- Actualizar datos en la tabla Usuarios
-        UPDATE u
-        SET 
-            u.UserName = @NuevoUserName
-        FROM Usuarios u
-        WHERE u.idUsuario = @IdUsuario;
-
-        -- Actualizar datos en la tabla Personas
-        UPDATE p
-        SET 
-            p.Nombres = @Nombres,
-            p.Apellidos = @Apellidos,
-            p.FechaNacimiento = @FechaNacimiento,
-            p.Status = @Status
-        FROM Personas p
-        INNER JOIN Usuarios u ON p.idPersona = u.Persona_IdPersona2
-        WHERE u.idUsuario = @IdUsuario;
-    END
-    ELSE
-    BEGIN
-        -- Si no es administrador, generar un mensaje de error
-        THROW 50000, 'El usuario no tiene permisos para actualizar estos datos.', 1;
-    END
-END;
-
-
-EXEC ActualizarDatosAdmin 
-    @IdUsuario = 1, 
-    @NuevoUserName = 'NuevoAdmin',
-    @Nombres = 'Carlos',
-    @Apellidos = 'Gómez',
-    @FechaNacimiento = '1985-08-23',
-    @Status = 'Activo';
+	

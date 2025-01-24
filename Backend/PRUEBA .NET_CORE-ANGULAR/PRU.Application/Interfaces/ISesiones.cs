@@ -12,7 +12,7 @@ namespace PRU.Application.Interfaces
 {
     public interface ISesiones
     {
-        Task<BaseResponse<IEnumerable<SesionsResponse>>> ListaSesiones(int usuarioId, BaseFilterRequest filters);
+        Task<BaseResponse<IEnumerable<SesionsResponse>>> ListaSesiones(int usuarioId, BaseFilterRequestDates filters);
         //Task<BaseResponse<IEnumerable<UsuariosAdmResponseDto>>> ListaSesiones(int usuarioId, BaseFilterRequest filters);
 
 

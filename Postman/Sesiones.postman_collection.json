@@ -1,0 +1,73 @@
+{
+	"info": {
+		"_postman_id": "252621cb-9ff1-4c63-8485-9a353daac651",
+		"name": "Sesiones",
+		"description": "Consulta las sesiones que ha tenido el usuario",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39956651",
+		"_collection_link": "https://www.postman.com/avionics-architect-34378447/workspace/endpoints-proyecto-login/collection/39956651-252621cb-9ff1-4c63-8485-9a353daac651?action=share&source=collection_link&creator=39956651"
+	},
+	"item": [
+		{
+			"name": "Consultar sesiones",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7096/api/Sesions/ListaSesiones?idUsuario=1&StartDate=2025-01-16&EndDate=2025-01-17",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Sesions",
+						"ListaSesiones"
+					],
+					"query": [
+						{
+							"key": "idUsuario",
+							"value": "1",
+							"description": "id del usuario"
+						},
+						{
+							"key": "StartDate",
+							"value": "2025-01-16"
+						},
+						{
+							"key": "EndDate",
+							"value": "2025-01-17"
+						},
+						{
+							"key": "NumPage",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "NumRecordsPage",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "Order",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "Sort",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "Records",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

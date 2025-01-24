@@ -16,28 +16,7 @@ export class AuthGuard implements CanActivate {
     // Verifica si el usuario está autenticado
     const user = this.authService.getUserId();
     const role = this.authService.getUserRole();
-   /* if (route.url[0].path === 'bienvenido' && role ===null&& user === null) {
-      this.router.navigate(['/login']);
-      return false; // Usuario con rol 2 puede acceder a 'bienvenido'
-    }
-    if (route.url[0].path === 'bienvenido' && role !==null&& user !== null) {
-      this.router.navigate(['/bienvenido']);
-      return true; // Usuario con rol 2 puede acceder a 'bienvenido'
-    }*/
-    
-    /*
-    if (route.url[0].path === 'bienvenido' && role === 2) {
-        return true; // Usuario con rol 2 puede acceder a 'bienvenido'
-      }
-      
-      // Redirige al NotFound si el rol no es 2 y trata de acceder a 'bienvenido'
-      if (route.url[0].path === 'bienvenido' && role !== 2) {
-        this.router.navigate(['/notfound']);
-        return false;
-      }
-      */
-      // Acceso a 'administrador' solo permitido para el rol 1 (admin)
-     
+   
       // Si el usuario está autenticado, permite el acceso
       if (role !== null && user !== null) {
         if (route.url[0].path === 'administrador' && role === 1) {
@@ -56,16 +35,18 @@ export class AuthGuard implements CanActivate {
           return false;
         }
       
-       // return true;
+  
       }else{
         if (route.url[0].path === 'bienvenido') {
-          this.router.navigate(['/notfound']);
+          this.router.navigate(['/login']);
+          return false;
+        }
+        if (route.url[0].path === 'perfil') {
+          this.router.navigate(['/login']);
           return false;
         }
       }
-      
-  //    // Si no está autenticado, redirige al login
-    // this.router.navigate(['/login']);
+
      return true;
     }
 }

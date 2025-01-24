@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from 'express';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 import { GenericValidators,  PasswordComplexityValidator,  PasswordMatchValidator,  passwordValidator } from '../../../shared/validators/generic-validators';
 import { AuthService } from '../../Auth/Services/auth.service';
 import { CambiarContrasenaService } from '../Servicios/cambiar-contrasena.service';
@@ -19,9 +20,8 @@ export class RecuperarcontrasenaComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder, 
-    private authServices: AuthService,
 private recuperarctr:CambiarContrasenaService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef, private router:Router
   ) { }
 
   ngOnInit(): void {
@@ -32,19 +32,13 @@ private recuperarctr:CambiarContrasenaService,
   initForm(): void {
     this.form = this.fb.group({
       identificacion: ["", [Validators.required, GenericValidators.identificacion]],
-     email: ["", [Validators.required, GenericValidators.emailValidation]], // Email validation added
+     email: ["", [Validators.required, GenericValidators.emailValidation]], 
      nuevaContrasena: ["", [Validators.required, passwordValidator()]],
      confirNuevaContrasena: ["", [Validators.required]]
     }
    
-    
-    
-    
     );
   }
-
-
-
 
 
 Recuperar() {
@@ -55,39 +49,27 @@ Recuperar() {
       controls.markAllAsTouched();
     })
     } 
-    Object.keys(this.form.controls).forEach((controlName) => {
-      const control = this.form.get(controlName);
-      if (control?.invalid) {
-        console.log(`El campo ${controlName} no es válido`);
-        
-        // Mostrar los errores de cada campo
-        Object.keys(control.errors || {}).forEach((errorKey) => {
-          console.log(`Error en el campo ${controlName}: ${errorKey}`);
-        });
-      }
-    });
-
- console.log(this.form.value)
 
       this.recuperarctr.CambiarContrasena (this.form.value).subscribe((resp)=>{
-        console.log('Respuesta del servidor:', resp);
-        if(resp.isSucces === true){
-          console.log('Respuesta del servidor:', resp.isSucces);
-      //    this._alert.success('Excelente',resp.message)
-         
-        }else{
-          console.log('Respuesta del servidor:', resp.isSucces);
-         // this._alert.warn('Atencion',resp.message)
+        if(resp.isSucces){
+          Swal.fire({
+            title: 'Éxito!',
+            text: 'Tu acción fue exitosa, Inicia sesion otra vez',
+            icon: 'success',
+            confirmButtonText: 'Continuar',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Si el usuario confirma, redirigir a la página de login
+              this.router.navigate(['/login']);
+            }
+          });
         }
-       
+      
       })
        
 
 
 }
-
-
-
 
 
 toggleVisibility() {

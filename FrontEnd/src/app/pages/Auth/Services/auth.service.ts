@@ -12,28 +12,20 @@ import { ToastrService } from 'ngx-toastr';
   providedIn: 'root'
 })
 export class AuthService {
-/*private user: BehaviorSubject<BaseResponse>;
-public get userToken():BaseResponse{
-  return this.user.value
-}*/
-
 
   constructor(private http:HttpClient,private toastr: ToastrService) { 
-    /*
-this.user= new BehaviorSubject<BaseResponse>(
-  JSON.parse(localStorage.getItem("token"))
-)*/
+
 
   }
-  private formDataUser: FormData | null = null; // Propiedad para guardar el FormData
+  private formDataUser: FormData | null = null; 
   showSuccess(mensaje:string) {
     this.toastr.success(mensaje, 'Éxito');
   }
   showError(mensaje:string) {
     this.toastr.error(mensaje, 'Error');
   }
+
   login(req:Login): Observable<BaseResponse>{
-//    localStorage.setItem("authType","Interno");
 const requestURL=  `${env.api}${end.GENERATE_TOKEN}`
 return this.http.post<BaseResponse>(requestURL, req, httpOptions).pipe(
 map((resp:BaseResponse)=>{
@@ -41,8 +33,6 @@ map((resp:BaseResponse)=>{
 if(resp.isSucces){
   
   this.showSuccess(resp.message);
-  console.log(resp.isSucces)
-  console.log(resp.dataPersonal.fechaIngreso)
   localStorage.setItem('datospersonales', JSON.stringify(resp.dataPersonal));
  
 
@@ -59,28 +49,21 @@ if (resp.data!=null && resp.additionalData!=null) {
     personalData: resp.dataPersonal.userName // Los datos personales del usuario
   };
 
-  // Almacenar el objeto de credenciales en localStorage
 
   localStorage.setItem('userCredentials', JSON.stringify(resp.dataPersonal.userName));
-  localStorage.setItem('NombreUsuario', JSON.stringify(resp.dataPersonal.nombres));
+  localStorage.setItem('NombreUsuario', JSON.stringify(`${resp.dataPersonal.nombres} ${resp.dataPersonal.apellidos}`));
 }
-if (resp.dataPersonal) {
-  const userName = resp.dataPersonal.userName;
-  //localStorage.setItem('personalData', JSON.stringify(resp.dataPersonal));
-  console.log('Datos personales:', resp.dataPersonal,userName);
-  console.log('Datos personales:', resp.dataPersonal.nombres);
-}
+
+
 }else{
-  console.log(resp.message)
+ 
   this.showError(resp.message);
 }
 return resp;
 
 }),  catchError((error) => {
-  // Aquí puedes manejar el error de manera adecuada
-  console.error('Error al hacer login', error);
+ 
   this.showError(error);
-  // Puedes devolver un objeto de respuesta de error si lo necesitas
  
   return of(error);  // Retorna una respuesta de error para que el flujo continúe
 })
@@ -91,7 +74,8 @@ return resp;
 
   formData.append("userName", user.userName.toString());              
   formData.append("nombres", user.nombres.toString());                
-  formData.append("apellidos", user.apellidos.toString());            
+  formData.append("apellidos", user.apellidos.toString());
+  formData.append("mail", user.mail.toString());            
   formData.append("fechaNacimiento", user.fechaNacimiento.toString());
   formData.append("fechaIngreso", user.fechaIngreso.toString());     
   formData.append("identificacion", user.identificacion.toString());            
@@ -113,7 +97,6 @@ getFormDataUser(): FormData | null {
     
   }
 
-  // Método para obtener el ID del usuario
   getUserId(): number | null {
     return JSON.parse(localStorage.getItem('userId') || 'null');
   }
@@ -124,10 +107,6 @@ getFormDataUser(): FormData | null {
   
   logout(credentials: string): Observable<BaseResponse> {
     const requestURL = `${env.api}${end.LOGOUT}`;
-    const headers = new HttpHeaders({
-      'Content-Type': 'text/plain', // Indica que el cuerpo es texto plano
-    });
-  console.log(credentials)
     return this.http.post<BaseResponse>(requestURL, credentials, httpOptions).pipe(
       map((resp: BaseResponse) => {
         if (resp.isSucces) {
@@ -140,7 +119,7 @@ getFormDataUser(): FormData | null {
       }),
       catchError((error) => {
         console.error('Error en logout:', error);
-        throw error; // Re-lanza el error para manejo posterior
+        throw error; 
       })
     );
   }

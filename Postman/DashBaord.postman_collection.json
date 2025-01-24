@@ -1,0 +1,117 @@
+{
+	"info": {
+		"_postman_id": "9e2c2b1c-f026-4d4f-9b77-4de7ceb742a2",
+		"name": "DashBaord",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39956651",
+		"_collection_link": "https://www.postman.com/avionics-architect-34378447/workspace/endpoints-proyecto-login/collection/39956651-9e2c2b1c-f026-4d4f-9b77-4de7ceb742a2?action=share&source=collection_link&creator=39956651"
+	},
+	"item": [
+		{
+			"name": "Consulta de datos de sesiones",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "https://localhost:7096/api/Dashboard/Dashboard?idUsuario=1&NumFilter=1",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Dashboard",
+						"Dashboard"
+					],
+					"query": [
+						{
+							"key": "idUsuario",
+							"value": "1",
+							"description": "id del usuario admin"
+						},
+						{
+							"key": "NumFilter",
+							"value": "1",
+							"description": "1= Consulta ultimas sesiones 2=Consultar todas las sesiones 3=Consultar sesiones sin fechas(solo para ver sus estados)"
+						},
+						{
+							"key": "TextFilterSesion",
+							"value": "",
+							"description": "A/I JUNTO CON FILTRO 2",
+							"disabled": true
+						},
+						{
+							"key": "StateFilter",
+							"value": null,
+							"description": "1/0 SESION FALLIDAS CON FILTRO 2",
+							"disabled": true
+						},
+						{
+							"key": "StateFilterText",
+							"value": null,
+							"description": "Activo/Inacctivo CON FILTRO 3",
+							"disabled": true
+						},
+						{
+							"key": "NumPage",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "NumRecordsPage",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "Order",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "Sort",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "Records",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Filtro 1 con problemas solo funciona en la bd, de todas formas no esta en uso ese filtro en el fronted."
+			},
+			"response": []
+		},
+		{
+			"name": "Contador de usuarios",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7096/api/Dashboard/DashboardCount",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Dashboard",
+						"DashboardCount"
+					]
+				},
+				"description": "Contador de los usuarios registrados, segun sus estados y estados de sesion"
+			},
+			"response": []
+		}
+	]
+}

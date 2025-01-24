@@ -15,6 +15,7 @@ namespace PRU.Application.Dtos.Administrador.Usuarios
         public string? SesionActive { get; set; }
         public int IntentosFallidos { get; set; }
         public string? StatusUsuario { get; set; }
+        public int idPersona { get; set; }
         public string? Nombres { get; set; }
         public string? Apellidos { get; set; }
         public string? Identificacion { get; set; }

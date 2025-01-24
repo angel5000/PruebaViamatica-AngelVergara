@@ -49,7 +49,15 @@
 
             <mat-form-field class="w-full">
                 <mat-label>Sesión Activa</mat-label>
-                <input matInput formControlName="sesionActive" />
+            
+
+                <mat-select formControlName="sesionActive">
+                    <mat-option *ngFor="let estado of getestasseison" [value]="estado.value">
+                      {{ estado.label }}
+                    </mat-option>
+                  </mat-select>
+              
+
                 <mat-error *ngIf="form?.get('sesionActive')?.hasError('required')">
                     El campo Sesión Activa es requerido
                 </mat-error>
@@ -57,7 +65,16 @@
 
             <mat-form-field class="w-full">
                 <mat-label>Estado Usuario</mat-label>
-                <input matInput formControlName="statusUsuario" />
+
+                <mat-select formControlName="statusUsuario">
+                    <mat-option *ngFor="let estado of getestadouser" [value]="estado.value">
+                      {{ estado.label }}
+                    </mat-option>
+                  </mat-select>
+              
+           
+
+
                 <mat-error *ngIf="form?.get('statusUsuario')?.hasError('required')">
                     El campo Estado Usuario es requerido
                 </mat-error>
@@ -90,7 +107,18 @@
 
             <mat-form-field class="w-full">
                 <mat-label>Estado Persona</mat-label>
-                <input matInput formControlName="statusPersona" />
+                <mat-label>Selecciona una opción</mat-label>
+                <mat-select formControlName="statusPersona">
+                  <mat-option *ngFor="let estado of getestadouser" [value]="estado.value">
+                    {{ estado.label }}
+                  </mat-option>
+                </mat-select>
+            
+
+         
+
+
+
                 <mat-error *ngIf="form?.get('statusPersona')?.hasError('required')">
                     El campo Estado Persona es requerido
                 </mat-error>
@@ -98,7 +126,16 @@
     
             <mat-form-field *ngIf="!ocultar" class="w-full" [hidden]="ocultar">
                 <mat-label>Rol</mat-label>
-                <input matInput formControlName="rol" />
+               
+                    <mat-label>Selecciona una opción</mat-label>
+                    <mat-select formControlName="rol">
+                      <mat-option *ngFor="let estado of getRol" [value]="estado.value">
+                        {{ estado.label }}
+                      </mat-option>
+                    </mat-select>
+                
+                
+
                 <mat-error *ngIf="form?.get('rol')?.hasError('required')&&!ocultar">
                     El campo Rol es requerido
                 </mat-error>

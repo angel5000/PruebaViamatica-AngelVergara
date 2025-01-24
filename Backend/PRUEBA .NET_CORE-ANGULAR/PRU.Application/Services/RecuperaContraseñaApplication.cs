@@ -48,15 +48,27 @@ namespace PRU.Application.Services
                 var verifpasswordParam = new SqlParameter("@ConfirNuevaContrasena", requestDto.ConfirNuevaContrasena);
                 var mailParam = new SqlParameter("@Email", requestDto.Email);
                 var Mensaje = new SqlParameter("@Mensaje", SqlDbType.NVarChar,255) { Direction = ParameterDirection.Output };
-                await _context.Database.ExecuteSqlRawAsync(
-      "EXEC CambiarContrasena @Email,@Identificacion,@NuevaContrasena,@ConfirNuevaContrasena, @Mensaje OUTPUT",
-    identificacionParam, mailParam,
-     passwordParam, verifpasswordParam,Mensaje
-                );
+                var resultadoParam = new SqlParameter("@Resultado", System.Data.SqlDbType.Int) { Direction = System.Data.ParameterDirection.Output };
 
-                response.IsSucces = true;
-               
-                response.Message = (string)Mensaje.Value;
+
+ await _context.Database.ExecuteSqlRawAsync(
+      "EXEC CambiarContrasena @Email,@Identificacion,@NuevaContrasena,@ConfirNuevaContrasena, @Mensaje OUTPUT, @Resultado OUTPUT",
+     mailParam, identificacionParam, passwordParam, verifpasswordParam,Mensaje, resultadoParam
+                );
+                var resultado = (int)resultadoParam.Value;
+                if (resultado==0)
+                {
+                    response.IsSucces = false;
+
+                    response.Message = (string)Mensaje.Value;
+                }
+                else
+                {
+                    response.IsSucces = true;
+
+                    response.Message = (string)Mensaje.Value;
+                }
+                
                
             }
             catch (Exception e)

@@ -1,0 +1,57 @@
+<div class="perfil mt-4 mb-5 pb-5">
+<p class="headline  text-2xl font-bold bg-red-100 items-start mb-3">Perfil</p>
+<div class="mb-2 ml-4">
+    <button mat-button (click)="habilitarCampos()">
+        <i class="bi bi-pencil-square fs-4"></i>
+    </button>
+   
+</div>
+ <div class="contenedor">
+    
+<form [formGroup]="form" class="perfil-form" (ngSubmit)="Editar()">
+    <div class="input-group mb-3 textbox">
+        <span class="input-group-text" id="inputGroup-sizing-default">Identificación</span>
+        <input type="text"  [readOnly]="false"  class="form-control" formControlName="identificacion" aria-label="Identificación" aria-describedby="inputGroup-sizing-default">
+      </div>
+    
+      <div class="input-group mb-3 textbox">
+        <span class="input-group-text" id="basic-addon1">Usuario</span>
+        <input type="text"[readOnly]="habilitar"  [ngClass]="{'editable': !habilitar}"  class="form-control" placeholder="Nombre de usuario" formControlName="userName" aria-label="Nombre de usuario" aria-describedby="basic-addon1">
+      </div>
+    
+      <div class="input-group textbox mb-3">
+        <span class="input-group-text">Nombres y Apellidos</span>
+        <input type="text" [readOnly]="habilitar"  [ngClass]="{'editable': !habilitar}"   class="form-control" placeholder="Nombres" formControlName="nombres" aria-label="Nombres">
+        <input type="text" [readOnly]="habilitar" [ngClass]="{'editable': !habilitar}"  class="form-control" placeholder="Apellidos" formControlName="apellidos" aria-label="Apellidos">
+      </div>
+      <div class="input-group mb-3 textbox">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Correo Electrónico"
+          formControlName="correo"
+          aria-label="Correo Electrónico"
+          aria-describedby="basic-addon2"
+          [readOnly]="true" 
+        >
+        <span class="input-group-text" id="basic-addon2">{{ correoDominio }}</span>
+      </div>
+      
+    
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="inputGroup-sizing-default">Fecha de nacimiento</span>
+        <input type="date"[readOnly]="habilitar"  [ngClass]="{'editable': !habilitar}"  class="form-control" formControlName="fechaNacimiento" aria-label="Fecha de nacimiento" aria-describedby="inputGroup-sizing-default">
+      </div>
+    
+        <button type="submit" [disabled]="form.invalid||habilitar" class="btn btn-primary">Actualizar datos</button>
+        
+     
+    
+    </form>
+   
+    <div class="avatar">
+        <img src="assets/img/demo/landscape.jpg" >
+        </div>
+     
+</div>
+</div>

@@ -1,17 +1,22 @@
 
+<div class="mb-0 ml-5 spandv">
+  <span>REGISTRO MASIVO DE USUARIOS POR EXCEL</span>
+</div>
 <div class="flex items-center justify-end w-full ">
   
 <div class="flex justify-between sizediv">
-   
-    <input class="form-control size" type="file" id="formFile" accept=".xls, .xlsx" (change)="onFileChange($event)">
+  
+    <input class="form-control size" type="file" id="formFile" accept=".xls, .xlsx" 
+    (change)="onFileChange($event)" #fileInput>
    
     <button matTooltip="Subir Archivo Excel" type="button"
     
-    class="btn btn-success mx-5 sizebt"(click)="upload()"  [disabled]="!fileSelected">
-    
+    class="btn btn-success mx-5 sizebt"(click)="upload(fileInput)"  [disabled]="!fileSelected">
+   
     Subir Archivo
  <i class="bi bi-file-earmark-arrow-up-fill"></i>
 </button>
+
   </div>
 </div>
 

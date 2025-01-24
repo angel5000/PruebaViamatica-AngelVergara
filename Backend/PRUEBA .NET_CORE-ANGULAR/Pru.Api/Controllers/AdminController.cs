@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PRU.Application.Commons.Bases.Request;
+using PRU.Application.Commons.Bases.Response;
+using PRU.Application.Dtos.Administrador.DatosPersonales;
 using PRU.Application.Dtos.Administrador.Usuarios;
 using PRU.Application.Dtos.Usuarios.Request;
 using PRU.Application.Interfaces;
@@ -41,27 +43,38 @@ namespace Pru.Api.Controllers
             return Ok(response);
            
         }
-
+        public class Response
+        {
+            public bool IsSucces { get; set; }
+            public string Message { get; set; }
+        }
 
         [HttpPost("registerbyExcel")]
         public async Task<IActionResult> RegisterUserbyExcel(IFormFile archivo, [FromServices] IUploadExcel uploadExcelService)
         {
-
+            bool exito = false; string mensaje = "";
             var usuarios = upexcel.SubirExcel<UsuarioRequest>(archivo);
 
             foreach (var usuario in usuarios)
             {
                 // Registrar cada usuario individualmente
-                var response = await IAdminApplication.RegisterUser(usuario);
+                 var response = await IAdminApplication.RegisterUser(usuario);
 
                 // Validar respuesta en caso de error
                 if (!response.IsSucces)
                 {
-                    return BadRequest($"Error al registrar usuario: {response.Message}");
+                    exito = response.IsSucces;
+                    mensaje = response.Message!;
+
+                }
+                else
+                {
+                    exito = response.IsSucces;
+                    mensaje = response.Message!;
                 }
 
             }
-            return Ok("Excel subido correctamente");
+            return Ok(new Response {IsSucces=exito, Message=mensaje});
 
         }
 
@@ -74,9 +87,23 @@ namespace Pru.Api.Controllers
 
 
         }
+        [HttpPut("EditAdmindt/{idAdmin:int}")]
+        public async Task<IActionResult> EditAdminPerfil(int idAdmin, [FromForm] DatosPersonalesAdminRequest requestDto)
+        {
+            var response = await IAdminApplication.EditDTPersonal(requestDto, idAdmin);
+            return Ok(response);
 
-        [HttpGet("{idUsuario:int}")]
-        public async Task<IActionResult> CategorybyId(int idUsuario)
+
+        }
+        [HttpGet("infoperfil/{idadmin:int}")]
+        public async Task<IActionResult> MostrarDtosPerfilAdmin(int idadmin)
+        {
+            var response = await IAdminApplication.DatosAdminPerfil(idadmin);
+            return Ok(response);
+        }
+
+        [HttpGet("Usuario/{idUsuario:int}")]
+        public async Task<IActionResult>UserbyId(int idUsuario)
         {
             var response = await IAdminApplication.UserbyId(idUsuario);
             return Ok(response);

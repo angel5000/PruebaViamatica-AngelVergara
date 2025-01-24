@@ -1,0 +1,58 @@
+{
+	"info": {
+		"_postman_id": "2f4b3d7a-7c66-4349-8e60-b5f49e9aec43",
+		"name": "RecuperarContraseña",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39956651",
+		"_collection_link": "https://www.postman.com/avionics-architect-34378447/workspace/endpoints-proyecto-login/collection/39956651-2f4b3d7a-7c66-4349-8e60-b5f49e9aec43?action=share&source=collection_link&creator=39956651"
+	},
+	"item": [
+		{
+			"name": "Cambiar contraseña",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "NuevaContrasena",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "ConfirNuevaContrasena",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "Email",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "Identificacion",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7096/api/CambiarContrasena/ctrsnueva",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"CambiarContrasena",
+						"ctrsnueva"
+					]
+				},
+				"description": "El metodo verifica si hay match en las contraseñas y si existe el usuario por correo o identificacion"
+			},
+			"response": []
+		}
+	]
+}

@@ -33,7 +33,7 @@ dashboardCount: DashboardCount | null = null;
     const userRole = this.authService.getUserRole();
       const userId = this.authService.getUserId();
      this.identifi=userId;
-     //this.component.getInputs=1;
+   
       console.log('Rol del usuario:', userRole);
       console.log('ID del usuario:', userId);
       console.log("input",this.component.getInputs)
@@ -55,7 +55,6 @@ dashboardCount: DashboardCount | null = null;
       str += `&stateFilter=${this.component.filters.stateFilter}`;
     }
   
-    // Verificar si las fechas están definidas y no son vacías antes de concatenarlas
     if (
       this.component.filters.startDate &&
       this.component.filters.startDate.trim() !== "" &&
@@ -93,7 +92,7 @@ dashboardCount: DashboardCount | null = null;
       str += `&stateFilter=${this.component2.filters.stateFilter}`;
     }
   
-    // Verificar si las fechas están definidas y no son vacías antes de concatenarlas
+  
     if (
       this.component.filters.startDate &&
       this.component.filters.startDate.trim() !== "" &&

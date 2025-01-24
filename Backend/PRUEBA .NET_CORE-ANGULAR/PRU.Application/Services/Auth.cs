@@ -148,22 +148,24 @@ namespace PRU.Application.Services
                     " @Identificacion OUTPUT, @FechaNacimiento OUTPUT,@FechaIngreso OUTPUT,@FechaCierre OUTPUT", parametros);
               
                 
-                if ((int)outputParam.Value == 0) { Console.WriteLine($"nulo {parametros}");
+               
+                var resultado = outputParam.Value != DBNull.Value ? (int?)outputParam.Value : null ;
+                var rol = outputParam2.Value != DBNull.Value ? (int?)outputParam2.Value : null;
+                var id = outputParam3.Value != DBNull.Value ? (int?)outputParam3.Value : null; 
+                if ((int)outputParam.Value == 0)
+                {
+                    Console.WriteLine($"nulo {parametros}");
                     response.IsSucces = false;
                     response.Message = "Credenciales no exiten, Intentelo denuevo";
-                    response.Data =0;
+                    response.Data = 0;
                     return response;
 
                 }
-                var resultado = (int)outputParam.Value ;
-                var rol = (int)outputParam2.Value ; 
-                var id = (int)outputParam3.Value; 
-
-                    if (resultado == -1)
+                if (resultado == -1)
                     {
                         response.IsSucces = false;
                         response.Message = "Cuenta bloqueada, contacte al administrador";
-                        response.Data = resultado;
+                        response.Data = (int)resultado;
                         return response;
                     }
 
@@ -171,13 +173,13 @@ namespace PRU.Application.Services
 
                     if (resultado == 1)
                     {
-                        string nombRol = _validaciones.VerificacionRoles(rol);
+                        string nombRol = _validaciones.VerificacionRoles((int)rol);
 
                         response.IsSucces = true;
                         response.Message = "Sesión iniciada exitosamente. (" + nombRol + ")";
-                        response.Data = rol;
+                        response.Data = (int)rol;
                         response.AdditionalData = id;
-                        // Asignar los datos personales a DataPersonal
+                     
                         response.DataPersonal = new UsuariosResponse
                         {
                             UserName = (string)outputParam4.Value,
@@ -189,9 +191,6 @@ namespace PRU.Application.Services
                             FechaIngreso = outputParam10.Value != DBNull.Value ? (DateTime)outputParam10.Value : DateTime.MinValue,
                             FechaCierre = outputParam11.Value != DBNull.Value ? (DateTime)outputParam11.Value : DateTime.MinValue
 
-
-
-
                         };
 
                         return response;
@@ -200,21 +199,21 @@ namespace PRU.Application.Services
                     {
                         response.IsSucces = false;
                         response.Message = "Ya existe una sesión activa para este usuario.";
-                        response.Data = resultado;
+                        response.Data = (int)resultado;
                         return response;
                     }
                 else if (resultado == -2)
                 {
                     response.IsSucces = false;
                     response.Message = "Credenciales o contraseña incorrectas";
-                    response.Data = resultado;
+                    response.Data = (int)resultado;
                     return response;
                 }
                 else
                     {
                         response.IsSucces = false;
                         response.Message = "Usuario/correo no existente, verifique su informacion...";
-                        response.Data = resultado;
+                        response.Data = (int)resultado;
                         return response;
                    }
                 

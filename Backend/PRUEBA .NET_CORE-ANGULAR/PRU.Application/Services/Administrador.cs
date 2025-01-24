@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using PRU.Application.Commons.Bases.Request;
 using PRU.Application.Commons.Bases.Response;
 using PRU.Application.Commons.Validations;
+using PRU.Application.Dtos.Administrador.DatosPersonales;
+using PRU.Application.Dtos.Administrador.DatosPersonales.Response;
 using PRU.Application.Dtos.Administrador.Usuarios;
 using PRU.Application.Dtos.Usuarios.Request;
 using PRU.Application.Interfaces;
@@ -28,6 +30,94 @@ namespace PRU.Application.Services
             _validaciones = validaciones;
         }
 
+        public async Task<BaseResponse<bool>> RegisterUser(UsuarioRequest requestDto)
+        {
+
+            if (!_validaciones.ValidarIdentificacion(requestDto.Identificacion!))
+            {
+                return new BaseResponse<bool>
+                {
+                    IsSucces = false,
+                    Message = $"Identificacion no valida, revisar por favor: {requestDto.Identificacion}",
+                    Data = false
+                };
+            }
+
+            // Validar usuario
+            if (!_validaciones.ValidarUsuario(requestDto.UserName!))
+            {
+                return new BaseResponse<bool>
+                {
+                    IsSucces = false,
+                    Message = "El nombre de usuario no es válido. Debe tener entre 8 y 20 caracteres alfanuméricos y almenos una mayuscula.",
+                    Data = false
+                };
+            }
+
+            // Validar contraseña
+            if (!_validaciones.ValidarContraseña(requestDto.Password))
+            {
+                return new BaseResponse<bool>
+                {
+                    IsSucces = false,
+                    Message = "La contraseña no es válida. Debe tener al menos 8 caracteres, incluir una mayúscula, un número y un carácter especial.",
+                    Data = false
+                };
+            }
+
+
+            var identificacionParam = new SqlParameter("@Identificacion", requestDto.Identificacion);
+            var nombresParam = new SqlParameter("@Nombres", requestDto.Nombres);
+            var apellidosParam = new SqlParameter("@Apellidos", requestDto.Apellidos);
+            var fechaNacimientoParam = new SqlParameter("@FechaNacimiento", requestDto.FechaNacimiento);
+            var userNameParam = new SqlParameter("@UserName", requestDto.UserName);
+            var passwordParam = new SqlParameter("@Password", requestDto.Password);
+            var statusParam = new SqlParameter("@Status", requestDto.StadoPersona);
+            var statuspersonaParam = new SqlParameter("@StatusPersona", requestDto.StadoPersona);
+            var sesionActiveParam = new SqlParameter("@SesionActive", requestDto.SesionActive);
+            var RolParam = new SqlParameter("@ROL", requestDto.Rol);
+
+            var personaIdParam = new SqlParameter("@PersonaId", SqlDbType.Int) { Direction = ParameterDirection.Output };
+            var usuarioIdParam = new SqlParameter("@UsuarioId", SqlDbType.Int) { Direction = ParameterDirection.Output };
+
+            try
+            {
+
+                await _context.Database.ExecuteSqlRawAsync(
+      "EXEC sp_RegistrarPersonaYUsuario @Identificacion, @Nombres, @Apellidos, @FechaNacimiento, " +
+      " @UserName, @Password, @Status,  @StatusPersona,@SesionActive,@ROL , @PersonaId OUTPUT, @UsuarioId OUTPUT",
+   identificacionParam, nombresParam, apellidosParam, fechaNacimientoParam,
+   userNameParam, passwordParam, statusParam, statuspersonaParam, sesionActiveParam, RolParam, personaIdParam, usuarioIdParam
+                );
+
+                var personaId = (int)personaIdParam.Value;
+                var usuarioId = (int)usuarioIdParam.Value;
+
+                return new BaseResponse<bool>
+                {
+                    IsSucces = true,
+                    Data = true,
+                    Message = "Registro exitoso",
+                    TotalRecords = 1,
+                    AdditionalData = new { PersonaId = personaId, UsuarioId = usuarioId }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<bool>
+                {
+                    IsSucces = false,
+                    Data = false,  // Indica que la operación falló
+                    Message = $"Error al registrar los datos: {ex.Message}",
+                    TotalRecords = 0,
+
+                };
+            }
+
+
+        }
+
+
         public async Task<BaseResponse<bool>> EditUser(UserEditResponse requestDto, int idAdmin)
         {
             var response = new BaseResponse<bool>();
@@ -41,8 +131,8 @@ namespace PRU.Application.Services
                 {
                     command.CommandType = CommandType.StoredProcedure;
 
-                    // Parámetros del procedimiento almacenado
-                    command.Parameters.AddWithValue("@IdUsuario", idAdmin);
+                    command.Parameters.AddWithValue("@IdUsuarioAdmin", idAdmin);
+                    command.Parameters.AddWithValue("@IdUsuario", requestDto.IdUsuario);
                     command.Parameters.AddWithValue("@UserName", requestDto.UserName ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@SesionActive", requestDto.SesionActive ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@StatusUsuario", requestDto.StatusUsuario ?? (object)DBNull.Value);
@@ -54,7 +144,7 @@ namespace PRU.Application.Services
                         : (object)DBNull.Value);
                     command.Parameters.AddWithValue("@StatusPersona", requestDto.StatusPersona ?? (object)DBNull.Value);
 
-                    // Ejecutar el procedimiento almacenado
+
                     var rowsAffected = await command.ExecuteNonQueryAsync();
 
                     if (rowsAffected > 0)
@@ -89,97 +179,106 @@ namespace PRU.Application.Services
 
         }
 
-        public async Task<BaseResponse<bool>> EliminarUsuario(int id, int idAdmin)
+        public async Task<BaseResponse<UserEditResponse>> UserbyId(int id)
         {
-            var response = new BaseResponse<bool>();
-            var resultado = 0;
+            var response = new BaseResponse<UserEditResponse>();
+
+
+            using var connection = (SqlConnection)_context.Database.GetDbConnection();
             try
             {
-                using var connection = (SqlConnection)_context.Database.GetDbConnection(); // Obtener la conexión del DbContext.
 
-                try
+
+                if (connection.State != System.Data.ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                // Crear el comando SQL para ejecutar el procedimiento almacenado
+                using (var command = new SqlCommand("ConsultarUsuarioPorId", connection))
                 {
-                    await connection.OpenAsync(); // Abrir la conexión asíncronamente si no está abierta.
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    using (var command = new SqlCommand("EliminarUsuario", connection))
+
+                    command.Parameters.AddWithValue("@idUsuario", id);
+
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        command.CommandType = CommandType.StoredProcedure;
-
-                        // Parámetros del procedimiento almacenado
-                        command.Parameters.AddWithValue("@IdAdmin", idAdmin);
-                        command.Parameters.AddWithValue("@UsuarioId", id);
-                        var paramResultado = command.CreateParameter();
-                        paramResultado.ParameterName = "@Resultado";
-                        paramResultado.DbType = DbType.Int32; // Especificar que el tipo es entero
-                        paramResultado.Direction = ParameterDirection.Output; // Definir como parámetro de salida
-                        command.Parameters.Add(paramResultado);
-                        await command.ExecuteNonQueryAsync();
-                        resultado = (int)paramResultado.Value;
-                       
-                        if (resultado==1)
+                        if (await reader.ReadAsync())
                         {
-                            
-                                response.IsSucces = true;
-                                response.Message = "EXITO AL ELIMINAR USUARIO";
-                            response.AdditionalData = resultado;
 
+                            var user = new UserEditResponse
+                            {
+                                UserName = reader["UserName"]?.ToString(),
+                                SesionActive = reader["SesionActive"]?.ToString(),
+                                StatusUsuario = reader["Status"]?.ToString(),
+                                Nombres = reader["Nombres"]?.ToString(),
+                                IdUsuario = reader["idUsuario"] != DBNull.Value
+    ? Convert.ToInt32(reader["idUsuario"])
+    : 0,
+                                IdPersona = reader["idPersona"] != DBNull.Value
+    ? Convert.ToInt32(reader["idPersona"])
+    : 0,
+                                Apellidos = reader["Apellidos"]?.ToString(),
+                                FechaNacimiento = reader["FechaNacimiento"] != DBNull.Value
+    ? reader["FechaNacimiento"] is DateTime fechaTime
+        ? DateOnly.FromDateTime(fechaTime)
+        : (DateOnly?)null
+    : (DateOnly?)null,
+                                StatusPersona = reader["Status"]?.ToString()
+                            };
+
+
+                            response.IsSucces = true;
+                            response.Message = "Usuario encontrado.";
+                            response.Data = user;
                         }
-                        if (resultado == -1)
+                        else
                         {
+
                             response.IsSucces = false;
-                            response.Message = "OCURRIO UN ERROR AL ELIMINAR AL USUARIO, VERIFIQUE EL ID DEL USUARIO, " +
-                                "O QUIZA NO TENGA PERMISOS PARA REALIZAR ESTA ACCION";
-                          
-                            response.AdditionalData = resultado;
+                            response.Message = "Usuario no encontrado.";
+                            response.Data = null;
                         }
-
-                        
                     }
-
-
-
-                }
-                catch (SqlException ex)
-                {
-                    response.IsSucces = false;
-                    response.Message = $"Error inesperado: {ex.Message}";
-                    response.Data = false;
                 }
             }
-            catch (Exception e)
+            catch (SqlException ex)
             {
 
+                response.IsSucces = false;
+                response.Message = $"Error al consultar el usuario: {ex.Message}";
+                response.Data = null;
             }
-                return response;
-            
+            catch (Exception ex)
+            {
+
+                response.IsSucces = false;
+                response.Message = $"Error inesperado: {ex.Message}";
+                response.Data = null;
+            }
+
+            return response;
         }
-
-
-
-
-
         public async Task<BaseResponse<IEnumerable<UsuariosAdmResponseDto>>> ListaUsuarios(int usuarioId, BaseFilterRequest filters)
         {
             var response = new BaseResponse<IEnumerable<UsuariosAdmResponseDto>>();
             var totalpage = 0;
             try
             {
-                if (usuarioId >0)
+                if (usuarioId > 0)
                 {
-                    using var connection = _context.Database.GetDbConnection(); // Usa la conexión de tu DbContext.
+                    using var connection = _context.Database.GetDbConnection();
                     await connection.OpenAsync();
 
                     using var command = connection.CreateCommand();
                     command.CommandText = "ConsultarUsuariosYPersonasConFiltros";
                     command.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    // Agregar el parámetro UsuarioId al comando
                     var param = command.CreateParameter();
                     param.ParameterName = "@UsuarioId";
                     param.Value = usuarioId;
                     command.Parameters.Add(param);
                     ////filtros
-                    ///
+
                     if (filters.NumFilter.HasValue)
                     {
                         var paramNumFilter = command.CreateParameter();
@@ -196,11 +295,11 @@ namespace PRU.Application.Services
                         command.Parameters.Add(paramTextFilter);
                     }
 
-                    if (filters.StateFilter.HasValue)
+                    if (!string.IsNullOrWhiteSpace(filters.StateFilter))
                     {
                         var paramStateFilter = command.CreateParameter();
                         paramStateFilter.ParameterName = "@StateFilter";
-                        paramStateFilter.Value = filters.StateFilter.Value;
+                        paramStateFilter.Value = filters.StateFilter;
                         command.Parameters.Add(paramStateFilter);
                     }
 
@@ -228,30 +327,29 @@ namespace PRU.Application.Services
 
                     var paramNumRecordsPage = command.CreateParameter();
                     paramNumRecordsPage.ParameterName = "@NumRecordsPage";
-                    paramNumRecordsPage.Value = filters.NumRecordsPage; // Asignar el valor entero desde filters
-                    paramNumRecordsPage.DbType = DbType.Int32; // Especificar que el tipo es entero
+                    paramNumRecordsPage.Value = filters.NumRecordsPage;
+                    paramNumRecordsPage.DbType = DbType.Int32;
                     command.Parameters.Add(paramNumRecordsPage);
-                   ;
+                    ;
                     var paramTotalRecords = command.CreateParameter();
                     paramTotalRecords.ParameterName = "@TotalRecords";
-                    paramTotalRecords.DbType = DbType.Int32; // Especificar que el tipo es entero
-                    paramTotalRecords.Direction = ParameterDirection.Output; // Definir como parámetro de salida
+                    paramTotalRecords.DbType = DbType.Int32;
+                    paramTotalRecords.Direction = ParameterDirection.Output;
                     command.Parameters.Add(paramTotalRecords);
 
-                    // Ejecutar el comando
+
                     using (var reader2 = command.ExecuteReader())
                     {
-                        // Procesar los resultados del procedimiento almacenado
+
                         while (reader2.Read())
                         {
-                            // Aquí procesas cada fila obtenida del procedimiento almacenado
+                            //cuenta los datos alamacenados para la paginacion
                         }
                     }
 
-                    // Obtener el valor del parámetro de salida después de ejecutar el comando
-                    totalpage = (int)paramTotalRecords.Value; // Asignar el valor del parámetro de salida a la variable
 
-                    //////
+                    totalpage = (int)paramTotalRecords.Value;
+
 
                     using var reader = await command.ExecuteReaderAsync();
                     var usuariosAdmList = new List<UsuariosAdmResponseDto>();
@@ -262,11 +360,12 @@ namespace PRU.Application.Services
                         {
                             idUsuario = Convert.ToInt32(reader["idUsuario"]),
                             UserName = reader["UserName"]?.ToString(),
-                          
+
                             Mail = reader["Mail"]?.ToString(),
                             SesionActive = reader["SesionActive"]?.ToString(),
                             StatusUsuario = reader["StatusUsuario"]?.ToString(),
                             IntentosFallidos = Convert.ToInt32(reader["IntentosFallidos"]),
+                            idPersona = Convert.ToInt32(reader["idPersona"]),
                             Nombres = reader["Nombres"]?.ToString(),
                             Apellidos = reader["Apellidos"]?.ToString(),
                             Identificacion = reader["Identificacion"]?.ToString(),
@@ -288,135 +387,93 @@ namespace PRU.Application.Services
                 response.IsSucces = false;
                 response.Message = $"Error al consultar usuarios: {ex.Message}";
             }
-        
+
             return response;
-        
+
         }
 
-
-
-
-       
-        public async Task<BaseResponse<bool>> RegisterUser(UsuarioRequest requestDto)
+        public async Task<BaseResponse<bool>> EliminarUsuario(int id, int idAdmin)
         {
-            Console.WriteLine("id: " + requestDto.Identificacion);
-            Console.WriteLine("nombre: " + requestDto.Nombres);
-            if (!_validaciones.ValidarIdentificacion(requestDto.Identificacion!))
-            {
-                Console.WriteLine("id: " + requestDto.Identificacion);
-                return new BaseResponse<bool>
-                {
-                    IsSucces = false,
-                    Message = $"Identificacion no valida, revisar por favor: {requestDto.Identificacion}",
-                    Data = false
-                };
-            }
-
-            // Validar usuario
-            if (!_validaciones.ValidarUsuario(requestDto.UserName!))
-            {
-                return new BaseResponse<bool>
-                {
-                    IsSucces = false,
-                    Message = "El nombre de usuario no es válido. Debe tener entre 8 y 20 caracteres alfanuméricos.",
-                    Data = false
-                };
-            }
-
-            // Validar contraseña
-            if (!_validaciones.ValidarContraseña(requestDto.Password))
-            {
-                return new BaseResponse<bool>
-                {
-                    IsSucces = false,
-                    Message = "La contraseña no es válida. Debe tener al menos 8 caracteres, incluir una mayúscula, un número y un carácter especial.",
-                    Data = false
-                };
-            }
-
-            // Verificar si el correo ya existe
-            var correoGenerado = _validaciones.GenerarCorreo(requestDto.Nombres, requestDto.Apellidos, requestDto.Identificacion);
-            var existeCorreo = await _context.Usuarios.AnyAsync(u => u.Mail == correoGenerado);
-            if (existeCorreo)
-            {
-                return new BaseResponse<bool>
-                {
-                    IsSucces = false,
-                    Message = "El correo ya está registrado.",
-                    Data = false
-                };
-            }
-
-            var identificacionParam = new SqlParameter("@Identificacion", requestDto.Identificacion);
-            var nombresParam = new SqlParameter("@Nombres", requestDto.Nombres);
-            var apellidosParam = new SqlParameter("@Apellidos", requestDto.Apellidos);
-            var fechaNacimientoParam = new SqlParameter("@FechaNacimiento", requestDto.FechaNacimiento);
-            var mailParam = new SqlParameter("@Mail", correoGenerado);
-            var userNameParam = new SqlParameter("@UserName", requestDto.UserName);
-            var passwordParam = new SqlParameter("@Password", requestDto.Password);
-            var statusParam = new SqlParameter("@Status", requestDto.StadoPersona);
-            var statuspersonaParam = new SqlParameter("@StatusPersona", requestDto.StadoPersona);
-            var sesionActiveParam = new SqlParameter("@SesionActive", requestDto.SesionActive);
-            var RolParam = new SqlParameter("@ROL", requestDto.Rol);
-
-            // Parámetros de salida
-            var personaIdParam = new SqlParameter("@PersonaId", SqlDbType.Int) { Direction = ParameterDirection.Output };
-            var usuarioIdParam = new SqlParameter("@UsuarioId", SqlDbType.Int) { Direction = ParameterDirection.Output };
-
+            var response = new BaseResponse<bool>();
+            var resultado = 0;
             try
             {
-                // Ejecutar el procedimiento almacenado
-                await _context.Database.ExecuteSqlRawAsync(
-      "EXEC sp_RegistrarPersonaYUsuario @Identificacion, @Nombres, @Apellidos, @FechaNacimiento, " +
-      "@Mail, @UserName, @Password, @Status,  @StatusPersona,@SesionActive,@ROL , @PersonaId OUTPUT, @UsuarioId OUTPUT",
-   identificacionParam, nombresParam, apellidosParam, fechaNacimientoParam, mailParam,
-   userNameParam, passwordParam, statusParam, statuspersonaParam, sesionActiveParam,RolParam,personaIdParam, usuarioIdParam
-                );
+                using var connection = (SqlConnection)_context.Database.GetDbConnection(); // Obtener la conexión del DbContext.
 
-                // Obtener los ID generados para Persona y Usuario
-                var personaId = (int)personaIdParam.Value;
-                var usuarioId = (int)usuarioIdParam.Value;
-
-                return new BaseResponse<bool>
+                try
                 {
-                    IsSucces = true,
-                    Data = true,  
-                    Message = "Registro exitoso",
-                     TotalRecords = 1, 
-                    AdditionalData = new { PersonaId = personaId, UsuarioId = usuarioId }
-                };
+                    await connection.OpenAsync();
+
+                    using (var command = new SqlCommand("EliminarUsuario", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.AddWithValue("@IdAdmin", idAdmin);
+                        command.Parameters.AddWithValue("@UsuarioId", id);
+                        var paramResultado = command.CreateParameter();
+                        paramResultado.ParameterName = "@Resultado";
+                        paramResultado.DbType = DbType.Int32;
+                        paramResultado.Direction = ParameterDirection.Output;
+                        command.Parameters.Add(paramResultado);
+                        await command.ExecuteNonQueryAsync();
+                        resultado = (int)paramResultado.Value;
+
+                        if (resultado == 1)
+                        {
+
+                            response.IsSucces = true;
+                            response.Message = "EXITO AL ELIMINAR USUARIO";
+                            response.AdditionalData = resultado;
+
+                        }
+                        if (resultado == -1)
+                        {
+                            response.IsSucces = false;
+                            response.Message = "OCURRIO UN ERROR AL ELIMINAR AL USUARIO, VERIFIQUE EL ID DEL USUARIO, " +
+                                "O QUIZA NO TENGA PERMISOS PARA REALIZAR ESTA ACCION";
+
+                            response.AdditionalData = resultado;
+                        }
+
+
+                    }
+
+                }
+                catch (SqlException ex)
+                {
+                    response.IsSucces = false;
+                    response.Message = $"Error inesperado: {ex.Message}";
+                    response.Data = false;
+                }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new BaseResponse<bool>
-                {
-                    IsSucces = false,
-                    Data = false,  // Indica que la operación falló
-                    Message = $"Error al registrar los datos: {ex.Message}",
-                    TotalRecords = 0,
-                    // Errors = null
-                };
+                response.IsSucces = false;
+                response.Message = $"Error inesperado: {e.Message}";
+                response.Data = false;
             }
-
+            return response;
 
         }
 
-        public async Task<BaseResponse<UserEditResponse>> UserbyId(int id)
+
+
+        public async Task<BaseResponse<DatospersonalesAdminResponse>> DatosAdminPerfil(int id)
         {
-            var response = new BaseResponse<UserEditResponse>();
+            var response = new BaseResponse<DatospersonalesAdminResponse>();
 
             // Establecer la conexión con la base de datos
 
             using var connection = (SqlConnection)_context.Database.GetDbConnection();
             try
             {
-             
+
                 // Asegurarse de que la conexión esté abierta
                 if (connection.State != System.Data.ConnectionState.Open)
                     await connection.OpenAsync();
 
                 // Crear el comando SQL para ejecutar el procedimiento almacenado
-                using (var command = new SqlCommand("ConsultarUsuarioPorId", connection))
+                using (var command = new SqlCommand("ConsultarDatosAdmin", connection))
                 {
                     command.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -428,25 +485,21 @@ namespace PRU.Application.Services
                     {
                         if (await reader.ReadAsync())
                         {
-                            // Asignar los valores leídos a la respuesta
-                            var user = new UserEditResponse
+                           
+                            var user = new DatospersonalesAdminResponse
                             {
+                                Identificacion = reader["Identificacion"]?.ToString(),
                                 UserName = reader["UserName"]?.ToString(),
-                                SesionActive = reader["SesionActive"]?.ToString(),
-                                StatusUsuario = reader["Status"]?.ToString(),
+                               Mail = reader["Mail"]?.ToString(),
                                 Nombres = reader["Nombres"]?.ToString(),
-                                IdPersona = reader["idPersona"] != DBNull.Value
-    ? Convert.ToInt32(reader["idPersona"])
-    : 0,
+           FechaIngreso = reader["FechaIngreso"] != DBNull.Value ? (DateTime)reader["FechaIngreso"] : DateTime.MinValue,
                                 Apellidos = reader["Apellidos"]?.ToString(),
-                                FechaNacimiento = reader["FechaNacimiento"] != DBNull.Value
+                             FechaNacimiento = reader["FechaNacimiento"] != DBNull.Value
     ? reader["FechaNacimiento"] is DateTime fechaTime
         ? DateOnly.FromDateTime(fechaTime)
         : (DateOnly?)null
     : (DateOnly?)null,
 
-
-                                StatusPersona = reader["Status"]?.ToString()
                             };
 
                             // Asignar los valores a la respuesta
@@ -480,6 +533,66 @@ namespace PRU.Application.Services
             }
 
             return response;
+
+
         }
+
+        public async Task<BaseResponse<bool>> EditDTPersonal(DatosPersonalesAdminRequest requestDto, int id)
+        {
+            var response = new BaseResponse<bool>();
+            using var connection = (SqlConnection)_context.Database.GetDbConnection(); 
+
+            try
+            {
+                await connection.OpenAsync(); 
+
+                using (var command = new SqlCommand("ActualizarDatosAdmin", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@IdUsuario", id);
+                    command.Parameters.AddWithValue("@NuevoUserName", requestDto.UserName ?? (object)DBNull.Value);
+                
+                    command.Parameters.AddWithValue("@Nombres", requestDto.Nombres ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Apellidos", requestDto.Apellidos ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@FechaNacimiento", requestDto.FechaNacimiento.HasValue
+                        ? requestDto.FechaNacimiento.Value.ToDateTime(TimeOnly.MinValue)
+                        : (object)DBNull.Value);
+                    var result = (int)(await command.ExecuteScalarAsync());
+
+
+                    if (result == 1)
+                    {
+                        response.IsSucces = true;
+                        response.Message = "Actualización realizada con éxito.";
+                        response.Data = true;
+                    }
+                    else
+                    {
+                        response.IsSucces = false;
+                        response.Message = "No se encontraron registros para actualizar.";
+                        response.Data = false;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                response.IsSucces = false;
+                response.Message = $"Error al actualizar: {ex.Message}";
+                response.Data = false;
+            }
+            catch (Exception ex)
+            {
+                response.IsSucces = false;
+                response.Message = $"Error inesperado: {ex.Message}";
+                response.Data = false;
+            }
+
+            return response;
+
+
+
+        }
+
     }
 }

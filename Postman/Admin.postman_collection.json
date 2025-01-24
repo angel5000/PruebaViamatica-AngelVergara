@@ -1,0 +1,406 @@
+{
+	"info": {
+		"_postman_id": "3f64bff6-2ce5-43ed-adef-95e6c11577e2",
+		"name": "Admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39956651",
+		"_collection_link": "https://www.postman.com/avionics-architect-34378447/workspace/endpoints-proyecto-login/collection/39956651-3f64bff6-2ce5-43ed-adef-95e6c11577e2?action=share&source=collection_link&creator=39956651"
+	},
+	"item": [
+		{
+			"name": "ListaUsuarios",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7096/api/Admin/ListaUsuarios?idUsuario=1&NumFilter=1&TextFilter=Angel",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Admin",
+						"ListaUsuarios"
+					],
+					"query": [
+						{
+							"key": "idUsuario",
+							"value": "1",
+							"description": "id del usuario admin"
+						},
+						{
+							"key": "NumFilter",
+							"value": "1",
+							"description": "1=nombre 2=username"
+						},
+						{
+							"key": "TextFilter",
+							"value": "Angel",
+							"description": "Texto de busqueda"
+						},
+						{
+							"key": "StateFilter",
+							"value": "Activo",
+							"description": "Estado del usuario Activo, Inactivo o Bloqueado",
+							"disabled": true
+						},
+						{
+							"key": "StartDate",
+							"value": "1990",
+							"description": "Fecha de nacimiento",
+							"disabled": true
+						},
+						{
+							"key": "EndDate",
+							"value": "2004",
+							"description": "Fecha de nacimiento",
+							"disabled": true
+						},
+						{
+							"key": "NumPage",
+							"value": null,
+							"description": "Numero de pagina",
+							"disabled": true
+						},
+						{
+							"key": "NumRecordsPage",
+							"value": null,
+							"description": "Total de registros",
+							"disabled": true
+						},
+						{
+							"key": "Order",
+							"value": null,
+							"description": "Orden asc o desc",
+							"disabled": true
+						},
+						{
+							"key": "Sort",
+							"value": null,
+							"description": "Ordenar por idUsuario(esta por defecto)",
+							"disabled": true
+						},
+						{
+							"key": "Records",
+							"value": null,
+							"description": "registros",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Registrar Usuarios",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "Nombres",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "Apellidos",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "Identificacion",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "FechaNacimiento",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "StadoPersona",
+							"value": "",
+							"description": "Activo/Inactivo",
+							"type": "text"
+						},
+						{
+							"key": "UserName",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "Password",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "SesionActive",
+							"value": "",
+							"description": "I/A",
+							"type": "text"
+						},
+						{
+							"key": "StadoUsuario",
+							"value": "",
+							"description": "Activo/Inactivo",
+							"type": "text"
+						},
+						{
+							"key": "Rol",
+							"value": "",
+							"description": "1=administrador 2=usuario (dado mi caso)",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7096/api/Admin/register",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Admin",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Registrar Usuarios por excel",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "archivo",
+							"description": "solo tipo xlsx",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7096/api/Admin/registerbyExcel",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Admin",
+						"registerbyExcel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Editar usuarios",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "UserName",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "SesionActive",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "idPersona",
+							"value": "",
+							"description": "Aqui se espefica el id de la persona a actualizar",
+							"type": "text"
+						},
+						{
+							"key": "StatusUsuario",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "Nombres",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "Apellidos",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "FechaNacimiento",
+							"value": "2000-05-05",
+							"type": "text"
+						},
+						{
+							"key": "StatusPersona",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "idUsuario",
+							"value": "",
+							"description": "id de la persona a actualizar",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7096/api/Admin/EditbyAdmin/1(id del usuario admin)",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Admin",
+						"EditbyAdmin",
+						"1(id del usuario admin)"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Editar perfil admin",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "UserName",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "Nombres",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "Apellidos",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "FechaNacimiento",
+							"value": "2000-05-05",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7096/api/Admin/EditAdmindt/1(id del usuario admin)",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Admin",
+						"EditAdmindt",
+						"1(id del usuario admin)"
+					]
+				},
+				"description": "El administrador edita sus propios datos"
+			},
+			"response": []
+		},
+		{
+			"name": "Datos perfil admin",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7096/api/Admin/infoperfil/1(id del usuario admin)",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Admin",
+						"infoperfil",
+						"1(id del usuario admin)"
+					]
+				},
+				"description": "Consultar informacion del usuario admin"
+			},
+			"response": []
+		},
+		{
+			"name": "Usuarios por id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7096/api/Admin/Usuario/1",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Admin",
+						"Usuario",
+						"1"
+					]
+				},
+				"description": "Consultar usuarios por id"
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar Usuarios",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7096/api/Admin/DeletUser/1?idUsuario=72",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Admin",
+						"DeletUser",
+						"1"
+					],
+					"query": [
+						{
+							"key": "idUsuario",
+							"value": "72"
+						}
+					]
+				},
+				"description": "Eliminar un usuario de forma logica primer numero el id del usuario admin para verificar que es el quien esta eliminando\n\nStartFragmenthttps://localhost:7096/api/Admin/DeletUser/1?idUsuario=72"
+			},
+			"response": []
+		}
+	]
+}

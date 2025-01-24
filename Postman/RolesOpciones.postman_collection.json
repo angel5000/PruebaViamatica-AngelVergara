@@ -1,0 +1,41 @@
+{
+	"info": {
+		"_postman_id": "3106d726-8fbe-4574-9a0d-f72ca05fe40d",
+		"name": "RolesOpciones",
+		"description": "Opciones de los roles, como crear editar etc tanto para admin como para usuario general",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39956651",
+		"_collection_link": "https://www.postman.com/avionics-architect-34378447/workspace/endpoints-proyecto-login/collection/39956651-3106d726-8fbe-4574-9a0d-f72ca05fe40d?action=share&source=collection_link&creator=39956651"
+	},
+	"item": [
+		{
+			"name": "Opcion de roles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7096/api/RolesOpciones/RolesOpciones?idUsuario=1",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"RolesOpciones",
+						"RolesOpciones"
+					],
+					"query": [
+						{
+							"key": "idUsuario",
+							"value": "1",
+							"description": "id del usuario administrador"
+						}
+					]
+				},
+				"description": "si esta inactivo unos de sus roles entonces no tendra dicha opcion en el sistema."
+			},
+			"response": []
+		}
+	]
+}

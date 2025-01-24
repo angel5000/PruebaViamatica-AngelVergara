@@ -39,7 +39,7 @@ title=""
     
   }
   ngOnInit(): void {
-    
+ 
     const hiddenRoutes = ['/login', '/recuperar', '/notfound'];
 
     this.router.events.subscribe((event) => {
@@ -51,6 +51,7 @@ title=""
 
 
     const userRole = this.authService.getUserRole()?? 0; // Método que devuelve el rol del usuario
+ 
     if(this.NombreUsuario===''||this.NombreUsuario!==''){
       const userName = this.authService.getNombre()?? ''.replace(/"/g, ''); 
       this.NombreUsuario =userName;
@@ -61,15 +62,15 @@ title=""
       item.requiredRole ? item.requiredRole.includes(userRole) : true
       
     );
-  
+   
 
-   // console.log(this.NombreUsuario)
+  }
+  Perfil(){
+    this.router.navigate(["/perfil"]);
   }
   Cerrarsesion(): void {
-    // Obtén las credenciales del almacenamiento local
+
     const userCredentials = localStorage.getItem('userCredentials');
-//console.log(userCredentials)
-    // Verifica que las credenciales existen antes de llamar a logout
     if (userCredentials) {
       this.authService.logout(userCredentials).subscribe({
         next: () => {
@@ -82,109 +83,13 @@ title=""
         },
         error: (err) => {
           console.error('Error al cerrar sesión:', err);
-          // Manejo de errores opcional, como mostrar un mensaje al usuario
+         
         },
       });
     } else {
       console.warn('No se encontraron credenciales de usuario en localStorage.');
-      this.router.navigate(['/login']); // Redirige al login incluso si no hay credenciales
+      this.router.navigate(['/login']); 
     }
   }    
- /* constructor(private configService: ConfigService,
-    private styleService: StyleService,
-    private renderer: Renderer2,
-    private platform: Platform,
-    @Inject(DOCUMENT) private document: Document,
-    @Inject(LOCALE_ID) private localeId: string,
-    private route: ActivatedRoute,
-    private navigationService: NavigationService) {
-    Settings.defaultLocale = this.localeId;
-
-    if (this.platform.BLINK) {
-      this.renderer.addClass(this.document.body, 'is-blink');
-    }
-
-    this.configService.updateConfig({
-      sidenav: {
-        title: "POS",
-        imageUrl: "/assets/img/demo/logo.svg",
-        showCollapsePin: true,
-      },
-    });
-
-    this.route.queryParamMap.pipe(
-      map(queryParamMap => queryParamMap.has('rtl') && coerceBooleanProperty(queryParamMap.get('rtl'))),
-    ).subscribe(isRtl => {
-      this.document.body.dir = isRtl ? 'rtl' : 'ltr';
-      this.configService.updateConfig({
-        rtl: isRtl
-      });
-    });
-
-    this.route.queryParamMap.pipe(
-      filter(queryParamMap => queryParamMap.has('layout'))
-    ).subscribe(queryParamMap => this.configService.setConfig(queryParamMap.get('layout') as ConfigName));
-
-    this.route.queryParamMap.pipe(
-      filter(queryParamMap => queryParamMap.has('style'))
-    ).subscribe(queryParamMap => this.styleService.setStyle(queryParamMap.get('style') as Style));
-
-
-    this.navigationService.items = [
-      {
-        type: 'link',
-        label: 'Estadísticas',
-        route: 'estadisticas',
-        icon: icDashboard
-      },{
-        type: 'link',
-        label: 'Almacenes',
-        route: 'almacenes',
-        icon: icWarehouse
-      },{
-        type: 'dropdown',
-        label: 'Catalogo',
-        icon: icCategory,
-        children:[{
-          type: 'link',
-          label: 'Categorias',
-          route: 'categorias',
-        
-        },{
-          type: 'link',
-          label: 'Productos',
-          route: 'productos',
-        
-        }]
-      },{
-        type: 'link',
-        label: 'Proveedores',
-        route: 'proveedores',
-        icon: IconsService.prototype.getIcon("icProvider")
-      },
-      {
-        type: 'link',
-        label: 'Clientes',
-        route: 'client',
-        icon: IconsService.prototype.getIcon("icClient")
-      },
-      {
-        type: 'dropdown',
-        label: 'Procesos',
-        icon: icCategory,//icsales point of sale
-        children:[{
-          type: 'link',
-          label: 'Proceso de compras',
-          route: 'proceso-compras',
-        
-        },{
-          type: 'link',
-          label: 'Proceso de ventas',
-          route: 'proceso-ventas',
-        
-        }]
-      }
-    ];
-  }
-*/
+ 
 }

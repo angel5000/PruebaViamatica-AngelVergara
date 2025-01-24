@@ -1,4 +1,17 @@
 // Módulo de clientes
+export const Roles = [
+    { value: 2, label: 'UsuarioGeneral'},
+   
+];
+export const Estadosusuarios = [
+    { value: 'Activo', label: 'Activo'},
+    { value: 'Inactivo', label: 'Inactivo'},
+];
+export const SesionEstadoUser = [
+    { value: 'A', label: 'Activos'},
+    { value: 'I', label: 'Inactivos'},
+
+];
 
 export const SesionEstado = [
     { value: 'A', label: 'Activos'},

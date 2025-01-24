@@ -1,0 +1,86 @@
+{
+	"info": {
+		"_postman_id": "7458a68b-7ba7-46f9-8979-5ee4a692d6a7",
+		"name": "UsuarioGeneral",
+		"description": "Consultas y actualizacion del usuario general por el mismo.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39956651",
+		"_collection_link": "https://www.postman.com/avionics-architect-34378447/workspace/endpoints-proyecto-login/collection/39956651-7458a68b-7ba7-46f9-8979-5ee4a692d6a7?action=share&source=collection_link&creator=39956651"
+	},
+	"item": [
+		{
+			"name": "ConsultarinfoPerfil",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7096/api/Usuarios/infoperfilUsuarioG/2",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Usuarios",
+						"infoperfilUsuarioG",
+						"2"
+					]
+				},
+				"description": "[StartFragmenthttps://localhost:7096/api/Usuarios/infoperfilUsuarioG/2](https://StartFragmenthttps://localhost:7096/api/Usuarios/infoperfilUsuarioG/2) (id del usuario no admin) caso contrario no consulta"
+			},
+			"response": []
+		},
+		{
+			"name": "EditardatosPerfil",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "UserName",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "Nombres",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "Apellidos",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "FechaNacimiento",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7096/api/Usuarios/EditUserGdt/1(id del usuario)",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"Usuarios",
+						"EditUserGdt",
+						"1(id del usuario)"
+					]
+				},
+				"description": "El usuario edita sus propios datos"
+			},
+			"response": []
+		}
+	]
+}

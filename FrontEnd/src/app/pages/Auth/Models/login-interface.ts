@@ -10,6 +10,7 @@ export interface Login{
         export interface UserData{
             identificacion: string
             userName: string
+            mail: string
     nombres: string
     apellidos: string
     fechaNacimiento: Date

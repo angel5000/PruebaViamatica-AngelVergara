@@ -1,0 +1,73 @@
+{
+	"info": {
+		"_postman_id": "e67a7653-94b7-4661-9777-4f38b4e2c9fb",
+		"name": "AuthControlles",
+		"description": "endpoints para iniciar y cerrar sesion",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39956651",
+		"_collection_link": "https://www.postman.com/avionics-architect-34378447/workspace/endpoints-proyecto-login/collection/39956651-e67a7653-94b7-4661-9777-4f38b4e2c9fb?action=share&source=collection_link&creator=39956651"
+	},
+	"item": [
+		{
+			"name": "Iniciar sesion",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"credenciales\": \"string\",\r\n  \"password\": \"string\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7096/api/AuthControlles/Login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"AuthControlles",
+						"Login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cerrar Sesion",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\"string\"",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7096/api/AuthControlles/Logout",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7096",
+					"path": [
+						"api",
+						"AuthControlles",
+						"Logout"
+					]
+				},
+				"description": "Cerrar sesion, ingresar nombre de usuario o correo electronico"
+			},
+			"response": []
+		}
+	]
+}

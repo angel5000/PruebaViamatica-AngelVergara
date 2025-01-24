@@ -38,7 +38,6 @@ namespace PRU.Application.Services
                     command.CommandText = "ROLESOPCIONES";
                     command.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    // Agregar el parámetro UsuarioId al comando
                     var param = command.CreateParameter();
                     param.ParameterName = "@IdUsuario";
                     param.Value = usuarioId;

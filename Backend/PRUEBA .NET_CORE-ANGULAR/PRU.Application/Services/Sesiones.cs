@@ -26,7 +26,7 @@ namespace PRU.Application.Services
             _context = context;
            
         }
-        public async Task<BaseResponse<IEnumerable<SesionsResponse>>> ListaSesiones(int usuarioId, BaseFilterRequest filters)
+        public async Task<BaseResponse<IEnumerable<SesionsResponse>>> ListaSesiones(int usuarioId, BaseFilterRequestDates filters)
         {
             var response = new BaseResponse<IEnumerable<SesionsResponse>>();
             var totalpage = 0;
@@ -41,7 +41,7 @@ namespace PRU.Application.Services
                     command.CommandText = "SESIONES";
                     command.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    // Agregar el parámetro UsuarioId al comando
+                 
                     var param = command.CreateParameter();
                     param.ParameterName = "@IdPersona";
                     param.Value = usuarioId;
@@ -51,29 +51,8 @@ namespace PRU.Application.Services
 
 
 
-                    if (filters.NumFilter.HasValue)
-                    {
-                        var paramNumFilter = command.CreateParameter();
-                        paramNumFilter.ParameterName = "@NumFilter";
-                        paramNumFilter.Value = filters.NumFilter.Value;
-                        command.Parameters.Add(paramNumFilter);
-                    }
 
-                    if (!string.IsNullOrWhiteSpace(filters.TextFilter))
-                    {
-                        var paramTextFilter = command.CreateParameter();
-                        paramTextFilter.ParameterName = "@TextFilter";
-                        paramTextFilter.Value = filters.TextFilter;
-                        command.Parameters.Add(paramTextFilter);
-                    }
 
-                    if (filters.StateFilter.HasValue)
-                    {
-                        var paramStateFilter = command.CreateParameter();
-                        paramStateFilter.ParameterName = "@StateFilter";
-                        paramStateFilter.Value = filters.StateFilter.Value;
-                        command.Parameters.Add(paramStateFilter);
-                    }
 
                     if (!string.IsNullOrWhiteSpace(filters.StartDate))
                     {
@@ -99,18 +78,18 @@ namespace PRU.Application.Services
 
                     var paramNumRecordsPage = command.CreateParameter();
                     paramNumRecordsPage.ParameterName = "@NumRecordsPage";
-                    paramNumRecordsPage.Value = filters.NumRecordsPage; // Asignar el valor entero desde filters
-                    paramNumRecordsPage.DbType = DbType.Int32; // Especificar que el tipo es entero
+                    paramNumRecordsPage.Value = filters.NumRecordsPage; 
+                    paramNumRecordsPage.DbType = DbType.Int32;
                     command.Parameters.Add(paramNumRecordsPage);
                     ;
                     var paramTotalRecords = command.CreateParameter();
                     paramTotalRecords.ParameterName = "@TotalRecords";
-                    paramTotalRecords.DbType = DbType.Int32; // Especificar que el tipo es entero
-                    paramTotalRecords.Direction = ParameterDirection.Output; // Definir como parámetro de salida
+                    paramTotalRecords.DbType = DbType.Int32; 
+                    paramTotalRecords.Direction = ParameterDirection.Output; 
                     command.Parameters.Add(paramTotalRecords);
                     using (var reader2 = command.ExecuteReader())
                     {
-                        // Procesar los resultados del procedimiento almacenado
+                        
                         while (reader2.Read())
                         {
                             // Aquí procesas cada fila obtenida del procedimiento almacenado

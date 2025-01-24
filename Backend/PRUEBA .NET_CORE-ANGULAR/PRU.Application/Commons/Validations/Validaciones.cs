@@ -19,6 +19,7 @@ namespace PRU.Application.Commons.Validations
             _context = context;
 
         }
+        /*
         public string GenerarCorreo(string nombres, string apellidos, string identificacion)
         {
             // Reemplazar los espacios por puntos en los nombres y apellidos
@@ -38,7 +39,7 @@ namespace PRU.Application.Commons.Validations
             }
 
             return correo;
-        }
+        }*/
 
       public bool ValidarUsuario(string nombreUsuario)
 {

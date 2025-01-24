@@ -1,4 +1,8 @@
 ﻿using PRU.Application.Commons.Bases.Response;
+using PRU.Application.Dtos.Administrador.DatosPersonales;
+using PRU.Application.Dtos.Administrador.DatosPersonales.Response;
+using PRU.Application.Dtos.UsuarioGeneral.Request;
+using PRU.Application.Dtos.UsuarioGeneral.Response;
 using PRU.Application.Dtos.Usuarios.Request;
 using System;
 using System.Collections.Generic;
@@ -10,7 +14,8 @@ namespace PRU.Application.Interfaces
 {
    public interface IUsuariosApplication
     {
-       
-       // Task<BaseResponse<bool>> RegisterUserbyExcel(UsuarioRequest requestDto);
+
+        Task<BaseResponse<UsuarioGResponse>> DatosUsuarioGPerfil(int id);
+        Task<BaseResponse<bool>> EditDTPersonalUsuario(UsuarioGRequest requestDto, int id);
     }
 }
