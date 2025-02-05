@@ -30,7 +30,7 @@ namespace PRU.Application.Services
 
         public async Task<BaseResponse<bool>> RegisterUserbyexcel(IFormFile archivo)
         {
-            bool exito = false; string mensaje = "";
+            
             var usuarios = upexcel.SubirExcel<UsuarioRequest>(archivo);
             var response = new BaseResponse<bool>();
             foreach (var usuario in usuarios)
@@ -38,17 +38,6 @@ namespace PRU.Application.Services
 
                 response= await IAdminApplication.RegisterUser(usuario);
 
-                if (!response.IsSucces)
-                {
-                    exito = response.IsSucces;
-                    mensaje = response.Message!;
-
-                }
-                else
-                {
-                    exito = response.IsSucces;
-                    mensaje = response.Message!;
-                }
 
             }
             return response;
