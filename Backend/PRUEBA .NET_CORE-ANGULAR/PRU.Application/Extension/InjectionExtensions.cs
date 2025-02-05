@@ -32,7 +32,8 @@ namespace PRU.Application.Extension
            services.AddScoped<IAdministrador, Administrador>();
            services.AddScoped<IAuth, Auth>();
            services.AddScoped<IDashboardApplication, DashboardApplication>();
-           services.AddScoped<IRecuperaContraseñaApplication, RecuperaContraseñaApplication>();
+            services.AddScoped<IRegisterbyExcelApplication, RegisterbyExcelApplication>();
+            services.AddScoped<IRecuperaContraseñaApplication, RecuperaContraseñaApplication>();
             services.AddScoped<IRolesOpcionesApplication, RolesOpcionesApplication>();
             return services;
 

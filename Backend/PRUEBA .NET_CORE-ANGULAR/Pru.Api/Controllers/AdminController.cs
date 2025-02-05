@@ -17,11 +17,10 @@ namespace Pru.Api.Controllers
         private readonly IAdministrador IAdminApplication;
 
       
-        private readonly IUploadExcel upexcel;
-        public AdminController(IAdministrador iAuthApplication,  IUploadExcel upexcel)
+        private readonly IRegisterbyExcelApplication upexcel;
+        public AdminController(IAdministrador iAuthApplication,  IRegisterbyExcelApplication upexcel)
         {
             this.IAdminApplication = iAuthApplication;
-
             this.upexcel = upexcel;
         }
         [HttpGet("ListaUsuarios")]
@@ -43,38 +42,18 @@ namespace Pru.Api.Controllers
             return Ok(response);
            
         }
-        public class Response
-        {
-            public bool IsSucces { get; set; }
-            public string Message { get; set; }
-        }
+     
 
         [HttpPost("registerbyExcel")]
         public async Task<IActionResult> RegisterUserbyExcel(IFormFile archivo, [FromServices] IUploadExcel uploadExcelService)
         {
-            bool exito = false; string mensaje = "";
-            var usuarios = upexcel.SubirExcel<UsuarioRequest>(archivo);
 
-            foreach (var usuario in usuarios)
-            {
-                // Registrar cada usuario individualmente
-                 var response = await IAdminApplication.RegisterUser(usuario);
+            var response = await upexcel.RegisterUserbyexcel(archivo);
+            
+                
+            return Ok(response);
 
-                // Validar respuesta en caso de error
-                if (!response.IsSucces)
-                {
-                    exito = response.IsSucces;
-                    mensaje = response.Message!;
-
-                }
-                else
-                {
-                    exito = response.IsSucces;
-                    mensaje = response.Message!;
-                }
-
-            }
-            return Ok(new Response {IsSucces=exito, Message=mensaje});
+          
 
         }
 

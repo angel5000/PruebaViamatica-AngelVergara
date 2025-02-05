@@ -98,7 +98,6 @@ namespace PRU.Application.Services
                     IsSucces = true,
                     Data = true,
                     Message = "Registro exitoso",
-                    TotalRecords = 1,
                     AdditionalData = new { PersonaId = personaId, UsuarioId = usuarioId }
                 };
             }
@@ -107,7 +106,7 @@ namespace PRU.Application.Services
                 return new BaseResponse<bool>
                 {
                     IsSucces = false,
-                    Data = false,  // Indica que la operación falló
+                    Data = false,  
                     Message = $"Error al registrar los datos: {ex.Message}",
                     TotalRecords = 0,
 
